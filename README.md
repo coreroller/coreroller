@@ -1,4 +1,4 @@
-![Coreroller](./docs/screenshots/coreroller.png)
+![Coreroller](https://github.com/coreroller/coreroller/raw/master/docs/screenshots/coreroller.png)
 
 ## Overview
 
@@ -8,14 +8,14 @@ Screenshots:
 
 <table>
     <tr>
-        <td width="33%"><img src="./docs/screenshots/screenshot1.png"></td>
-        <td width="33%"><img src="./docs/screenshots/screenshot2.png"></td>
-        <td width="33%"><img src="./docs/screenshots/screenshot3.png"></td>
+        <td width="33%"><img src="https://github.com/coreroller/coreroller/raw/master/docs/screenshots/screenshot1.png"></td>
+        <td width="33%"><img src="https://github.com/coreroller/coreroller/raw/master/docs/screenshots/screenshot2.png"></td>
+        <td width="33%"><img src="https://github.com/coreroller/coreroller/raw/master/docs/screenshots/screenshot3.png"></td>
     </tr>
     <tr>
-        <td><img src="./docs/screenshots/screenshot4.png"></td>
-        <td><img src="./docs/screenshots/screenshot5.png"></td>
-        <td><img src="./docs/screenshots/screenshot6.png"></td>
+        <td><img src="https://github.com/coreroller/coreroller/raw/master/docs/screenshots/screenshot4.png"></td>
+        <td><img src="https://github.com/coreroller/coreroller/raw/master/docs/screenshots/screenshot5.png"></td>
+        <td><img src="https://github.com/coreroller/coreroller/raw/master/docs/screenshots/screenshot6.png"></td>
     </tr>
 </table>
 
@@ -44,7 +44,7 @@ Please report your experience and/or any bug you find as [issues](https://github
 
 ## Getting started
 
-The best way to give it a try is to launch a Docker container using the public images hosted in the [Docker Hub]() or [Quay.io](). Feel free to use your favourite tool or environment to spin it up (Kitematic, etc) or just do it in the command line running this command:
+The best way to give it a try is to launch a Docker container using the public images hosted in the Docker Hub or Quay.io. Feel free to use your favourite tool or environment to spin it up (Kitematic, etc) or just do it in the command line running this command:
 
 	docker run -d -p 8000:8000 coreroller/demo
 
@@ -78,22 +78,29 @@ In addition to the default `stable`, `beta` and `alpha` groups, you can also cre
 
 ###### Existing machines
 
-To update the update server in existing instances please edit `/etc/coreos/update.conf` and update the `SERVER` and `GROUP` values:
+To update the update server in existing instances please edit `/etc/coreos/update.conf` and update the `SERVER` value (and optionally `GROUP`):
 
-	GROUP=1a809ab1-c01c-4a6b-8ac8-6b17cb9bae08
 	SERVER=https://your.coreroller.host/v1/update/
 	
 To apply these changes run:
 
 	sudo systemctl restart update-engine
+	
+In may take a few minutes to see an update request coming through. If you want to see it sooner, you can force it running this command:
+
+	update_engine_client -update
 
 **Note:** the CoreUpdate docs do a great job explaining in detail how this process works and most of the information it contains is valid for CoreRoller as well, so please have a look at them [here](https://coreos.com/products/coreupdate/docs/latest/configure-machines.html) if you want more information.
 
 ### Managing updates for your own applications
 
-In addition to manage the updates for CoreOS, you can use CoreRoller for your own applications as well. In the `updaters/lib` directory there are some sample helpers that can be useful to create your own updaters that talk to CoreRoller or even embed them into your own applications. In `updaters/examples` you'll find a sample minimal application built using [grace](https://github.com/facebookgo/grace) that is able to update itself using CoreRoller in a graceful way.
+In addition to manage the updates for CoreOS, you can use CoreRoller for your own applications as well. 
 
-Some more documents, examples and updaters and on their way :)
+In the `updaters/lib` directory there are some sample helpers that can be useful to create your own updaters that talk to CoreRoller or even embed them into your own applications. 
+
+In the `updaters/examples` you'll find a sample minimal application built using [grace](https://github.com/facebookgo/grace) that is able to update itself using CoreRoller in a graceful way.
+
+Some more documents, examples and updaters are on their way :)
 
 ## Contributing
 
