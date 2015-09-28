@@ -1,5 +1,7 @@
 ![Coreroller](https://github.com/coreroller/coreroller/raw/master/docs/screenshots/coreroller.png)
 
+[![Build Status](https://travis-ci.org/coreroller/coreroller.svg)](https://travis-ci.org/coreroller/coreroller)
+
 ## Overview
 
 **CoreRoller** is a set of tools to control and monitor the rollout of your updates. It's aimed to be an open source alternative to [CoreUpdate](https://coreos.com/products/coreupdate/) by CoreOS.
