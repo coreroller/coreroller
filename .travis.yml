@@ -1,0 +1,19 @@
+language: go
+sudo: required
+
+go:
+  - 1.5
+
+services:
+  - docker
+
+before_install:
+  - sudo /etc/init.d/postgresql stop
+  - docker pull coreroller/postgres
+  - sudo service docker restart ; sleep 10
+  - docker run --privileged -d -p 127.0.0.1:5432:5432 coreroller/postgres
+  - docker ps -a
+
+script:
+  - export GOPATH=$TRAVIS_BUILD_DIR/backend:$TRAVIS_BUILD_DIR/backend/vendor
+  - cd backend/src && LOGXI=* go test -p 1 -v ./...
