@@ -31,6 +31,7 @@ Screenshots:
 - Manage updates for your CoreOS clusters out of the box
 - HTTP Restul and Golang APIs
 - Based on the [Omaha](https://code.google.com/p/omaha/wiki/ServerProtocol) protocol developed by Google
+- Backend server built using Golang, dashboard built using React
 
 More exciting features coming soon, stay tuned!
 
@@ -44,7 +45,7 @@ Please report your experience and/or any bug you find as [issues](https://github
 
 ## Getting started
 
-The best way to give it a try is to launch a Docker container using the public images hosted in the Docker Hub or Quay.io. Feel free to use your favourite tool or environment to spin it up (Kitematic, etc) or just do it in the command line running this command:
+The best way to give it a try is to launch a Docker container using the public images hosted in the Docker Hub. Feel free to use your favourite tool or environment to spin it up (Kitematic, etc) or just do it in the command line running this command:
 
 	docker run -d -p 8000:8000 coreroller/demo
 
