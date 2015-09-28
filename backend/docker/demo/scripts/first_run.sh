@@ -1,9 +1,8 @@
 #!/bin/bash
 
 # Start PostgreSQL service
-sudo -u postgres /usr/lib/postgresql/$PGSQL_VER/bin/postgres -D /data &
-
-while ! sudo -u postgres psql -q -c "select true;"; do sleep 1; done
+sudo -u postgres /usr/lib/postgresql/9.3/bin/pg_ctl -D /data -l /tmp/logfile start
+sleep 3
 
 # Create dabatase
 echo "Creating databases..."
@@ -22,7 +21,7 @@ CREATE EXTENSION "uuid-ossp";
 CREATE EXTENSION semver;
 EOF
 
-echo "Installing the databse with the initial schema..."
+echo "Installing the coreroller database with CoreRoller schema..."
 $COREROLLER_DIR/backend/bin/initdb
 
 rm -f /.firstrun

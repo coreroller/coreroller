@@ -72,3 +72,5 @@ RUN touch /.firstrun
 ENV COREROLLER_DB_URL="postgres://postgres@127.0.0.1:5432/coreroller?sslmode=disable"
 WORKDIR /coreroller/backend
 ENTRYPOINT ["/scripts/run.sh"]
+
+EXPOSE 8000
