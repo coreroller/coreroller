@@ -1,0 +1,9 @@
+.DS_Store
+*.swp
+*.lock
+*sublime*
+pkg
+bin
+node_modules
+frontend/built/js/main.js
+frontend/built/css/styles.css

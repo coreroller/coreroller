@@ -1,0 +1,50 @@
+// Rollout error flag
+.rollout--error {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  padding: 4px 12px;  
+  background-color: @white;
+  background-image: none;
+  border: 2px solid @red;
+  color: @red;
+
+  &.rollout--bigger {
+    right: -80px;
+  }
+
+  h4 {
+    margin: 0px;
+    font-size: .90em;
+    text-transform: uppercase;
+    font-weight: bold;
+    text-align: center;
+  }
+
+  .fa-lock {
+    font-size: 1.25em;
+    padding-right: 10px;
+  }
+
+  .cr-button {
+    font-size: 16px;
+    margin-left: 0px;
+    margin-top: 2px;
+  }
+}
+
+/* Rollout running effect */
+.rolloutRunning {
+  opacity: 0;
+  height: 0px;
+  .transform(scale(0));
+  overflow: auto;
+  .transform(scale(0.7));
+
+
+  &.active {
+    opacity: 1;
+    height: 280px;
+    .transform(scale(1));
+  }
+}

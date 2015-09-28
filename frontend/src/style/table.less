@@ -1,0 +1,339 @@
+// Table
+.coreRollerTable {
+  width: 100%;
+  margin-top: 20px;
+  padding: 0px 10px;
+
+  .coreRollerTable-header,
+  .coreRollerTable-body {
+    border-bottom: 1px solid @lighter-grey;
+    position: relative;
+    clear: both;
+    overflow: hidden;
+
+    .coreRollerTable-cell {
+      float: left;
+      width: 19%;
+      background-color: @white;
+      padding-right: 30px;
+
+      .label-default {
+        line-height: 45px;
+        font-weight: normal;
+        background-color: @label-color;
+        color: @white;
+
+        img {
+          padding-right: 5px;
+        }
+      }
+
+      &:nth-child(4) {
+        width: 15%;
+      }
+
+      &:nth-child(2) {
+        // width: 25%;
+      }
+
+      &.coreRollerTable-cell--mini {
+        width: 10%;
+      }
+
+      &.coreRollerTable-cell--medium {
+        width: 28%;
+
+        p {
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          padding-right: 10px;
+        }
+      }
+
+      &.coreRollerTable-cell--10 {
+        width: 10%;
+      }
+
+      p {
+        margin: 5px 0px !important;
+        line-height: 35px;
+
+        &.smallText {
+          font-size: @font-size-px * .80;
+        }
+      }
+
+      &:nth-of-type(1) {
+        border-left: 0;
+      }
+
+      [class^="box--"] {
+        padding-left: 23px;
+        position: relative;
+
+        &:before {
+          content: "";
+          position: absolute;
+          border: 1px solid @lighter-grey;
+          min-width: 16px;
+          height: 16px;
+          bottom: 9px;
+          left: 0px;
+          background-image: -webkit-gradient(linear,0 100%,100% 0,color-stop(0.25,rgba(255, 255, 255, 0.10),color-stop(0.25,transparent),color-stop(0.5,transparent),color-stop(0.5,rgba(255, 255, 255, 0.10)),color-stop(0.75,rgba(255, 255, 255, 0.10)),color-stop(0.75,transparent),to(transparent))); background-image: -webkit-linear-gradient(45deg,rgba(255, 255, 255, 0.10) 25%,transparent 25%,transparent 50%,rgba(255, 255, 255, 0.10) 50%,rgba(255, 255, 255, 0.10) 75%,transparent 75%,transparent); background-image: linear-gradient(45deg,rgba(255, 255, 255, 0.10) 25%,transparent 25%,transparent 50%,rgba(255, 255, 255, 0.10) 50%,rgba(255, 255, 255, 0.10) 75%,transparent 75%,transparent);
+          background-size: 10px 10px;
+          background-repeat: repeat;
+        }
+      }
+
+      .glyphicon {
+        padding-right: 5px;
+      }
+    }
+  }
+
+  .coreRollerTable-body {
+    .coreRollerTable-cell {
+      &.lightText {
+        p {
+          font-weight: 300;
+        }
+      }
+    }
+  }
+
+  .coreRollerTable-header {
+    & > .coreRollerTable-cell {
+      font-size: 14px;
+      text-transform: uppercase;
+      font-weight: 300;
+      font-family: @font-family-Roboto;
+      color: @grey-75;
+      background-color: transparent;
+      border: 0;
+      border-bottom: 3px solid @lighter-grey;
+      margin-bottom: 0;
+      padding: 2px 0px;
+    }
+  }
+
+  & > .coreRollerTable-body:nth-last-child(2) {
+    border-bottom: none;
+  }
+
+  .coreRollerTable-detail {
+    position: relative;
+    background: @lite-grey;
+    height: 0px;
+    .transition(all .3s ease-out);
+
+    .coreRollerTable-detailContent {
+      padding: 40px 30px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid @lighter-grey;
+      visibility: hidden;
+    }
+
+    &.active {
+      height: 195px;
+
+      .coreRollerTable-detailContent {
+        visibility: visible;
+      }
+    }
+  }
+
+  // Events table
+  &.coreRollerTable--events {
+    padding: 0px;
+
+    & > .coreRollerTable-body:nth-last-child(2) {
+      border-bottom: 1px solid @lighter-grey;
+    }
+
+    .coreRollerTable-cell {
+      width: 14%;
+    }
+
+    .coreRollerTable-header, 
+    .coreRollerTable-body {
+      .coreRollerTable-cell {
+
+        &:first-child,
+        &:nth-child(2) {
+          width: 12%;
+        }
+
+        &:last-child {
+          width: 34%;
+        }
+      }
+    }
+
+    .coreRollerTable-body {
+      .coreRollerTable-cell {
+        &:last-child {
+          p {
+            line-height: 22px;
+            font-weight: 300;
+            padding-top: 8px;
+            padding-bottom: 10px;
+            font-size: .90em;
+          }
+        }
+
+        &:first-child {
+          p {
+            font-weight: normal;
+          }
+        }
+      }
+
+      &:last-child {
+        border-bottom: none;
+      }
+    }
+
+    .coreRollerTable-dateHeader {
+      height: 50px; 
+
+      .coreRollerTable-cell {
+        width: 100%;
+        padding-bottom: 10px;
+
+        span {
+          border: 2px solid @brand-color;
+          padding: 8px 16px;
+          position: relative;
+
+          &:before {
+            content: "\2022";
+            position: absolute;
+            left: -52px;
+            top: 8px;
+            font-size: 1.75em;
+            color: @brand-color;
+          }
+
+          &:after {
+            content: "";
+            position: absolute;
+            left: -40px;
+            top: 20px;
+            height: 2px;
+            width: 40px;
+            background-color: @brand-color;
+          }
+        }
+      }
+    }
+
+    .coreRollerTable--tbody {
+      border: 1px solid @grey-50;
+      .border-radius(4px);
+      background-color: @white;
+      padding: 0px 25px;
+      padding-top: 20px;
+      margin-bottom: 50px;
+    }
+  }
+
+  // Users table
+  &.coreRollerTable--users {
+    width: 100%;
+    border: 1px solid @grey-50;
+    .border-radius(4px);
+    background-color: @white;
+
+    .coreRollerTable-cell {
+      width: 20% !important;
+    }
+
+    .coreRollerTable-header, 
+    .coreRollerTable-body {
+      .coreRollerTable-cell {
+
+        &:first-child {
+          width: 40% !important;
+          padding-left: 25px;
+        }
+
+        &:last-child {
+          padding-right: 25px;
+        }
+      }
+    }
+
+    .userImg {
+      left: 25px;
+      top: 12px;
+    }
+
+    .coreRollerTable-body {
+      .coreRollerTable-cell {
+        height: 60px !important;
+        padding: 6px 0px;
+
+        .cr-button {
+          margin-top: 8px;
+
+          &:first-child {
+            margin-left: 0px;
+          }
+        }
+      }
+    }
+
+    .coreRollerTable-header {
+      -webkit-border-top-left-radius: 4px;
+      -webkit-border-top-right-radius: 4px;
+      -moz-border-radius-topleft: 4px;
+      -moz-border-radius-topright: 4px;
+      border-top-left-radius: 4px;
+      border-top-right-radius: 4px;
+
+      .coreRollerTable-cell {
+        border-bottom: 1px solid @grey-50;
+        padding: 15px 0px;
+        background-color: @lite-grey;
+        font-weight: normal;     
+        
+        .cr-button {
+          margin-top: -2px;
+        }   
+      }
+    }
+  }
+}
+
+
+
+
+
+.granted-status .glyphicon {
+  color: #1fbb86;
+}
+
+.complete-status .glyphicon {
+  color: #1fbb86;
+}
+
+.downloaded-status .glyphicon {
+  color: #5e77c1;
+}
+
+.downloading-status .glyphicon {
+  color: #6992f3;
+}
+
+.error-status .glyphicon {
+  color: #fc4633;
+}
+
+.instanceHold-status .glyphicon {
+  color: #e69b33;
+}
+
+.installed-status .glyphicon {
+  color: #8dccb7;
+}

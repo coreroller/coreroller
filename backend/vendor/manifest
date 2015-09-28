@@ -1,0 +1,168 @@
+{
+	"version": 0,
+	"dependencies": [
+		{
+			"importpath": "github.com/MichaelTJones/walk",
+			"repository": "https://github.com/MichaelTJones/walk",
+			"revision": "3af09438b0ab0e8f296410bfa646a7e635ea1fc0",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/abbot/go-http-auth",
+			"repository": "https://github.com/abbot/go-http-auth",
+			"revision": "46b96277a30605aa35da613039628d71eab707d2",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/aquam8/go-omaha/omaha",
+			"repository": "https://github.com/aquam8/go-omaha",
+			"revision": "65e68b0e80b1db113f482abd2aba0bb03df765dd",
+			"branch": "master",
+			"path": "/omaha"
+		},
+		{
+			"importpath": "github.com/cenkalti/backoff",
+			"repository": "https://github.com/cenkalti/backoff",
+			"revision": "4dc77674aceaabba2c7e3da25d4c823edfb73f99",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/coreos/go-semver/semver",
+			"repository": "https://github.com/coreos/go-semver",
+			"revision": "d043ae190b3202550d026daf009359bb5d761672",
+			"branch": "master",
+			"path": "/semver"
+		},
+		{
+			"importpath": "github.com/garyburd/redigo/internal",
+			"repository": "https://github.com/garyburd/redigo",
+			"revision": "9c474d0715937065f7e5b9f8d724a72ba55763e7",
+			"branch": "master",
+			"path": "/internal"
+		},
+		{
+			"importpath": "github.com/garyburd/redigo/redis",
+			"repository": "https://github.com/garyburd/redigo",
+			"revision": "9c474d0715937065f7e5b9f8d724a72ba55763e7",
+			"branch": "master",
+			"path": "/redis"
+		},
+		{
+			"importpath": "github.com/goji/param",
+			"repository": "https://github.com/goji/param",
+			"revision": "da86c81e3e3c23b1948bc7a003d381250a032aa7",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/howeyc/gopass",
+			"repository": "https://github.com/howeyc/gopass",
+			"revision": "10b54de414cc9693221d5ff2ae14fd2fbf1b0ac1",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/jmoiron/sqlx",
+			"repository": "https://github.com/jmoiron/sqlx",
+			"revision": "3a92b1fd96032c4490fa618370fbf98ec69b680c",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/lib/pq",
+			"repository": "https://github.com/lib/pq",
+			"revision": "b269bd035a727d6c1081f76e7a239a1b00674c40",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/mattn/go-colorable",
+			"repository": "https://github.com/mattn/go-colorable",
+			"revision": "40e4aedc8fabf8c23e040057540867186712faa5",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/mattn/go-isatty",
+			"repository": "https://github.com/mattn/go-isatty",
+			"revision": "7fcbc72f853b92b5720db4a6b8482be612daef24",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/mgutz/ansi",
+			"repository": "https://github.com/mgutz/ansi",
+			"revision": "c286dcecd19ff979eeb73ea444e479b903f2cfcb",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/mgutz/logxi/v1",
+			"repository": "https://github.com/mgutz/logxi",
+			"revision": "5e85ab8bfe3b2db5d199916ef190d3f940a3d5ca",
+			"branch": "master",
+			"path": "/v1"
+		},
+		{
+			"importpath": "github.com/mgutz/minimist",
+			"repository": "https://github.com/mgutz/minimist",
+			"revision": "e3e5af13ccefb15bcf80187ae6879fcc99984fc9",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/mgutz/str",
+			"repository": "https://github.com/mgutz/str",
+			"revision": "968bf66e3da857419e4f6e71b2d5c9ae95682dc4",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/mgutz/to",
+			"repository": "https://github.com/mgutz/to",
+			"revision": "d72775a547168f5dae1b0f0acc1a31da7e32f779",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/nozzle/throttler",
+			"repository": "https://github.com/nozzle/throttler",
+			"revision": "d9b45f19996c645d38c9266d1f5cf1990e930119",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/pmylund/go-cache",
+			"repository": "https://github.com/pmylund/go-cache",
+			"revision": "93d85800f2fa6bd0a739e7bd612bfa3bc008b72d",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/satori/go.uuid",
+			"repository": "https://github.com/satori/go.uuid",
+			"revision": "08f0718b61e95ddba0ade3346725fe0e4bf28ca6",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/stretchr/testify/assert",
+			"repository": "https://github.com/stretchr/testify",
+			"revision": "b8dc1cecf15bdaf1988d9e87aa7cd98d899a06d6",
+			"branch": "master",
+			"path": "/assert"
+		},
+		{
+			"importpath": "github.com/zenazn/goji",
+			"repository": "https://github.com/zenazn/goji",
+			"revision": "46b46e00f46dda650e04f0bceeb7c40732cd5988",
+			"branch": "master"
+		},
+		{
+			"importpath": "golang.org/x/crypto/ssh/terminal",
+			"repository": "https://go.googlesource.com/crypto",
+			"revision": "aedad9a179ec1ea11b7064c57cbc6dc30d7724ec",
+			"branch": "master",
+			"path": "/ssh/terminal"
+		},
+		{
+			"importpath": "gopkg.in/godo.v2",
+			"repository": "https://gopkg.in/godo.v2",
+			"revision": "0969c44f5d0c73030d1417f496111768436c34ea",
+			"branch": "master"
+		},
+		{
+			"importpath": "gopkg.in/mgutz/dat.v1",
+			"repository": "https://gopkg.in/mgutz/dat.v1",
+			"revision": "1a548c71882f3597d93dc002382f6f1c983704af",
+			"branch": "master"
+		}
+	]
+}

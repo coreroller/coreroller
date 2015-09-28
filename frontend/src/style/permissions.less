@@ -1,0 +1,142 @@
+/* Permissions */
+.rolesList {
+  margin: 0px;
+  padding: 0px;
+  border-bottom: 1px solid @lighter-grey;
+  margin-right: 50px;
+  padding-bottom: 20px;
+  margin-bottom: 20px;
+
+  li {
+    list-style-type: none;
+    padding-left: 10px;
+    cursor: pointer;
+
+    &.active {
+      border-right: 3px solid @brand-color;
+      background-color: @grey-5;
+    }
+  }
+}
+
+.rolesList--footer {
+  padding-top: 10px;
+
+  p {
+    display: inline-block;
+    font-size: 14px;
+    text-transform: uppercase;
+    font-weight: 300;
+    font-family: @font-family-Roboto;
+    color: @grey-75;
+  }
+
+  .cr-button {
+    margin-top: -2px;
+  }
+}
+
+.permissionsList--container {
+  padding-bottom: 10px;
+  width: 100%;
+
+  &:before {
+    content: "";
+    height: 100%;
+    width: 1px;
+    background-color: @lighter-grey;
+    position: absolute;
+    left: -25px;
+  }
+
+  .permissionsList--header {
+    padding-top: 5px;
+    text-transform: uppercase;
+    color: @brand-color;
+    position: relative;
+
+    h4 {
+      display: inline;
+      font-size: 16px;
+      border-bottom: 4px solid @lighter-grey;
+      padding-bottom: 5px;
+      margin-bottom: 15px;
+
+      &:after {
+        content: "";
+        position: absolute;
+        left: 15px;
+        top: 33px;
+        width: 0;
+        height: 0;
+        border-left: 5px solid transparent;
+        border-right: 5px solid transparent;
+        border-top: 5px solid @lighter-grey;
+      }
+    }
+  }
+
+  .permissionsList--actions {
+    padding-left: 10px;
+    color: @grey-50;
+    
+    a {
+      text-transform: none;
+      color: @grey-75;
+      font-size: .90em;
+      .transition(color .3s ease-out);
+
+      &:hover {
+        color: @grey;
+      }
+    }
+  }
+
+  .checkbox {
+
+    & > label {
+      padding-left: 0px;
+    }
+  }
+
+  .permissions--sublist {
+    list-style-type: none;
+    margin: 10px;
+    padding: 0px;
+
+    & > li {
+      padding-top: 5px;
+      text-transform: none;
+
+      &:first-child {
+        padding-top: 10px;
+      }
+    }
+  }
+
+  input[type="checkbox"] {
+    display: none;
+
+    & + label {
+      background-color: @white;
+      border: 1px solid @grey-50;
+      padding: 9px;
+      display: inline-block;
+      position: relative;
+      margin-right: 10px;
+      vertical-align: -4px;
+    }
+
+    &:checked + label:after {
+      content: '\2717';
+      position: absolute;
+      top: 0px;
+      left: 0px;
+      width: 100%;
+      text-align: center;
+      font-size: 1em;
+      line-height: 17px;
+    }
+  }
+}
+

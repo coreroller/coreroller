@@ -1,0 +1,85 @@
+// General
+
+body {
+    font-family: @font-family-base;
+    padding-top: 50px;
+    padding-bottom: 20px;
+    /*background: rgba(0,0,0,0.03);*/
+    color: @font-color;
+    font-size: 16px;
+    line-height: 20px;
+}
+
+a:hover {
+  text-decoration: none;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin-left: 0px;
+}
+
+button:focus, button:active, 
+input:focus, input:active,
+select:focus, select:active,
+textarea:focus, textarea:active,
+select:focus, select:active {
+    outline: none !important;
+    box-shadow:none !important;
+    border-color: transparent;
+    background-image: none !important;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
+
+input[type="text"], textarea, select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+.form-group + select:after {
+  content: "";
+  position: absolute;
+  right: 7px;
+  top: 38px;
+  width: 0; 
+  height: 0; 
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid @grey-50;
+}
+
+textarea {
+    resize: none;
+    min-height: 100px;
+}
+
+:-webkit-autofill { color: @white !important; }
+
+::-webkit-input-placeholder, :-moz-placeholder, ::-moz-placeholder, :-ms-input-placeholder {
+    color: @grey-50;
+    font-style: italic;
+}
+
+.container {
+    min-width: 1170px !important;
+}
+
+.vertical--divider {
+  content: "";
+  width: 2px;
+  background-color: @grey-75;
+  height: 100%;
+  margin: 20px auto;
+  position: absolute;
+  top: 0px;
+  left: 50%;
+}
+
+.mainTitle {
+  color: @brand-color;
+  font-size: 28px;
+}
+
+h2 {
+  color: @dark-grey;
+}

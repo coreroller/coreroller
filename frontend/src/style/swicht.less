@@ -1,0 +1,54 @@
+// Switch
+.switch--container {
+  width: 43px;
+  height: 22px;
+  overflow: hidden;
+  position: absolute;
+  right: 16px;
+  top: 0px;
+
+  input.cmn-toggle-round {
+    opacity: 0;
+
+    & + label {
+      padding: 2px;
+      width: 120px;
+      height: 5px;
+      background-color: transparent;
+      border-radius: 60px;
+
+      &:after, &:before {
+        display: block;
+        position: absolute;
+        top: 1px;
+        left: 1px;
+        bottom: 1px;
+        content: "";
+      }
+
+      &:before {
+        right: 1px;
+        background-color: @lighter-grey;
+        border: 1px solid @grey-50;
+        border-radius: 60px;
+        .transition(background 0.4s);
+      }
+
+      &:after {
+        width: 20px;
+        background-color: @white;
+        border-radius: 100%;
+        .transition(margin 0.4s);
+        border: 1px solid @grey-50;
+      }
+    }
+
+    &:checked + label:before {
+      background-color: @green;
+    }
+
+    &:checked + label:after {
+      margin-left: 21px;
+    }
+  }
+}

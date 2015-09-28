@@ -1,0 +1,37 @@
+/* Buttons */
+
+.cr-button {
+  display: inline-block;
+  position: relative;
+  text-align: left;
+  width: 30px;
+  height: 30px;
+  background: @white;
+  border-radius: 50%;
+  margin-left: 15px;
+  margin-top: 15px;
+  border: 2px solid @grey-50 !important;
+  color: @grey-50;
+  text-align: center;
+  transition: all .3s ease-out;
+  -webkit-transition: all .3s ease-out;
+  outline: none;
+
+  &:focus {
+    color: @grey-50;
+    text-decoration: none;
+  }
+}
+
+a.cr-button:active, a.cr-button:hover, a.cr-button:focus {
+  outline: none;
+}
+
+a.cr-button {
+  line-height: 28px;
+}
+
+.cr-button:hover {
+  color: #fff;
+  background-color: @grey-75;
+}

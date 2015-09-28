@@ -1,0 +1,23 @@
+// Breadcrumb
+
+.breadcrumb {
+  margin: 30px 0px;
+  background-color: @lite-grey;
+  border: 1px solid @grey-50;
+  margin-bottom: 10px;
+  border-radius: 4px;
+
+  & > li+li:before {
+    color: @grey-50;
+  }
+}
+
+a {
+  color: @brand-color;
+  cursor: pointer;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: none;
+  }
+}

@@ -1,0 +1,337 @@
+// Containers
+
+/* Apps container */
+
+.apps--container,
+.groups--container {
+  padding-top: 25px;
+  min-height: 400px;
+  position: relative;
+  transition: all .3s ease-out;
+  -webkit-transition: all .3s ease-out;
+
+  &.loading--apps:before {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    content: url(../img/loadingCR.gif);
+    text-align: center;
+    padding-top: calc(~"200px - 32px");
+  }
+
+  .apps--box,
+  .groups--box {
+    width: 100%;
+    margin-bottom: 20px;
+    border: 1px solid @grey-50;
+    border-radius: 4px;
+    background-color: @white;
+    transition: all .15s ease-out;
+    -webkit-transition: all .15s ease-out;
+  }
+
+  .row:not(:last-child) {
+    margin-bottom: 20px;
+  }
+
+  &:hover {
+    // border: 1px solid @orange;
+  }
+
+  .apps--boxHeader,
+  .groups--boxHeader {
+    background-color: @lite-grey;
+    padding: 10px 0px;
+    margin: 0px !important;
+    .border-top-radius(4px);
+    border-bottom: 1px solid @grey-50;
+    // -moz-border-radius-topleft: 4px;
+    // -webkit-border-top-left-radius: 4px;
+    // border-top-left-radius: 4px;
+    // -moz-border-radius-topright: 4px;
+    // -webkit-border-top-right-radius: 4px;
+    // border-top-right-radius: 4px;
+  }
+
+  .apps--boxTitle, .groups--boxTitle {
+    font-size: 18px;
+    margin: 0px;
+    padding-top: 3px;
+    margin-bottom: 5px;
+
+    span.apps--id, span.groups--id {
+      font-variant: normal;
+      font-size: 12px;
+      font-weight: 300;
+      color: @grey-75;
+      padding-left: 10px;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+      transition: color .3s ease-out;
+      -webkit-transition: color .3s ease-out;
+
+      &:hover {  
+        color: @brand-color;
+      }
+    }
+  }
+
+  .apps--description, .groups--description { 
+    color: @grey-75;
+    font-family: @font-family-Roboto;
+    font-size: .90em;
+  }
+
+  .apps--buttons, .groups--buttons {
+    text-align: right;
+
+    .cr-button {
+      margin-top: 0px;
+      margin-left: 5px;
+
+      &:first-child {
+        margin-left: 0px;
+      }
+    }
+  }
+
+  .apps--boxContent, .groups--boxContent {
+    padding: 20px 16px; 
+  }
+
+  .apps--resume, .groups--resume {
+    font-size: 16px;
+
+    span.subtitle {
+      font-size: 14px;
+      text-transform: uppercase;
+      font-weight: 300;
+      font-family: @font-family-Roboto;
+      padding-right: 2px;
+      color: @grey-75;
+    }
+    
+    span.fa {
+      padding-left: 5px;
+    }
+
+    .divider {
+      display: -webkit-inline-flex;
+      display: inline-flex;
+      font-size: 18px;
+      padding: 0px 15px;
+      color: @grey-50;
+    }
+  }
+
+  .apps--channelsList,
+  .groups--channelList {
+    margin-left: 0px;
+    margin-bottom: 0px;
+    display: -webkit-inline-flex;
+    display: inline-flex;
+    padding-left: 8px;
+    vertical-align: middle;
+  }
+
+  .groups--channelList {
+    display: block;
+
+    & > div > * {
+      display: inline-block;
+    }
+
+    .cr-button {
+      margin-top: -4px !important;
+    }
+
+    .channelLabel {
+      min-width: 150px;
+    }
+  }
+
+  .groups--channel {
+    display: inline-block;
+  }
+
+  .apps--groupsList {
+    padding-left: 8px;
+    vertical-align: 0px;
+    font-size: .80em;
+
+    .lighter {
+      padding: 0px 2px;
+    }
+
+    & > a:not(:first-of-type):before {
+      content: " · ";
+      padding: 0px 5px;
+    }
+  }
+
+  .apps--channelsList .channelLabel {
+    margin-right: 15px;
+  }
+
+  .groups--versionBreakdown {
+    margin: 0px 0px 5px 0px;
+    text-transform: uppercase;
+    color: @grey-75;
+    font-weight: 800;
+  }
+
+  .progress {
+    margin-bottom: 0px;
+    height: 30px;
+  
+    .progress-bar {
+      font-size: 1em;
+      line-height: 30px;
+
+      span.progress-bar--version {
+        font-size: .8em;
+      }
+    }
+
+    .progress {
+      display: inline;
+    }
+  }
+}
+
+.group--info hr {
+  border-top-width: 2px;
+
+  .groups--channel {
+    margin-top: 10px;
+  }
+}
+
+.groups--channelsList{
+  padding-top: 20px;
+  padding-bottom: 20px;
+  padding-left: 15px;
+
+  .cr-button {
+    margin-left: 5px;
+
+    &.fa-edit {
+      margin-left: 15px;    
+    }
+  }
+
+  & > .row {
+    margin-bottom: 10px;
+  }
+}
+
+.groups--channelsList .cr-button.fa-edit {
+  margin-left: 15px;
+}
+
+.groups--channelsList > .row {
+  margin-bottom: 10px;
+}
+
+.channelsList-buttons {
+  margin-top: -19px;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.groups--packagesList {
+  padding-bottom: 20px;
+  padding-left: 15px;
+  margin-top: 15px;
+
+  & > .row {
+    padding: 10px 0px;
+
+    &:not(:last-child) {
+      border-bottom: 1px solid @lighter-grey;
+    }
+  }
+
+  .containerIcon {
+    display: inline-block;
+    height: 25px;
+    line-height: 25px;
+
+    img {
+      max-width: 100%;
+    }
+
+    &:before {
+      line-height: 25px;
+      font-size: 14px;
+      text-transform: uppercase;
+      font-weight: 300;
+      font-family: @font-family-Roboto;
+      padding-right: 2px;
+      color: @grey-75;
+      white-space: nowrap;
+    }
+
+    &.container-1 {
+      &:before {
+        content: "COREOS";
+        background: transparent url(../img/coreos.png) no-repeat left center;
+        background-size: 20px;
+        padding: 15px;
+        padding-left: 23px;
+      }
+    }    
+
+    &.container-2 {
+      &:before {
+        content: "DOCKER IMAGE";
+        background: transparent url(../img/docker.png) no-repeat left center;
+        background-size: 30px;
+        padding: 15px;
+        padding-left: 30px;
+      }
+    }
+
+    &.container-3 {
+      &:before {
+        content: "ROCKET IMAGE";
+        background: transparent url(../img/rocket.png) no-repeat left center;
+        background-size: 20px;
+        padding: 15px;
+        padding-left: 20px;
+      }
+    }
+
+    &.container-4 {
+      &:before {
+        content: "OTHER";
+        background: transparent url(../img/other.png) no-repeat left center;
+        background-size: 20px;
+        padding: 15px;
+        padding-left: 20px;
+      }
+    }
+  }
+
+  .cr-button {
+    margin-left: 5px;
+    margin-top: 13px;
+  }
+
+  .package--info {
+    font-size: 14px;
+    padding-left: 15px;
+
+    .subtitle {
+      font-size: 14px;
+      text-transform: uppercase;
+      font-weight: 300;
+      font-family: @font-family-Roboto;
+      padding-right: 2px;
+      color: @grey-75;
+    }
+  }
+}

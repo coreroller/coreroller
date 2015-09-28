@@ -1,0 +1,26 @@
+// Navigation
+
+.activeLink {
+  color: @font-color;
+  transition: color .3s ease-out;
+  -webkit-transition: color .3s ease-out;
+
+  // &:not(:first-child):before {
+  //   content: "  \2022  ";
+  //   padding: 0px 10px;
+  // }
+
+  &.lighter {
+    color: @medium-grey;
+  }
+
+  &:hover {
+    color: @brand-color;
+    cursor: pointer;
+  }
+}
+
+.navbar-nav .cr-button {
+  margin-top: 10px;
+  margin-right: 10px;
+}

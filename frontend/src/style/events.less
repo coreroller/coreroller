@@ -1,0 +1,144 @@
+/* The icons */
+
+// Events
+.event--icon {
+  position: absolute;
+  color: @e-dark-darkBlue;
+  box-shadow: 0 0 0 2px @e-dark-darkBlue;
+  background: @e-lite-darkBlue;
+  border-radius: 55%;
+  text-align: center;
+  left: calc(~"50% - 12px");
+  top: 50px;
+  width: 25px;
+  height: 25px;
+  line-height: 25px;
+  font-size: 0.80em;
+
+  &.event--complete {
+    background: @e-lite-darkGreen;
+    box-shadow: 0 0 0 2px @e-dark-darkGreen;
+    color: @e-dark-darkGreen;
+  }
+
+  &.event--installed {
+    background: @e-lite-lightGreen;
+    box-shadow: 0 0 0 2px @e-dark-lightGreen;
+    color: @e-dark-lightGreen;
+  }
+
+  &.event--downloaded {
+    background: @e-lite-darkBlue;
+    box-shadow: 0 0 0 2px @e-dark-darkBlue;
+    color: @e-dark-darkBlue;
+  }
+
+  &.event--downloading {
+    background: @e-lite-midBlue;
+    box-shadow: 0 0 0 2px @e-dark-midBlue;
+    color: @e-dark-midBlue;
+  }
+
+  &.event--instanceHold {
+    background: @e-lite-orange;
+    box-shadow: 0 0 0 2px @e-dark-orange;
+    color: @e-dark-orange;
+  }
+
+  &.event--error {
+    background: @e-lite-red;
+    box-shadow: 0 0 0 2px @e-dark-red;
+    color: @e-dark-red;
+  }
+}
+
+.event--box {
+  border: 1px solid @grey-50;
+  .border-radius(4px);
+  background-color: @white;
+  padding: 5px 10px;
+
+  &:before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 32px;
+    height: 20px;
+    width: 5px;
+    margin-left: -2px;
+    background-color: @black-10;
+  }
+}
+
+.event--date {
+  position: absolute;
+  text-align: center;
+  width: 100px;
+  font-size: .75em;
+  top: 80px;
+  line-height: 14px;
+  font-family: @font-family-Roboto;
+  color: @grey-75;
+  
+  span {
+    font-size: 1.1em;
+    color: rgba(119, 119, 119, 1);
+  }
+}
+
+.eventType {
+  color: @i-lite-blue;
+  font-size: .75em;
+  margin-top: 7px !important;
+  line-height: 35px;
+  text-transform: uppercase;
+
+  span {
+    font-size: 1.5em;
+    margin-right: 5px;
+  }
+
+  &.error {
+    color: @i-dark-red;
+  }
+
+  &.success {
+    color: @i-dark-green;
+  }
+
+  &.warning {
+    color: @i-dark-yellow;
+  }
+
+  &.inactive {
+    color: @grey-50;
+  }
+}
+
+// Events table
+.tableEvents--container {
+  margin-left: 20px;
+  border-left: 5px solid @black-10;
+  padding: 20px 0px;
+  padding-left: 40px;
+  width: calc(~"100% - 35px");
+}
+
+
+.events--content {
+  .form-inline label {
+    padding-left: 0px !important;
+  }
+
+  .cr-exampleTagsInput {
+    width: calc(~"100% - 70px") !important;
+  }
+
+  .coreRollerTable.coreRollerTable--events {
+    margin-top: 30px;
+
+    &:first-child {
+      margin-top: 0px;
+    }
+  }
+}

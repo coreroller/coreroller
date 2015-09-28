@@ -1,0 +1,56 @@
+/**
+ * react-btn-checkbox v0.0.1 (http://iam4x.github.io/react-btn-checkbox/)
+ * Copyright 2015 iam4x
+ * Licensed under MIT
+ */
+.checkbox-btn-container label,
+.radio-btn-container label {
+  display: block;
+}
+
+.checkbox-btn-container .btn-group:not(.bootstrap) label,
+.radio-btn-container .btn-group:not(.bootstrap) label {
+  border-bottom: 1px solid #000;
+  border-top: 1px solid #000;
+  display: inline-block;
+  padding: 5px 10px;
+
+  // &:first-child:before {
+  //   content: url(../img/docker.png);
+  //   position: absolute;
+  //   width: 20px;
+  // }
+}
+
+.checkbox-btn-container .btn-group:not(.bootstrap) label.active,
+.radio-btn-container .btn-group:not(.bootstrap) label.active {
+  background: #ddd;
+}
+
+.checkbox-btn-container .btn-group:not(.bootstrap) label.active:hover,
+.radio-btn-container .btn-group:not(.bootstrap) label.active:hover {
+  background: #ddd;
+}
+
+.checkbox-btn-container .btn-group:not(.bootstrap) label:hover,
+.radio-btn-container .btn-group:not(.bootstrap) label:hover {
+  background: #eee;
+  cursor: pointer;
+}
+
+.checkbox-btn-container .btn-group:not(.bootstrap) label:first-of-type,
+.checkbox-btn-container .btn-group:not(.bootstrap) label:last-of-type,
+.radio-btn-container .btn-group:not(.bootstrap) label:first-of-type,
+.radio-btn-container .btn-group:not(.bootstrap) label:last-of-type {
+  border: 1px solid #000;
+}
+
+.checkbox-btn-container .btn-group:not(.bootstrap) label:first-of-type,
+.radio-btn-container .btn-group:not(.bootstrap) label:first-of-type {
+  border-radius: 5px 0 0 5px;
+}
+
+.checkbox-btn-container .btn-group:not(.bootstrap) label:last-of-type,
+.radio-btn-container .btn-group:not(.bootstrap) label:last-of-type {
+  border-radius: 0 5px 5px 0;
+}

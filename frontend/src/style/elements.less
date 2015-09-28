@@ -1,0 +1,164 @@
+/* Elements */
+
+// Progress bar
+.progress-bar-default {
+  background-color: @medium-grey;
+}
+
+.progress-bar-striped {
+  background-image: -webkit-gradient(linear,0 100%,100% 0,color-stop(0.25, @white-10,color-stop(0.25,transparent),color-stop(0.5,transparent),color-stop(0.5, @white-10),color-stop(0.75, @white-10),color-stop(0.75,transparent),to(transparent))); background-image: -webkit-linear-gradient(45deg, @white-10 25%,transparent 25%,transparent 50%, @white-10 50%, @white-10 75%,transparent 75%,transparent); background-image: linear-gradient(45deg,@white-10 25%,transparent 25%,transparent 50%, @white-10 50%, @white-10 75%,transparent 75%,transparent);
+  background-size: 10px 10px;
+  background-repeat: repeat;
+}
+
+.progress {
+  .progress-bar-striped {
+    border-right: 1px solid @white-75;
+
+    &:last-child {
+      border-right: none;
+    }
+  }
+}
+
+// Custom boxes
+.box--success:before {
+  background-color: @box-green;
+}
+
+.box--warning:before {
+  background-color: @box-orange;
+}
+
+.box--danger:before {
+  background-color: @box-red;
+}
+
+.box--default:before {
+  background-color: @medium-grey;
+}
+
+// Versions
+.versionBullet {
+  font-size: 18px;
+  background-color: @grey;
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 7px;
+  margin: 2px 3px;
+
+  .package--info &:last-child {
+    margin-right: 8px;
+  }
+}
+
+.channelLabel {
+  display: inline-block;
+  // float: left; 
+  margin-right: 20px;
+  line-height: 20px;
+  padding: 0 0 0 5px;
+  font-size: 12px;
+  text-decoration: none;
+  background: @lighter-grey;
+  text-transform: uppercase;
+  position: relative;
+  min-width: 50px;
+  height: 24px;
+
+  span & {
+    display: inline-flex;
+    display: -webkit-inline-flex;
+  }
+
+  .channelName {
+    padding-left: 15px;
+    line-height: 25px;
+    // width: 100%;
+    max-width: 110px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-right: 10px;
+    display: inline-block;
+  }
+
+  .colouredCircle {
+    font-size: 18px;
+    padding-right: 5px;
+    background-color: @grey;
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    border-radius: 7px;
+    margin: 9px 7px;
+    position: absolute;
+    left: 0px;
+  }
+
+  span.channelLabel--span {
+    font-family: @font-family-base;
+    background: @font-color;
+    padding: 1px 5px;
+    color: @white;
+    font-size: 12px;
+    margin-left: 15px;
+    position: relative;
+    font-weight: 500;
+    min-width: 50px;  
+    max-width: 120px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    padding: 2px 5px;    
+    text-align: center;
+    display: inline-block;
+    vertical-align: top;
+
+    &:before {
+      content: "";
+      width: 0;
+      height: 0;
+      border-style: solid;
+      border-width: 5px 5px 5px 0;
+      border-color: transparent @font-color transparent transparent;
+      position: absolute;
+      top: calc(~"50% - 5px");
+      left: -5px;
+    }
+  }
+}
+
+.groups--channelsList {
+  .channelLabel {
+    position: relative;
+    max-width: 100%; 
+    height: 25px; 
+
+    span:first-child {
+      padding-right: 20px;
+      width: 110px;
+      // max-width: 120px;
+      // width: auto;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: inline-block;
+      vertical-align: -6px;
+      line-height: 22px;
+    }
+
+    span.channelLabel--span {
+      position: absolute;
+      right: -45px;
+      min-width: 45px;  
+      padding: 2px 5px;    
+      text-align: center;
+      top: 0px;
+    }
+
+    &.fixedWidth {
+      width: 110px;
+    }
+  } 
+}
