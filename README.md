@@ -4,7 +4,7 @@
 
 ## Overview
 
-**CoreRoller** is a set of tools to control and monitor the rollout of your updates. It's aimed to be an open source alternative to [CoreUpdate](https://coreos.com/products/coreupdate/) by CoreOS.
+**CoreRoller** is a set of tools to control and monitor the rollout of your updates. It's aimed to be an open source alternative to CoreOS [CoreUpdate](https://coreos.com/products/coreupdate/).
 
 Screenshots:
 
