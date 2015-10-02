@@ -141,7 +141,7 @@ func (s *Syncer) checkForUpdates() error {
 			logger.Debug("checkForUpdates, no update available", "channel", channel, "currentVersion", currentVersion, "updateStatus", update.Status)
 		}
 
-		time.Sleep(10 * time.Second)
+		time.Sleep(1 * time.Minute)
 	}
 
 	return nil
@@ -196,39 +196,44 @@ func (s *Syncer) doOmahaRequest(channel, currentVersion string) (*omaha.UpdateCh
 // processUpdate is in charge of creating packages in the CoreOS application in
 // CoreRoller and updating the appropiate channel to point to the new channel.
 func (s *Syncer) processUpdate(channelName string, update *omaha.UpdateCheck) error {
-	// Create new package and action for CoreOS application in CoreRoller
-	pkg := &api.Package{
-		Type:          api.PkgTypeCoreos,
-		URL:           update.Urls.Urls[0].CodeBase,
-		Version:       update.Manifest.Version,
-		Filename:      dat.NullStringFrom(update.Manifest.Packages.Packages[0].Name),
-		Size:          dat.NullStringFrom(update.Manifest.Packages.Packages[0].Size),
-		Hash:          dat.NullStringFrom(update.Manifest.Packages.Packages[0].Hash),
-		ApplicationID: coreosAppID,
-	}
-	if _, err := s.api.AddPackage(pkg); err != nil {
-		logger.Error("processUpdate, adding package", "error", err, "channelName", channelName)
-		return err
+	// Create new package and action for CoreOS application in CoreRoller if
+	// needed (package may already exist and we just need to update the channel
+	// reference to it
+	pkg, err := s.api.GetPackageByVersion(coreosAppID, update.Manifest.Version)
+	if err != nil {
+		pkg = &api.Package{
+			Type:          api.PkgTypeCoreos,
+			URL:           update.Urls.Urls[0].CodeBase,
+			Version:       update.Manifest.Version,
+			Filename:      dat.NullStringFrom(update.Manifest.Packages.Packages[0].Name),
+			Size:          dat.NullStringFrom(update.Manifest.Packages.Packages[0].Size),
+			Hash:          dat.NullStringFrom(update.Manifest.Packages.Packages[0].Hash),
+			ApplicationID: coreosAppID,
+		}
+		if _, err = s.api.AddPackage(pkg); err != nil {
+			logger.Error("processUpdate, adding package", "error", err, "channelName", channelName)
+			return err
+		}
+
+		coreosAction := &api.CoreosAction{
+			Event:                 update.Manifest.Actions.Actions[0].Event,
+			ChromeOSVersion:       update.Manifest.Actions.Actions[0].ChromeOSVersion,
+			Sha256:                update.Manifest.Actions.Actions[0].Sha256,
+			NeedsAdmin:            update.Manifest.Actions.Actions[0].NeedsAdmin,
+			IsDelta:               update.Manifest.Actions.Actions[0].IsDelta,
+			DisablePayloadBackoff: update.Manifest.Actions.Actions[0].DisablePayloadBackoff,
+			MetadataSignatureRsa:  update.Manifest.Actions.Actions[0].MetadataSignatureRsa,
+			MetadataSize:          update.Manifest.Actions.Actions[0].MetadataSize,
+			Deadline:              update.Manifest.Actions.Actions[0].Deadline,
+			PackageID:             pkg.ID,
+		}
+		if _, err = s.api.AddCoreosAction(coreosAction); err != nil {
+			logger.Error("processUpdate, adding coreos action", "error", err, "channelName", channelName)
+			return err
+		}
 	}
 
-	coreosAction := &api.CoreosAction{
-		Event:                 update.Manifest.Actions.Actions[0].Event,
-		ChromeOSVersion:       update.Manifest.Actions.Actions[0].ChromeOSVersion,
-		Sha256:                update.Manifest.Actions.Actions[0].Sha256,
-		NeedsAdmin:            update.Manifest.Actions.Actions[0].NeedsAdmin,
-		IsDelta:               update.Manifest.Actions.Actions[0].IsDelta,
-		DisablePayloadBackoff: update.Manifest.Actions.Actions[0].DisablePayloadBackoff,
-		MetadataSignatureRsa:  update.Manifest.Actions.Actions[0].MetadataSignatureRsa,
-		MetadataSize:          update.Manifest.Actions.Actions[0].MetadataSize,
-		Deadline:              update.Manifest.Actions.Actions[0].Deadline,
-		PackageID:             pkg.ID,
-	}
-	if _, err := s.api.AddCoreosAction(coreosAction); err != nil {
-		logger.Error("processUpdate, adding coreos action", "error", err, "channelName", channelName)
-		return err
-	}
-
-	// Update channel to point to the new package just created
+	// Update channel to point to the package with the new version
 	channel, err := s.api.GetChannel(s.channelsIDs[channelName])
 	if err != nil {
 		logger.Error("processUpdate, getting channel to update", "error", err, "channelName", channelName)
