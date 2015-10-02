@@ -90,6 +90,23 @@ func (api *API) GetPackage(pkgID string) (*Package, error) {
 	return &pkg, nil
 }
 
+// GetPackageByVersion returns the package identified by the application id and
+// version provided.
+func (api *API) GetPackageByVersion(appID, version string) (*Package, error) {
+	var pkg Package
+
+	err := api.packagesQuery().
+		Where("application_id = $1", appID).
+		Where("version = $1", version).
+		QueryStruct(&pkg)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &pkg, nil
+}
+
 // GetPackageJSON returns the package identified by the id provided in JSON
 // format.
 func (api *API) GetPackageJSON(pkgID string) ([]byte, error) {

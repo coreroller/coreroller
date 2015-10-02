@@ -94,6 +94,31 @@ func TestGetPackage(t *testing.T) {
 	assert.Error(t, err, "Package id must exist.")
 }
 
+func TestGetPackageByVersion(t *testing.T) {
+	a, _ := New(OptionInitDB)
+	defer a.Close()
+
+	tTeam, _ := a.AddTeam(&Team{Name: "test_team"})
+	tApp, _ := a.AddApp(&Application{Name: "test_app", TeamID: tTeam.ID})
+	tPkg, err := a.AddPackage(&Package{Type: PkgTypeOther, URL: "http://sample.url/pkg", Version: "12.1.0", ApplicationID: tApp.ID})
+
+	pkg, err := a.GetPackageByVersion(tApp.ID, tPkg.Version)
+	assert.NoError(t, err)
+	assert.Equal(t, PkgTypeOther, pkg.Type)
+	assert.Equal(t, "http://sample.url/pkg", pkg.URL)
+	assert.Equal(t, "12.1.0", pkg.Version)
+	assert.Equal(t, tApp.ID, pkg.ApplicationID)
+
+	_, err = a.GetPackageByVersion("invalidAppID", "12.1.0")
+	assert.Error(t, err, "Application id must be a valid uuid.")
+
+	_, err = a.GetPackageByVersion(uuid.NewV4().String(), "12.1.0")
+	assert.Error(t, err, "Application id must exist.")
+
+	_, err = a.GetPackageByVersion(tApp.ID, "hola")
+	assert.Error(t, err, "Version must be a valid semver value.")
+}
+
 func TestGetPackages(t *testing.T) {
 	a, _ := New(OptionInitDB)
 	defer a.Close()
