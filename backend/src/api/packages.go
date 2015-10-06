@@ -27,6 +27,7 @@ type Package struct {
 	Version       string         `db:"version" json:"version"`
 	URL           string         `db:"url" json:"url"`
 	Filename      dat.NullString `db:"filename" json:"filename"`
+	Description   dat.NullString `db:"description" json:"description"`
 	Size          dat.NullString `db:"size" json:"size"`
 	Hash          dat.NullString `db:"hash" json:"hash"`
 	CreatedTs     time.Time      `db:"created_ts" json:"-"`

@@ -36,6 +36,7 @@ CREATE TABLE package (
 	version SEMVER NOT NULL,
 	url varchar(256) NOT NULL CHECK (url <> ''),
 	filename varchar(100),
+	description text,
 	size varchar(20),
 	hash varchar(64),
 	created_ts timestamp WITHOUT TIME ZONE DEFAULT (now() at time zone 'utc') NOT NULL,
@@ -177,10 +178,10 @@ INSERT INTO users (username, secret, team_id) VALUES ('admin', '8b31292d4778582c
 
 -- CoreOS application
 INSERT INTO application (id, name, description, team_id) VALUES ('e96281a6-d1af-4bde-9a0a-97b76e56dc57', 'CoreOS', 'Linux for massive server deployments', 'd89342dc-9214-441d-a4af-bdd837a3b239');
-INSERT INTO package VALUES ('2ba4c984-5e9b-411e-b7c3-b3eb14f7a261', 1, '766.3.0', 'https://commondatastorage.googleapis.com/update-storage.core-os.net/amd64-usr/766.3.0/', 'update.gz', '154967458', 'l4Kw7AeBLrVID9JbfyMoJeB5yKg=', '2015-09-20 00:12:37.523938', 'e96281a6-d1af-4bde-9a0a-97b76e56dc57');
-INSERT INTO package VALUES ('337b3f7e-ff29-47e8-a052-f0834d25bdb5', 1, '766.4.0', 'https://commondatastorage.googleapis.com/update-storage.core-os.net/amd64-usr/766.4.0/', 'update.gz', '155018912', 'frkka+B/zTv7OPWgidY+k4SnDSg=', '2015-09-20 06:15:29.108266', 'e96281a6-d1af-4bde-9a0a-97b76e56dc57');
-INSERT INTO package VALUES ('c2a36312-b989-403e-ab57-06c055a7eac2', 1, '808.0.0', 'https://commondatastorage.googleapis.com/update-storage.core-os.net/amd64-usr/808.0.0/', 'update.gz', '177717414', 'bq3fQRHP8xB3RFUjCdAf3wQYC2E=', '2015-09-20 00:09:06.839989', 'e96281a6-d1af-4bde-9a0a-97b76e56dc57');
-INSERT INTO package VALUES ('43580892-cad8-468a-a0bb-eb9d0e09eca4', 1, '815.0.0', 'https://commondatastorage.googleapis.com/update-storage.core-os.net/amd64-usr/815.0.0/', 'update.gz', '178643579', 'kN4amoKYVZUG2WoSdQH1PHPzr5A=', '2015-09-25 13:55:20.741419', 'e96281a6-d1af-4bde-9a0a-97b76e56dc57');
+INSERT INTO package VALUES ('2ba4c984-5e9b-411e-b7c3-b3eb14f7a261', 1, '766.3.0', 'https://commondatastorage.googleapis.com/update-storage.core-os.net/amd64-usr/766.3.0/', 'update.gz', NULL, '154967458', 'l4Kw7AeBLrVID9JbfyMoJeB5yKg=', '2015-09-20 00:12:37.523938', 'e96281a6-d1af-4bde-9a0a-97b76e56dc57');
+INSERT INTO package VALUES ('337b3f7e-ff29-47e8-a052-f0834d25bdb5', 1, '766.4.0', 'https://commondatastorage.googleapis.com/update-storage.core-os.net/amd64-usr/766.4.0/', 'update.gz', NULL, '155018912', 'frkka+B/zTv7OPWgidY+k4SnDSg=', '2015-09-20 06:15:29.108266', 'e96281a6-d1af-4bde-9a0a-97b76e56dc57');
+INSERT INTO package VALUES ('c2a36312-b989-403e-ab57-06c055a7eac2', 1, '808.0.0', 'https://commondatastorage.googleapis.com/update-storage.core-os.net/amd64-usr/808.0.0/', 'update.gz', NULL, '177717414', 'bq3fQRHP8xB3RFUjCdAf3wQYC2E=', '2015-09-20 00:09:06.839989', 'e96281a6-d1af-4bde-9a0a-97b76e56dc57');
+INSERT INTO package VALUES ('43580892-cad8-468a-a0bb-eb9d0e09eca4', 1, '815.0.0', 'https://commondatastorage.googleapis.com/update-storage.core-os.net/amd64-usr/815.0.0/', 'update.gz', NULL, '178643579', 'kN4amoKYVZUG2WoSdQH1PHPzr5A=', '2015-09-25 13:55:20.741419', 'e96281a6-d1af-4bde-9a0a-97b76e56dc57');
 INSERT INTO channel VALUES ('e06064ad-4414-4904-9a6e-fd465593d1b2', 'stable', '#14b9d6', '2015-09-19 05:09:34.261241', 'e96281a6-d1af-4bde-9a0a-97b76e56dc57', '337b3f7e-ff29-47e8-a052-f0834d25bdb5');
 INSERT INTO channel VALUES ('128b8c29-5058-4643-8e67-a1a0e3c641c9', 'beta', '#fc7f33', '2015-09-19 05:09:34.264334', 'e96281a6-d1af-4bde-9a0a-97b76e56dc57', '337b3f7e-ff29-47e8-a052-f0834d25bdb5');
 INSERT INTO channel VALUES ('a87a03ad-4984-47a1-8dc4-3507bae91ee1', 'alpha', '#1fbb86', '2015-09-19 05:09:34.265754', 'e96281a6-d1af-4bde-9a0a-97b76e56dc57', '43580892-cad8-468a-a0bb-eb9d0e09eca4');
