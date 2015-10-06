@@ -35,7 +35,7 @@ CREATE TABLE package (
 	type int NOT NULL CHECK (type > 0),
 	version SEMVER NOT NULL,
 	url varchar(256) NOT NULL CHECK (url <> ''),
-	filename varchar(50),
+	filename varchar(100),
 	size varchar(20),
 	hash varchar(64),
 	created_ts timestamp WITHOUT TIME ZONE DEFAULT (now() at time zone 'utc') NOT NULL,

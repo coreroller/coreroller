@@ -64,7 +64,7 @@ class ModalUpdate extends React.Component {
                 <option value={4}>Other</option>
               </Input>      
               <Input type="url" label="*Url:" defaultValue={this.props.data.channel.url} ref="urlPackage" required={true} macLength={256} />
-              <Input type="text" label="Filename:" defaultValue={this.props.data.channel.filename} ref="filenamePackage" maxLength={50} />
+              <Input type="text" label="Filename:" defaultValue={this.props.data.channel.filename} ref="filenamePackage" maxLength={100} />
               <Row>
                 <Col xs={6}>
                   <Input type="text" label="*Version:" defaultValue={this.props.data.channel.version} ref="versionPackage" required={true} />        

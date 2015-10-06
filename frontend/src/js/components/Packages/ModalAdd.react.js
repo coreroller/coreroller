@@ -63,7 +63,7 @@ class ModalAdd extends React.Component {
                 <option value={4}>Other</option>
               </Input>     
               <Input type="url" label="*Url:" ref="urlNewPackage" required={true} maxLength={256} />
-              <Input type="text" label="Filename:" ref="filenameNewPackage" maxLength={50} />
+              <Input type="text" label="Filename:" ref="filenameNewPackage" maxLength={100} />
               <Row>
                 <Col xs={6}>
                   <Input type="text" label="*Version:" ref="versionNewPackage" required={true} />        
