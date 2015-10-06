@@ -38,7 +38,7 @@ type Package struct {
 func (api *API) AddPackage(pkg *Package) (*Package, error) {
 	err := api.dbR.
 		InsertInto("package").
-		Whitelist("type", "filename", "size", "hash", "url", "version", "application_id").
+		Whitelist("type", "filename", "description", "size", "hash", "url", "version", "application_id").
 		Record(pkg).
 		Returning("*").
 		QueryStruct(pkg)
@@ -51,7 +51,7 @@ func (api *API) AddPackage(pkg *Package) (*Package, error) {
 func (api *API) UpdatePackage(pkg *Package) error {
 	result, err := api.dbR.
 		Update("package").
-		SetWhitelist(pkg, "type", "filename", "size", "hash", "url", "version").
+		SetWhitelist(pkg, "type", "filename", "description", "size", "hash", "url", "version").
 		Where("id = $1", pkg.ID).
 		Exec()
 
