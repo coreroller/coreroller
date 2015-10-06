@@ -51,7 +51,7 @@ class ModalUpdate extends React.Component {
           <div className="modal--form">
             <form role="form" action="" onFocus={this.handleFocus}>
               <Input type="text" label="*Name:" ref="nameApp" required defaultValue={this.props.data.name} min={1} maxLength={50} />
-              <Input type="textarea" label="Description:" ref="descriptionApp" defaultValue={this.props.data.description} maxLength={100} />
+              <Input type="textarea" label="Description:" ref="descriptionApp" defaultValue={this.props.data.description} maxLength={250} />
               <div className="modal--footer">
                 <Row>
                   <Col xs={8}>

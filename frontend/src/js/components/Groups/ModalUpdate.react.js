@@ -88,7 +88,7 @@ class ModalUpdate extends React.Component {
           <div className="modal--form">
             <form role="form" action="" onFocus={this.handleFocus}>
               <Input type="text" label="*Name:" defaultValue={this.props.data.group.name} ref="nameGroup" required={true} maxLength={50} />
-              <Input type="textarea" label="Description:" defaultValue={this.props.data.group.description} ref="descriptionGroup" maxLength={100} />
+              <Input type="textarea" label="Description:" defaultValue={this.props.data.group.description} ref="descriptionGroup" maxLength={250} />
               <Input type="select" label="Channel:" placeholder="" defaultValue={this.props.data.group.channel_id} groupClassName="arrow-icon" ref="channelGroup">
                 <option value="" />
                 {channels.map((channel, i) =>

@@ -23,7 +23,7 @@ DROP TABLE IF EXISTS application CASCADE;
 CREATE TABLE application (
 	id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
 	name varchar(50) NOT NULL CHECK (name <> ''),
-	description varchar(100),
+	description text,
 	created_ts timestamp WITHOUT TIME ZONE DEFAULT (now() at time zone 'utc') NOT NULL,
 	team_id UUID NOT NULL REFERENCES team (id),
 	UNIQUE (name, team_id)
@@ -75,7 +75,7 @@ DROP TABLE IF EXISTS groups CASCADE;
 CREATE TABLE groups (
 	id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
 	name varchar(50) NOT NULL CHECK (name <> ''),
-	description varchar(100) NOT NULL,
+	description text NOT NULL,
 	rollout_in_progress boolean default false NOT NULL,
 	policy_updates_enabled boolean DEFAULT true NOT NULL,
 	policy_safe_mode boolean NOT NULL,

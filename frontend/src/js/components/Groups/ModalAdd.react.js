@@ -84,8 +84,8 @@ class ModalAdd extends React.Component {
           <div className="modal--form">
             <form role="form" action="" onFocus={this.handleFocus}>
               <Input type="text" label="*Name:" ref="nameNewGroup" required={true} maxLength={50} />
-              <Input type="textarea" label="Description:" ref="descriptionNewGroup" />
-              <Input type="select" label="Channel:" placeholder="" defaultValue="" groupClassName="arrow-icon" ref="channelGroup" maxLength={100}>
+              <Input type="textarea" label="Description:" ref="descriptionNewGroup" maxLength={250} />
+              <Input type="select" label="Channel:" placeholder="" defaultValue="" groupClassName="arrow-icon" ref="channelGroup">
                 <option value="" />
                 {channels.map((channel, i) =>
                   <option value={channel.id} key={i}>{channel.name}</option>

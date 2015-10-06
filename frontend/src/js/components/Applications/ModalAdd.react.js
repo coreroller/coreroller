@@ -54,7 +54,7 @@ class ModalAdd extends React.Component {
           <div className="modal--form">
             <form role="form" action="" onFocus={this.handleFocus}>
               <Input type="text" label="*Name:" ref="nameNewApp" required={true} min="1" maxLength={50} />
-              <Input type="textarea" label="Description:" ref="descriptionNewApp" maxLength={100} />
+              <Input type="textarea" label="Description:" ref="descriptionNewApp" maxLength={250} />
               <Input type="select" label="Clone channels/groups from:" placeholder="" groupClassName="arrow-icon" ref="cloningNewApp">
                 <option value="" />
                 {this.props.data.applications.map((application, i) =>
