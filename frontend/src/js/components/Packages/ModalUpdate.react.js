@@ -23,6 +23,7 @@ class ModalUpdate extends React.Component {
     let data = {
       id: this.props.data.channel.id,
       filename: this.refs.filenamePackage.getValue(),
+      description: this.refs.descriptionPackage.getValue(),
       url: this.refs.urlPackage.getValue(),
       version: this.refs.versionPackage.getValue(),
       type: parseInt(this.refs.typePackage.getValue()),
@@ -65,6 +66,7 @@ class ModalUpdate extends React.Component {
               </Input>      
               <Input type="url" label="*Url:" defaultValue={this.props.data.channel.url} ref="urlPackage" required={true} macLength={256} />
               <Input type="text" label="Filename:" defaultValue={this.props.data.channel.filename} ref="filenamePackage" maxLength={100} />
+              <Input type="textarea" label="Description:" defaultValue={this.props.data.channel.description} ref="descriptionPackage" maxLength={250} />
               <Row>
                 <Col xs={6}>
                   <Input type="text" label="*Version:" defaultValue={this.props.data.channel.version} ref="versionPackage" required={true} />        

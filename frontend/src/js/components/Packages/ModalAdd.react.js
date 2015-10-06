@@ -22,6 +22,7 @@ class ModalAdd extends React.Component {
     this.setState({isLoading: true})
     let data = {
       filename: this.refs.filenameNewPackage.getValue(),
+      description: this.refs.descriptionNewPackage.getValue(),
       url: this.refs.urlNewPackage.getValue(),
       version: this.refs.versionNewPackage.getValue(),
       type: parseInt(this.refs.typeNewPackage.getValue()),
@@ -64,6 +65,7 @@ class ModalAdd extends React.Component {
               </Input>     
               <Input type="url" label="*Url:" ref="urlNewPackage" required={true} maxLength={256} />
               <Input type="text" label="Filename:" ref="filenameNewPackage" maxLength={100} />
+              <Input type="textarea" label="Description:" ref="descriptionNewPackage" maxLength={250} />
               <Row>
                 <Col xs={6}>
                   <Input type="text" label="*Version:" ref="versionNewPackage" required={true} />        
