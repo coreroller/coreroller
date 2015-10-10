@@ -2,6 +2,7 @@ package api
 
 import (
 	"errors"
+	"time"
 
 	"github.com/coreos/go-semver/semver"
 	"gopkg.in/mgutz/dat.v1"
@@ -106,6 +107,10 @@ func (api *API) enforceRolloutPolicy(instance *Instance, group *Group, updatesSt
 		return ErrUpdatesDisabled
 	}
 
+	if group.PolicyOfficeHours && !inOfficeHoursNow(group.PolicyTimezone.String) {
+		return ErrUpdatesDisabled
+	}
+
 	effectiveMaxUpdates := group.PolicyMaxUpdatesPerPeriod
 	if group.PolicySafeMode && updatesStats.UpdatesToCurrentVersionCompleted == 0 {
 		effectiveMaxUpdates = 1
@@ -144,4 +149,26 @@ func (api *API) grantUpdate(instanceID, appID, version string) error {
 		Exec()
 
 	return err
+}
+
+// inOfficeHoursNow checks if the provided timezone is now in office hours.
+func inOfficeHoursNow(tz string) bool {
+	if tz == "" {
+		return false
+	}
+
+	location, err := time.LoadLocation(tz)
+	if err != nil {
+		return false
+	}
+
+	now := time.Now().In(location)
+	if now.Weekday() == time.Saturday || now.Weekday() == time.Sunday {
+		return false
+	}
+	if now.Hour() < 9 || now.Hour() >= 16 {
+		return false
+	}
+
+	return true
 }

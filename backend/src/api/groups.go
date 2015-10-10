@@ -12,6 +12,10 @@ var (
 	// ErrInvalidChannel error indicates that a channel doesn't belong to the
 	// application it was supposed to belong to.
 	ErrInvalidChannel = errors.New("coreroller: invalid channel")
+
+	// ErrExpectingValidTimezone error indicates that a valid timezone wasn't
+	// provided when enabling the flag PolicyOfficeHours.
+	ErrExpectingValidTimezone = errors.New("coreroller: expecting valid timezone")
 )
 
 // Group represents a CoreRoller application's group.
@@ -25,6 +29,8 @@ type Group struct {
 	ChannelID                 dat.NullString           `db:"channel_id" json:"channel_id"`
 	PolicyUpdatesEnabled      bool                     `db:"policy_updates_enabled" json:"policy_updates_enabled"`
 	PolicySafeMode            bool                     `db:"policy_safe_mode" json:"policy_safe_mode"`
+	PolicyOfficeHours         bool                     `db:"policy_office_hours" json:"policy_office_hours"`
+	PolicyTimezone            dat.NullString           `db:"policy_timezone" json:"policy_timezone"`
 	PolicyPeriodInterval      string                   `db:"policy_period_interval" json:"policy_period_interval"`
 	PolicyMaxUpdatesPerPeriod int                      `db:"policy_max_updates_per_period" json:"policy_max_updates_per_period"`
 	PolicyUpdateTimeout       string                   `db:"policy_update_timeout" json:"policy_update_timeout"`
@@ -68,6 +74,10 @@ type UpdatesStats struct {
 
 // AddGroup registers the provided group.
 func (api *API) AddGroup(group *Group) (*Group, error) {
+	if group.PolicyOfficeHours && !isTimezoneValid(group.PolicyTimezone.String) {
+		return nil, ErrExpectingValidTimezone
+	}
+
 	if group.ChannelID.String != "" {
 		if err := api.validateChannel(group.ChannelID.String, group.ApplicationID); err != nil {
 			return nil, err
@@ -76,8 +86,8 @@ func (api *API) AddGroup(group *Group) (*Group, error) {
 
 	err := api.dbR.
 		InsertInto("groups").
-		Whitelist("name", "description", "application_id", "channel_id", "policy_updates_enabled", "policy_safe_mode",
-		"policy_period_interval", "policy_max_updates_per_period", "policy_update_timeout").
+		Whitelist("name", "description", "application_id", "channel_id", "policy_updates_enabled", "policy_safe_mode", "policy_office_hours",
+		"policy_timezone", "policy_period_interval", "policy_max_updates_per_period", "policy_update_timeout").
 		Record(group).
 		Returning("*").
 		QueryStruct(group)
@@ -88,6 +98,10 @@ func (api *API) AddGroup(group *Group) (*Group, error) {
 // UpdateGroup updates an existing group using the context of the group
 // provided.
 func (api *API) UpdateGroup(group *Group) error {
+	if group.PolicyOfficeHours && !isTimezoneValid(group.PolicyTimezone.String) {
+		return ErrExpectingValidTimezone
+	}
+
 	groupBeforeUpdate, err := api.GetGroup(group.ID)
 	if err != nil {
 		return err
@@ -101,8 +115,8 @@ func (api *API) UpdateGroup(group *Group) error {
 
 	result, err := api.dbR.
 		Update("groups").
-		SetWhitelist(group, "name", "description", "channel_id", "policy_updates_enabled", "policy_safe_mode",
-		"policy_period_interval", "policy_max_updates_per_period", "policy_update_timeout").
+		SetWhitelist(group, "name", "description", "channel_id", "policy_updates_enabled", "policy_safe_mode", "policy_office_hours",
+		"policy_timezone", "policy_period_interval", "policy_max_updates_per_period", "policy_update_timeout").
 		Where("id = $1", group.ID).
 		Exec()
 

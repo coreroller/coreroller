@@ -77,9 +77,11 @@ CREATE TABLE groups (
 	id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
 	name varchar(50) NOT NULL CHECK (name <> ''),
 	description text NOT NULL,
-	rollout_in_progress boolean default false NOT NULL,
+	rollout_in_progress boolean DEFAULT false NOT NULL,
 	policy_updates_enabled boolean DEFAULT true NOT NULL,
-	policy_safe_mode boolean NOT NULL,
+	policy_safe_mode boolean DEFAULT true NOT NULL,
+	policy_office_hours boolean DEFAULT false NOT NULL,
+	policy_timezone varchar(40),
 	policy_period_interval varchar(20) NOT NULL CHECK (policy_period_interval <> ''),
 	policy_max_updates_per_period integer NOT NULL CHECK (policy_max_updates_per_period > 0),
 	policy_update_timeout varchar(20) NOT NULL CHECK (policy_update_timeout <> ''),
@@ -185,9 +187,9 @@ INSERT INTO package VALUES ('43580892-cad8-468a-a0bb-eb9d0e09eca4', 1, '815.0.0'
 INSERT INTO channel VALUES ('e06064ad-4414-4904-9a6e-fd465593d1b2', 'stable', '#14b9d6', '2015-09-19 05:09:34.261241', 'e96281a6-d1af-4bde-9a0a-97b76e56dc57', '337b3f7e-ff29-47e8-a052-f0834d25bdb5');
 INSERT INTO channel VALUES ('128b8c29-5058-4643-8e67-a1a0e3c641c9', 'beta', '#fc7f33', '2015-09-19 05:09:34.264334', 'e96281a6-d1af-4bde-9a0a-97b76e56dc57', '337b3f7e-ff29-47e8-a052-f0834d25bdb5');
 INSERT INTO channel VALUES ('a87a03ad-4984-47a1-8dc4-3507bae91ee1', 'alpha', '#1fbb86', '2015-09-19 05:09:34.265754', 'e96281a6-d1af-4bde-9a0a-97b76e56dc57', '43580892-cad8-468a-a0bb-eb9d0e09eca4');
-INSERT INTO groups VALUES ('9a2deb70-37be-4026-853f-bfdd6b347bbe', 'Stable', 'For production clusters', false, true, true, '15 minutes', 2, '60 minutes', '2015-09-19 05:09:34.269062', 'e96281a6-d1af-4bde-9a0a-97b76e56dc57', 'e06064ad-4414-4904-9a6e-fd465593d1b2');
-INSERT INTO groups VALUES ('3fe10490-dd73-4b49-b72a-28ac19acfcdc', 'Beta', 'Promoted alpha releases, to catch bugs specific to your configuration', true, true, true, '15 minutes', 2, '60 minutes', '2015-09-19 05:09:34.273244', 'e96281a6-d1af-4bde-9a0a-97b76e56dc57', '128b8c29-5058-4643-8e67-a1a0e3c641c9');
-INSERT INTO groups VALUES ('5b810680-e36a-4879-b98a-4f989e80b899', 'Alpha', 'Tracks current development work and is released frequently', false, true, true, '15 minutes', 1, '30 minutes', '2015-09-19 05:09:34.274911', 'e96281a6-d1af-4bde-9a0a-97b76e56dc57', 'a87a03ad-4984-47a1-8dc4-3507bae91ee1');
+INSERT INTO groups VALUES ('9a2deb70-37be-4026-853f-bfdd6b347bbe', 'Stable', 'For production clusters', false, true, true, false, 'Australia/Sydney', '15 minutes', 2, '60 minutes', '2015-09-19 05:09:34.269062', 'e96281a6-d1af-4bde-9a0a-97b76e56dc57', 'e06064ad-4414-4904-9a6e-fd465593d1b2');
+INSERT INTO groups VALUES ('3fe10490-dd73-4b49-b72a-28ac19acfcdc', 'Beta', 'Promoted alpha releases, to catch bugs specific to your configuration', true, true, true, false, 'Australia/Sydney', '15 minutes', 2, '60 minutes', '2015-09-19 05:09:34.273244', 'e96281a6-d1af-4bde-9a0a-97b76e56dc57', '128b8c29-5058-4643-8e67-a1a0e3c641c9');
+INSERT INTO groups VALUES ('5b810680-e36a-4879-b98a-4f989e80b899', 'Alpha', 'Tracks current development work and is released frequently', false, true, true, false, 'Australia/Sydney', '15 minutes', 1, '30 minutes', '2015-09-19 05:09:34.274911', 'e96281a6-d1af-4bde-9a0a-97b76e56dc57', 'a87a03ad-4984-47a1-8dc4-3507bae91ee1');
 INSERT INTO coreos_action VALUES ('b2b16e2e-57f8-4775-827f-8f0b11ae9bd2', 'postinstall', '', 'k8CB8tMe0M8DyZ5RZwzDLyTdkHjO/YgfKVn2RgUMokc=', false, false, true, '', '', '', '2015-09-20 00:12:37.532281', '2ba4c984-5e9b-411e-b7c3-b3eb14f7a261');
 INSERT INTO coreos_action VALUES ('d5a2cbf3-b810-4e8c-88e8-6df91fc264c6', 'postinstall', '', 'QUGnmP51hp7zy+++o5fBIwElInTAms7/njnkxutn/QI=', false, false, true, '', '', '', '2015-09-20 06:15:29.11685', '337b3f7e-ff29-47e8-a052-f0834d25bdb5');
 INSERT INTO coreos_action VALUES ('299c54d1-3344-4ae9-8ad2-5c63d56d6c14', 'postinstall', '', 'SCv89GYzx7Ix+TljqbNsd7on65ooWqBzcCrLFL4wChQ=', false, false, true, '', '', '', '2015-09-20 00:09:06.927461', 'c2a36312-b989-403e-ab57-06c055a7eac2');
@@ -200,9 +202,9 @@ INSERT INTO package (id, type, url, filename, version, application_id) VALUES ('
 INSERT INTO package (id, type, url, filename, version, application_id) VALUES ('8004bad8-5f97-11e5-9d70-feff819cdc9f', 4, 'https://coreroller.org/', 'test_1.0.4', '1.0.4', 'b6458005-8f40-4627-b33b-be70a718c48e');
 INSERT INTO channel (id, name, color, application_id, package_id) VALUES ('bfe32b4a-5f8c-11e5-9d70-feff819cdc9f', 'Master', '#00CC00', 'b6458005-8f40-4627-b33b-be70a718c48e', '8004bad8-5f97-11e5-9d70-feff819cdc9f');
 INSERT INTO channel (id, name, color, application_id, package_id) VALUES ('cb2deea8-5f83-11e5-9d70-feff819cdc9f', 'Stable', '#0099FF', 'b6458005-8f40-4627-b33b-be70a718c48e', '12697fa4-5f83-11e5-9d70-feff819cdc9f');
-INSERT INTO groups VALUES ('bcaa68bc-5f82-11e5-9d70-feff819cdc9f', 'Prod EC2 us-west-2', 'Production servers, west coast', false, true, true, '15 minutes', 2, '60 minutes', '2015-09-19 05:09:34.269062', 'b6458005-8f40-4627-b33b-be70a718c48e', 'cb2deea8-5f83-11e5-9d70-feff819cdc9f');
-INSERT INTO groups VALUES ('7074264a-2070-4b84-96ed-8a269dba5021', 'Prod EC2 us-east-1', 'Production servers, east coast', false, true, true, '15 minutes', 2, '60 minutes', '2015-09-19 05:09:34.269062', 'b6458005-8f40-4627-b33b-be70a718c48e', 'cb2deea8-5f83-11e5-9d70-feff819cdc9f');
-INSERT INTO groups VALUES ('b110813a-5f82-11e5-9d70-feff819cdc9f', 'Qa-Dev', 'QA and development servers, Sydney', false, true, true, '15 minutes', 2, '60 minutes', '2015-09-19 05:09:34.269062', 'b6458005-8f40-4627-b33b-be70a718c48e', 'bfe32b4a-5f8c-11e5-9d70-feff819cdc9f');
+INSERT INTO groups VALUES ('bcaa68bc-5f82-11e5-9d70-feff819cdc9f', 'Prod EC2 us-west-2', 'Production servers, west coast', false, true, true, false, 'Australia/Sydney', '15 minutes', 2, '60 minutes', '2015-09-19 05:09:34.269062', 'b6458005-8f40-4627-b33b-be70a718c48e', 'cb2deea8-5f83-11e5-9d70-feff819cdc9f');
+INSERT INTO groups VALUES ('7074264a-2070-4b84-96ed-8a269dba5021', 'Prod EC2 us-east-1', 'Production servers, east coast', false, true, true, false, 'Australia/Sydney', '15 minutes', 2, '60 minutes', '2015-09-19 05:09:34.269062', 'b6458005-8f40-4627-b33b-be70a718c48e', 'cb2deea8-5f83-11e5-9d70-feff819cdc9f');
+INSERT INTO groups VALUES ('b110813a-5f82-11e5-9d70-feff819cdc9f', 'Qa-Dev', 'QA and development servers, Sydney', false, true, true, false, 'Australia/Sydney', '15 minutes', 2, '60 minutes', '2015-09-19 05:09:34.269062', 'b6458005-8f40-4627-b33b-be70a718c48e', 'bfe32b4a-5f8c-11e5-9d70-feff819cdc9f');
 INSERT INTO instance (id, ip) VALUES ('instance1', '10.0.0.1');
 INSERT INTO instance (id, ip) VALUES ('instance2', '10.0.0.2');
 INSERT INTO instance (id, ip) VALUES ('instance3', '10.0.0.3');
@@ -236,5 +238,5 @@ INSERT INTO application (id, name, description, team_id) VALUES ('780d6940-9a48-
 INSERT INTO package (id, type, url, filename, version, application_id) VALUES ('efb186c9-d5cb-4df2-9382-c4821e4dcc4b', 4, 'http://localhost:8000/', 'demo_v1.0.0', '1.0.0', '780d6940-9a48-4414-88df-95ba63bbe9cb');
 INSERT INTO package (id, type, url, filename, version, application_id) VALUES ('ba28af48-b5b9-460e-946a-eba906ce7daf', 4, 'http://localhost:8000/', 'demo_v1.0.1', '1.0.1', '780d6940-9a48-4414-88df-95ba63bbe9cb');
 INSERT INTO channel (id, name, color, application_id, package_id) VALUES ('a7c8c9a4-d2a3-475d-be64-911ff8d6e997', 'Master', '#14b9d6', '780d6940-9a48-4414-88df-95ba63bbe9cb', 'efb186c9-d5cb-4df2-9382-c4821e4dcc4b');
-INSERT INTO groups VALUES ('51a32aa9-3552-49fc-a28c-6543bccf0069', 'Master - dev', 'The latest stuff will be always here', false, true, true, '15 minutes', 2, '60 minutes', '2015-09-19 05:09:34.269062', '780d6940-9a48-4414-88df-95ba63bbe9cb', 'a7c8c9a4-d2a3-475d-be64-911ff8d6e997');
+INSERT INTO groups VALUES ('51a32aa9-3552-49fc-a28c-6543bccf0069', 'Master - dev', 'The latest stuff will be always here', false, true, true, false, 'Australia/Sydney', '15 minutes', 2, '60 minutes', '2015-09-19 05:09:34.269062', '780d6940-9a48-4414-88df-95ba63bbe9cb', 'a7c8c9a4-d2a3-475d-be64-911ff8d6e997');
 `
