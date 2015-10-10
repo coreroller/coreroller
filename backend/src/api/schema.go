@@ -232,6 +232,16 @@ INSERT INTO activity VALUES (DEFAULT, now() at time zone 'utc' - interval '6 hou
 INSERT INTO activity VALUES (DEFAULT, now() at time zone 'utc' - interval '12 hours', 3, 1, '1.0.3', 'b6458005-8f40-4627-b33b-be70a718c48e', '7074264a-2070-4b84-96ed-8a269dba5021', 'cb2deea8-5f83-11e5-9d70-feff819cdc9f', 'instance1');
 INSERT INTO activity VALUES (DEFAULT, now() at time zone 'utc' - interval '18 hours', 4, 4, '1.0.3', 'b6458005-8f40-4627-b33b-be70a718c48e', '7074264a-2070-4b84-96ed-8a269dba5021', 'cb2deea8-5f83-11e5-9d70-feff819cdc9f', 'instance1');
 INSERT INTO activity VALUES (DEFAULT, now() at time zone 'utc' - interval '24 hours', 2, 2, '1.0.3', 'b6458005-8f40-4627-b33b-be70a718c48e', '7074264a-2070-4b84-96ed-8a269dba5021', 'cb2deea8-5f83-11e5-9d70-feff819cdc9f', 'instance1');
+INSERT INTO instance_status_history VALUES (DEFAULT, 4, '1.0.3', now() at time zone 'utc' - interval '8 hours', 'instance5', 'b6458005-8f40-4627-b33b-be70a718c48e', '7074264a-2070-4b84-96ed-8a269dba5021');
+INSERT INTO instance_status_history VALUES (DEFAULT, 5, '1.0.3', now() at time zone 'utc' - interval '8 hours 5 minutes', 'instance5', 'b6458005-8f40-4627-b33b-be70a718c48e', '7074264a-2070-4b84-96ed-8a269dba5021');
+INSERT INTO instance_status_history VALUES (DEFAULT, 6, '1.0.3', now() at time zone 'utc' - interval '9 hours', 'instance5', 'b6458005-8f40-4627-b33b-be70a718c48e', '7074264a-2070-4b84-96ed-8a269dba5021');
+INSERT INTO instance_status_history VALUES (DEFAULT, 7, '1.0.3', now() at time zone 'utc' - interval '9 hours 45 minutes', 'instance5', 'b6458005-8f40-4627-b33b-be70a718c48e', '7074264a-2070-4b84-96ed-8a269dba5021');
+INSERT INTO instance_status_history VALUES (DEFAULT, 2, '1.0.3', now() at time zone 'utc' - interval '9 hours 45 minutes 10 seconds', 'instance5', 'b6458005-8f40-4627-b33b-be70a718c48e', '7074264a-2070-4b84-96ed-8a269dba5021');
+INSERT INTO instance_status_history VALUES (DEFAULT, 4, '1.0.2', now() at time zone 'utc' - interval '36 hours', 'instance5', 'b6458005-8f40-4627-b33b-be70a718c48e', '7074264a-2070-4b84-96ed-8a269dba5021');
+INSERT INTO instance_status_history VALUES (DEFAULT, 5, '1.0.2', now() at time zone 'utc' - interval '36 hours 5 minutes', 'instance5', 'b6458005-8f40-4627-b33b-be70a718c48e', '7074264a-2070-4b84-96ed-8a269dba5021');
+INSERT INTO instance_status_history VALUES (DEFAULT, 6, '1.0.2', now() at time zone 'utc' - interval '37 hours', 'instance5', 'b6458005-8f40-4627-b33b-be70a718c48e', '7074264a-2070-4b84-96ed-8a269dba5021');
+INSERT INTO instance_status_history VALUES (DEFAULT, 7, '1.0.2', now() at time zone 'utc' - interval '37 hours 45 minutes', 'instance5', 'b6458005-8f40-4627-b33b-be70a718c48e', '7074264a-2070-4b84-96ed-8a269dba5021');
+INSERT INTO instance_status_history VALUES (DEFAULT, 2, '1.0.2', now() at time zone 'utc' - interval '37 hours 45 minutes 10 seconds', 'instance5', 'b6458005-8f40-4627-b33b-be70a718c48e', '7074264a-2070-4b84-96ed-8a269dba5021');
 
 -- Sample application 2
 INSERT INTO application (id, name, description, team_id) VALUES ('780d6940-9a48-4414-88df-95ba63bbe9cb', 'Sample application 2', 'Another sample application, feel free to remove me', 'd89342dc-9214-441d-a4af-bdd837a3b239');
