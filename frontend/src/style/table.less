@@ -17,17 +17,6 @@
       background-color: @white;
       padding-right: 30px;
 
-      .label-default {
-        line-height: 45px;
-        font-weight: normal;
-        background-color: @label-color;
-        color: @white;
-
-        img {
-          padding-right: 5px;
-        }
-      }
-
       &:nth-child(4) {
         width: 15%;
       }
@@ -37,7 +26,12 @@
       }
 
       &.coreRollerTable-cell--mini {
-        width: 10%;
+        width: 5%;
+
+        .cr-button {
+          margin-left: 0px;
+          margin-top: 8px;
+        }
       }
 
       &.coreRollerTable-cell--medium {
@@ -123,23 +117,47 @@
 
   .coreRollerTable-detail {
     position: relative;
-    background: @lite-grey;
+    // background: @lite-grey;
     height: 0px;
-    .transition(all .3s ease-out);
+    .transition(all .3s ease-in-out);
+    overflow: hidden;
 
     .coreRollerTable-detailContent {
-      padding: 40px 30px;
-      padding-bottom: 14px;
-      border-bottom: 1px solid @lighter-grey;
-      visibility: hidden;
+
+      .emptyBox {
+        margin: 20px 0px;
+      }
+
+      .label-default {
+        vertical-align: 2px;
+        width: 85px;
+        line-height: 15px;
+        display: block;
+      }
     }
 
     &.active {
-      height: 195px;
+      height: 235px;
+      max-height: 235px;
+      border-bottom: 1px solid @lighter-grey;
+    }
 
-      .coreRollerTable-detailContent {
-        visibility: visible;
+    &--empty {
+      &.active {
+        height: 125px;
+        max-height: 125px;
       }
+    }
+  }
+
+  .label-default {
+    line-height: 45px;
+    font-weight: normal;
+    background-color: @label-color;
+    color: @white;
+
+    img {
+      padding-right: 5px;
     }
   }
 

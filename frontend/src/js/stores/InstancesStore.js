@@ -23,9 +23,8 @@ class InstancesStore extends Store {
   }
 
   getInstanceStatusHistory(applicationID, groupID, instanceID) {
-    API.getInstanceStatusHistory(applicationID, groupID, instanceID).
+    return API.getInstanceStatusHistory(applicationID, groupID, instanceID).
       done(statusHistory => {
-        console.log(statusHistory)
         let instancesList = this.instances[applicationID][groupID]
         let instanceToUpdate = _.findWhere(instancesList, {id: instanceID})
         instanceToUpdate.statusHistory = statusHistory
@@ -33,55 +32,79 @@ class InstancesStore extends Store {
       })
   }
 
-  getInstanceStatus(statusID) {
+  getInstanceStatus(statusID, version) {
     let status = {
       1: {
         type: "InstanceStatusUndefined",
         className: "",
         spinning: false,
-        description: ""
+        icon: "",
+        description: "",
+        status: "Undefined",
+        explanation: ""
       },
       2: {
         type: "InstanceStatusUpdateGranted",
         className: "warning",
         spinning: true,
-        description: "Updating: granted"
+        icon: "",
+        description: "Updating: granted",
+        status: "Granted",
+        explanation: "The instance has received an update package -version " + version + "- and the update process is about to start"
       },
       3: {
         type: "InstanceStatusError",
         className: "danger",
         spinning: false,
-        description: "Error updating"
+        icon: "glyphicon glyphicon-remove",
+        description: "Error updating",
+        status: "Error",        
+        explanation: "The instance reported an error while updating to version " + version
       },
       4: {
         type: "InstanceStatusComplete",
         className: "success",
         spinning: false,
-        description: "Update completed"
+        icon: "glyphicon glyphicon-ok",
+        description: "Update completed",
+        status: "Completed",        
+        explanation: "The instance has been updated successfully and is now running version " + version
       },
       5: {
         type: "InstanceStatusInstalled",
         className: "warning",
         spinning: true,
-        description: "Updating: installed"
+        icon: "",
+        description: "Updating: installed",
+        status: "Installed",
+        explanation: "The instance has installed the update package -version " + version + "- but it isn’t using it yet"
       },
       6: {
         type: "InstanceStatusDownloaded",
         className: "warning",
         spinning: true,
-        description: "Updating: downloaded"
+        icon: "",
+        description: "Updating: downloaded",
+        status: "Downloaded",
+        explanation: "The instance has downloaded the update package -version " + version + "- and will install it now"
       },  
       7: {
         type: "InstanceStatusDownloading",
         className: "warning",
         spinning: true,
-        description: "Updating: downloading"
+        icon: "",
+        description: "Updating: downloading",
+        status: "Downloading",        
+        explanation: "The instance has just started downloading the update package -version " + version + "-"
       },
       8: {
         type: "InstanceStatusOnHold",
         className: "default",
         spinning: false,
-        description: "Waiting..."
+        icon: "",
+        description: "Waiting...",
+        status: "On hold",
+        explanation: "There was an update pending for the instance but it was put on hold because of the rollout policy"
       }
     }
 
