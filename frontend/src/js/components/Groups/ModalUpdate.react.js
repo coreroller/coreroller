@@ -3,6 +3,7 @@ import React, { PropTypes } from "react"
 import { Row, Col, Modal, Input, Button, Alert } from "react-bootstrap"
 import Switch from "rc-switch"
 import _ from "underscore"
+import moment from "moment-timezone"
 
 class ModalUpdate extends React.Component {
 
@@ -10,13 +11,17 @@ class ModalUpdate extends React.Component {
     super(props);
     this.handleFocus = this.handleFocus.bind(this)
     this.updateGroup = this.updateGroup.bind(this)
+    this.validateTimezone = this.validateTimezone.bind(this)
     this.changeSafeMode = this.changeSafeMode.bind(this)
     this.changePolicyUpdates = this.changePolicyUpdates.bind(this)
+    this.changePolicyOfficeHours = this.changePolicyOfficeHours.bind(this)
     this.state = {
       safeMode: this.props.data.group.policy_safe_mode,
       policyUpdates: this.props.data.group.policy_updates_enabled,
+      policyOfficeHours: this.props.data.group.policy_office_hours,
       isLoading: false,
-      alertVisible: false
+      alertVisible: false,
+      timezoneError: false
     }
   }
 
@@ -26,34 +31,57 @@ class ModalUpdate extends React.Component {
 
   updateGroup() {
     this.setState({isLoading: true})
-    let period_interval = this.refs.timingUpdatesPerPeriod.getValue() + " " + this.refs.timingUpdatesPerPeriodUnit.getValue(),
-        update_timeout = this.refs.timingUpdatesTimeout.getValue() + " " + this.refs.timingUpdatesTimeoutUnit.getValue()
 
-    let data = {
-      name: this.refs.nameGroup.getValue(),
-      description: this.refs.descriptionGroup.getValue(),
-      policy_safe_mode: this.state.safeMode,
-      policy_max_updates_per_period: parseInt(this.refs.maxUpdatesPerPeriodInterval.getValue()),
-      policy_updates_enabled: this.state.updatesEnabled,
-      policy_period_interval: period_interval,
-      policy_update_timeout: update_timeout
+    let isValidTimezone = this.validateTimezone()
+    
+    if (isValidTimezone) {
+
+      let period_interval = this.refs.timingUpdatesPerPeriod.getValue() + " " + this.refs.timingUpdatesPerPeriodUnit.getValue(),
+          update_timeout = this.refs.timingUpdatesTimeout.getValue() + " " + this.refs.timingUpdatesTimeoutUnit.getValue()
+
+      let data = {
+        id: this.props.data.group.id,
+        name: this.refs.nameGroup.getValue(),
+        description: this.refs.descriptionGroup.getValue(),
+        policy_safe_mode: this.state.safeMode,
+        policy_max_updates_per_period: parseInt(this.refs.maxUpdatesPerPeriodInterval.getValue()),
+        policy_updates_enabled: this.state.updatesEnabled,
+        policy_period_interval: period_interval,
+        policy_update_timeout: update_timeout,
+        policy_office_hours: this.state.policyOfficeHours
+      }
+
+      let channel_id = this.refs.channelGroup.getValue()
+      if (channel_id) {
+        data["channel_id"] = channel_id;
+      }
+
+      let timezone = this.refs.policyTimezone.getValue()
+      if (timezone) {
+        data["policy_timezone"] = timezone
+      }
+
+      applicationsStore.updateGroup(data).
+        done(() => { 
+          this.props.onHide()   
+          this.setState({isLoading: false})
+        }).
+        fail(() => { 
+          this.setState({alertVisible: true, isLoading: false})
+        })
+    } else {
+      this.setState({isLoading: false, timezoneError: true})
     }
+  }
 
-    let channel_id = this.refs.channelGroup.getValue()
-    if (channel_id) {
-      data["channel_id"] = channel_id;
+  validateTimezone() {
+    let timezone = this.refs.policyTimezone.getValue()
+
+    if (this.state.policyOfficeHours && _.isEmpty(timezone)) {
+      return false
+    } else {
+      return true
     }
-
-    let groupToUpdate = _.extend(this.props.data.group, data)
-
-    applicationsStore.updateGroup(groupToUpdate).
-      done(() => { 
-        this.props.onHide()   
-        this.setState({isLoading: false})
-      }).
-      fail(() => { 
-        this.setState({alertVisible: true, isLoading: false})
-      })
   }
 
   handleFocus() {
@@ -72,12 +100,20 @@ class ModalUpdate extends React.Component {
     })
   }
 
+  changePolicyOfficeHours() {
+    this.setState({
+      policyOfficeHours: !this.state.policyOfficeHours
+    })
+  }
+
   render() {
     let current_period_interval = this.props.data.group.policy_period_interval.split(" "),
         current_update_timeout = this.props.data.group.policy_update_timeout.split(" "),
         channels = this.props.data.channels ? this.props.data.channels : [],
         btnStyle = this.state.isLoading ? " loading" : "",
-        btnContent = this.state.isLoading ? "Please wait" : "Submit" 
+        btnContent = this.state.isLoading ? "Please wait" : "Submit", 
+        timezones = moment.tz.names(),
+        timezoneError = this.state.timezoneError ? {bsStyle: "error"} : ""
 
     return (
       <Modal {...this.props} animation={true}>
@@ -88,7 +124,7 @@ class ModalUpdate extends React.Component {
           <div className="modal--form">
             <form role="form" action="" onFocus={this.handleFocus}>
               <Input type="text" label="*Name:" defaultValue={this.props.data.group.name} ref="nameGroup" required={true} maxLength={50} />
-              <Input type="textarea" label="Description:" defaultValue={this.props.data.group.description} ref="descriptionGroup" maxLength={250} />
+              <Input type="text" label="Description:" defaultValue={this.props.data.group.description} ref="descriptionGroup" maxLength={250} />
               <Input type="select" label="Channel:" placeholder="" defaultValue={this.props.data.group.channel_id} groupClassName="arrow-icon" ref="channelGroup">
                 <option value="" />
                 {channels.map((channel, i) =>
@@ -97,26 +133,43 @@ class ModalUpdate extends React.Component {
               </Input>
               <h5><span>Rollout policy</span></h5>
               <Row>
-                <Col xs={6}>
+                <Col xs={12} className="form--limit marginBottom15">
                   <div className="form-group noMargin">
                     <label className="normalText" htmlFor="policyUpdatesGroup">Updates enabled:</label>
                     <div className="displayInline">
                       <Switch checked={this.state.policyUpdates} onChange={this.changePolicyUpdates} checkedChildren={"✔"} unCheckedChildren={"✘"} />                      
                     </div>
                   </div>
-                </Col>
-                <Col xs={6}>
+                  <div className="form-group noMargin">
+                    <label className="normalText" htmlFor="policyOfficeHours">Only office hours:</label>
+                    <div className="displayInline">
+                      <Switch checked={this.state.policyOfficeHours} onChange={this.changePolicyOfficeHours} checkedChildren={"✔"} unCheckedChildren={"✘"} />                      
+                    </div>
+                  </div>
                   <div className="form-group noMargin">
                     <label className="normalText" htmlFor="safeModeGroup">Safe mode:</label>
-                    <div className="displayInline">
+                    <div className="displayInline lastCheck">
                       <Switch checked={this.state.safeMode} onChange={this.changeSafeMode} checkedChildren={"✔"} unCheckedChildren={"✘"} />                      
                     </div>
                   </div>
                 </Col>
               </Row>
+              <Row>
+                <Col xs={12}>
+                  <Input type="select" label="Timezone:" {...timezoneError} placeholder="" defaultValue={this.props.data.group.policy_timezone} groupClassName="arrow-icon" ref="policyTimezone">
+                    <option value="" />
+                    {timezones.map((timezone, i) =>
+                      <option value={timezone} key={i}>{timezone}</option>
+                    )}
+                  </Input>
+                </Col>
+              </Row>
               <div className="form--legend minlegend marginBottom15">
-                {"If safe mode is enabled, when a new rollout starts only one instance will be granted an updated, and if it doesn’t succeed updates will be disabled in the group automatically."}
-              </div>  
+                <b>Office hours:</b> Use this option to disable updates out of office hours. When using this option, you <b>must provide a valid timezone</b> as the office hours time range will be calculated based on it.
+              </div>    
+              <div className="form--legend minlegend marginBottom15">
+                <b>Safe mode:</b> If safe mode is enabled, when a new rollout starts only one instance will be granted an updated, and if it doesn’t succeed updates will be disabled in the group automatically.
+              </div>          
               <div className="form--limit">
                 Max 
                 <Input type="number" label="" standalone className="form-control" ref="maxUpdatesPerPeriodInterval" defaultValue={this.props.data.group.policy_max_updates_per_period} required={true} min="1" /> 
