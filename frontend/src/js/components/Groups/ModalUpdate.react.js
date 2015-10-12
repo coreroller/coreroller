@@ -45,7 +45,7 @@ class ModalUpdate extends React.Component {
         description: this.refs.descriptionGroup.getValue(),
         policy_safe_mode: this.state.safeMode,
         policy_max_updates_per_period: parseInt(this.refs.maxUpdatesPerPeriodInterval.getValue()),
-        policy_updates_enabled: this.state.updatesEnabled,
+        policy_updates_enabled: this.state.policyUpdates,
         policy_period_interval: period_interval,
         policy_update_timeout: update_timeout,
         policy_office_hours: this.state.policyOfficeHours
