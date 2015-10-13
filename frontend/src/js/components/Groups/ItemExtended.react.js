@@ -46,8 +46,9 @@ class ItemExtended extends React.Component {
         policyPeriodInterval = 0,
         channel = {},
         version_breakdown = [],
-        policyUpdates = true,
-        safeMode = true
+        policyUpdates,
+        safeMode,
+        officeHours
 
     if (group) {
       name = group.name
@@ -55,9 +56,9 @@ class ItemExtended extends React.Component {
       instancesNum = group.instances_stats ? group.instances_stats.total : 0
       policyMaxUpdatesPerDay = group.policy_max_updates_per_period ? group.policy_max_updates_per_period : 0
       policyPeriodInterval = group.policy_period_interval ? group.policy_period_interval : 0
-      policyUpdates = group.policy_updates_enabled ? group.policy_updates_enabled : true
-      safeMode = group.policy_safe_mode ? group.policy_safe_mode : true
-      channel = group.channel ? group.channel : {}
+      policyUpdates = group.policy_updates_enabled ? group.policy_updates_enabled : null
+      safeMode = group.policy_safe_mode ? group.policy_safe_mode : null
+      officeHours = group.policy_office_hours ? group.policy_office_hours : null
       version_breakdown = group.version_breakdown ? group.version_breakdown : []
     }
 
@@ -85,19 +86,21 @@ class ItemExtended extends React.Component {
                     </Col>
                   </Row>
                   <Row className="groups--resume">
-                    <Col xs={7}>
-                      <span className="subtitle">Rollout policy:</span>Max {policyMaxUpdatesPerDay} updates per {policyPeriodInterval} &nbsp;|&nbsp; Updates timeout 10 minutes
+                    <Col xs={6}>
+                      <span className="subtitle">Rollout policy:</span> Max {policyMaxUpdatesPerDay} updates per {policyPeriodInterval} &nbsp;|&nbsp; Updates timeout 10 minutes
                     </Col>
-                    <Col xs={2} className="alignRight">
-                      <span className="subtitle displayInline">Save mode:</span>
-                      <div className="displayInline">
-                        <Switch checked={safeMode} disabled={true} checkedChildren={"✔"} unCheckedChildren={"✘"} />                      
-                      </div>
-                    </Col>
-                    <Col xs={3} className="alignRight">
+                    <Col xs={6} className="alignRight">
                       <span className="subtitle displayInline">Updates enabled:</span>
                       <div className="displayInline">
                         <Switch checked={policyUpdates} disabled={true} checkedChildren={"✔"} unCheckedChildren={"✘"} />                      
+                      </div>
+                      <span className="subtitle displayInline">Only office hours:</span>
+                      <div className="displayInline">
+                        <Switch checked={officeHours} disabled={true} checkedChildren={"✔"} unCheckedChildren={"✘"} />                      
+                      </div>
+                      <span className="subtitle displayInline">Safe mode:</span>
+                      <div className="displayInline lastSwicth">
+                        <Switch checked={safeMode} disabled={true} checkedChildren={"✔"} unCheckedChildren={"✘"} />                      
                       </div>
                     </Col>
                   </Row>
