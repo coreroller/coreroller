@@ -52,7 +52,7 @@ class Item extends React.Component {
   }
 
   render() {
-    let date = moment(this.props.instance.application.last_check_for_updates).format("DD/MM/YYYY, hh:mma"),
+    let date = moment.utc(this.props.instance.application.last_check_for_updates + "+00:00").local().format("DD/MM/YYYY, hh:mma"),
         active = this.props.selected ? " active" : "",
         index = this.props.versionNumbers.indexOf(this.props.instance.application.version),
         boxStyle = "default"
