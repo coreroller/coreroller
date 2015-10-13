@@ -1,9 +1,10 @@
 import { applicationsStore } from "../../stores/Stores"
-import React, { PropTypes } from "react";
-import { Row, Col, Modal, Input, Button, Alert } from "react-bootstrap"
+import React, { PropTypes } from "react"
+import { Row, Col, Modal, Input, Button, Alert, OverlayTrigger } from "react-bootstrap"
 import Switch from "rc-switch"
 import _ from "underscore"
 import moment from "moment-timezone"
+import {tooltipSafeMode, tooltipOfficeHours} from "../Common/Tooltips.react"
 
 class ModalAdd extends React.Component {
 
@@ -28,7 +29,7 @@ class ModalAdd extends React.Component {
 
   static propTypes : {
     data: PropTypes.object
-  };
+  }
 
   createGroup() {
     this.setState({isLoading: true})
@@ -139,13 +140,17 @@ class ModalAdd extends React.Component {
                     </div>
                   </div>
                   <div className="form-group noMargin">
-                    <label className="normalText" htmlFor="policyOfficeHours">Only office hours:</label>
+                    <OverlayTrigger trigger="hover" container={this} placement="bottom" overlay={tooltipOfficeHours}>                    
+                      <label className="normalText" htmlFor="policyOfficeHours"><i className="fa fa-question-circle"></i> Only office hours:</label>
+                    </OverlayTrigger>
                     <div className="displayInline">
                       <Switch onChange={this.changePolicyOfficeHours} checkedChildren={"✔"} unCheckedChildren={"✘"} />                      
                     </div>
                   </div>
                   <div className="form-group noMargin">
-                    <label className="normalText" htmlFor="safeModeNewGroup">Safe mode:</label>
+                    <OverlayTrigger trigger="hover" container={this} placement="bottom" overlay={tooltipSafeMode}>
+                      <label className="normalText" htmlFor="safeModeNewGroup"><i className="fa fa-question-circle"></i> Safe mode:</label>
+                    </OverlayTrigger>
                     <div className="displayInline lastCheck">
                       <Switch defaultChecked onChange={this.changeSafeMode} checkedChildren={"✔"} unCheckedChildren={"✘"} />                      
                     </div>
@@ -161,13 +166,7 @@ class ModalAdd extends React.Component {
                     )}
                   </Input>
                 </Col>
-              </Row>
-              <div className="form--legend minlegend marginBottom15">
-                <b>Office hours:</b> Use this option to disable updates out of office hours. When using this option, you <b>must provide a valid timezone</b> as the office hours time range will be calculated based on it.
-              </div>    
-              <div className="form--legend minlegend marginBottom15">
-                <b>Safe mode:</b> If safe mode is enabled, when a new rollout starts only one instance will be granted an updated, and if it doesn’t succeed updates will be disabled in the group automatically.
-              </div>          
+              </Row>            
               <div className="form--limit">
                 Max 
                 <Input type="number" label="" standalone className="form-control" ref="maxUpdatesPerPeriodInterval" defaultValue={2} required={true} min="1" /> 
