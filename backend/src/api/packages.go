@@ -146,5 +146,5 @@ func (api *API) packagesQuery() *dat.SelectDocBuilder {
 	return api.dbR.
 		SelectDoc("*").
 		From("package").
-		OrderBy("created_ts DESC")
+		OrderBy("version DESC")
 }
