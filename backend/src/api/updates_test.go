@@ -204,6 +204,25 @@ func TestGetUpdatePackage_RolloutStats(t *testing.T) {
 	assert.Equal(t, 1, group.InstancesStats.Error)
 }
 
+func TestGetUpdatePackage_UpdateInProgressOnInstance(t *testing.T) {
+	a, _ := New(OptionInitDB)
+	defer a.Close()
+
+	tTeam, _ := a.AddTeam(&Team{Name: "test_team"})
+	tApp, _ := a.AddApp(&Application{Name: "test_app", TeamID: tTeam.ID})
+	tPkg, _ := a.AddPackage(&Package{Type: PkgTypeOther, URL: "http://sample.url/pkg", Version: "12.1.0", ApplicationID: tApp.ID})
+	tChannel, _ := a.AddChannel(&Channel{Name: "test_channel", Color: "blue", ApplicationID: tApp.ID, PackageID: dat.NullStringFrom(tPkg.ID)})
+	tGroup, _ := a.AddGroup(&Group{Name: "group", ApplicationID: tApp.ID, ChannelID: dat.NullStringFrom(tChannel.ID), PolicyUpdatesEnabled: true, PolicySafeMode: false, PolicyPeriodInterval: "15 minutes", PolicyMaxUpdatesPerPeriod: 2, PolicyUpdateTimeout: "60 minutes"})
+
+	instanceID := uuid.NewV4().String()
+
+	_, err := a.GetUpdatePackage(instanceID, "10.0.0.1", "12.0.0", tApp.ID, tGroup.ID)
+	assert.NoError(t, err)
+
+	_, err = a.GetUpdatePackage(instanceID, "10.0.0.1", "12.0.0", tApp.ID, tGroup.ID)
+	assert.Equal(t, ErrUpdateInProgressOnInstance, err)
+}
+
 func TestGetUpdatePackage_InstanceStatusHistory(t *testing.T) {
 	a, _ := New(OptionInitDB)
 	defer a.Close()
