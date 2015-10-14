@@ -6,7 +6,6 @@ import (
 	"log"
 	"os"
 	"testing"
-	"time"
 
 	"api"
 
@@ -176,10 +175,6 @@ func TestAppUpdateForAppWithChannelAndPackageName(t *testing.T) {
 	checkOmahaUpdateResponse(t, omahaResp, tPkgCoreos640.Version, tFilenameCoreos, tPkgCoreos640.URL, "ok")
 	checkOmahaCoreosAction(t, coreosAction, omahaResp.Apps[0].UpdateCheck.Manifest.Actions.Actions[0])
 
-	// Expect threshold error
-	omahaResp = doOmahaRequest(t, a, tAppCoreos.ID, oldAppVersion, validUnregisteredBootID, tGroup.ID, validUnregisteredIP, true, "", "", "")
-	checkOmahaResponse(t, omahaResp, tAppCoreos.ID, "error-maxUpdatesPerPeriodLimitReached")
-
 	// Send download started
 	omahaResp = doOmahaRequest(t, a, tAppCoreos.ID, oldAppVersion, validUnregisteredBootID, tGroup.ID, validUnregisteredIP, false, "13", "1", "")
 	checkOmahaResponse(t, omahaResp, tAppCoreos.ID, "ok")
@@ -199,56 +194,11 @@ func TestAppUpdateForAppWithChannelAndPackageName(t *testing.T) {
 	omahaResp = doOmahaRequest(t, a, tAppCoreos.ID, tPkgCoreos640.Version, validUnregisteredBootID, tGroup.ID, validUnregisteredIP, true, "3", "2", oldAppVersion)
 	checkOmahaResponse(t, omahaResp, tAppCoreos.ID, "ok")
 	checkOmahaUpdateResponse(t, omahaResp, tPkgCoreos640.Version, "", "", "noupdate")
-}
 
-func TestAppRegistrationForAppWithOtherInfo(t *testing.T) {
-	a, _ := api.New(api.OptionInitDB)
-	defer a.Close()
-
-	tTeam, _ := a.AddTeam(&api.Team{Name: "test_team"})
-	tAppCoreos, _ := a.AddApp(&api.Application{Name: "CoreOS", Description: "Linux containers", TeamID: tTeam.ID})
-	tFilenameCoreos := "coreosupdate.tgz"
-	tPkgCoreos640, err := a.AddPackage(&api.Package{Type: api.PkgTypeCoreos, URL: "http://sample.url/pkg", Filename: dat.NullStringFrom(tFilenameCoreos), Version: "640.0.0", ApplicationID: tAppCoreos.ID})
-	tPkgCoreos653, err := a.AddPackage(&api.Package{Type: api.PkgTypeCoreos, URL: "http://sample.url/pkg", Filename: dat.NullStringFrom(tFilenameCoreos), Version: "653.0.0", ApplicationID: tAppCoreos.ID})
-	_, err = a.AddChannel(&api.Channel{Name: "alpha", Color: "green", ApplicationID: tAppCoreos.ID, PackageID: dat.NullStringFrom(tPkgCoreos653.ID)})
-	tChannel2, err := a.AddChannel(&api.Channel{Name: "beta", Color: "blue", ApplicationID: tAppCoreos.ID, PackageID: dat.NullStringFrom(tPkgCoreos653.ID)})
-	tChannel3, err := a.AddChannel(&api.Channel{Name: "stable", Color: "white", ApplicationID: tAppCoreos.ID, PackageID: dat.NullStringFrom(tPkgCoreos640.ID)})
-	tGroup1, err := a.AddGroup(&api.Group{Name: "Production", ApplicationID: tAppCoreos.ID, ChannelID: dat.NullStringFrom(tChannel3.ID),
-		PolicyUpdatesEnabled: true, PolicySafeMode: true, PolicyPeriodInterval: "15 minutes", PolicyMaxUpdatesPerPeriod: 2, PolicyUpdateTimeout: "60 minutes"})
-	_, err = a.AddGroup(&api.Group{Name: "Qa", ApplicationID: tAppCoreos.ID, ChannelID: dat.NullStringFrom(tChannel2.ID),
-		PolicyUpdatesEnabled: true, PolicySafeMode: true, PolicyPeriodInterval: "15 minutes", PolicyMaxUpdatesPerPeriod: 2, PolicyUpdateTimeout: "60 minutes"})
-	assert.NoError(t, err)
-
-	tAppAcme, _ := a.AddApp(&api.Application{Name: "Acme", Description: "Container for Application ACME", TeamID: tTeam.ID})
-	tFilenameAcme := "acmeupdate.tgz"
-	tPkgAcme310, err := a.AddPackage(&api.Package{Type: api.PkgTypeCoreos, URL: "http://sample.url/pkg", Filename: dat.NullStringFrom(tFilenameAcme), Version: "310.0.0", ApplicationID: tAppAcme.ID})
-	tPkgAcme333, err := a.AddPackage(&api.Package{Type: api.PkgTypeCoreos, URL: "http://sample.url/pkg", Filename: dat.NullStringFrom(tFilenameAcme), Version: "333.0.0", ApplicationID: tAppAcme.ID})
-	tChannel4, err := a.AddChannel(&api.Channel{Name: "latest", Color: "blue", ApplicationID: tAppAcme.ID, PackageID: dat.NullStringFrom(tPkgAcme333.ID)})
-	tChannel5, err := a.AddChannel(&api.Channel{Name: "stable", Color: "white", ApplicationID: tAppAcme.ID, PackageID: dat.NullStringFrom(tPkgAcme310.ID)})
-	_, err = a.AddGroup(&api.Group{Name: "PROD", ApplicationID: tAppAcme.ID, ChannelID: dat.NullStringFrom(tChannel5.ID),
-		PolicyUpdatesEnabled: true, PolicySafeMode: true, PolicyPeriodInterval: "100 millisecond", PolicyMaxUpdatesPerPeriod: 2, PolicyUpdateTimeout: "60 minutes"})
-	_, err = a.AddGroup(&api.Group{Name: "QA", ApplicationID: tAppAcme.ID, ChannelID: dat.NullStringFrom(tChannel4.ID),
-		PolicyUpdatesEnabled: false, PolicySafeMode: true, PolicyPeriodInterval: "15 minutes", PolicyMaxUpdatesPerPeriod: 2, PolicyUpdateTimeout: "60 minutes"})
-	assert.NoError(t, err)
-
-	time.Sleep(10 * time.Millisecond)
-
-	validUnregisteredIP := "127.0.0.1"
-	validUnregisteredBootID := "65e1266d-6f54-4b87-9080-23b99ca9c12f"
-	expectedAppVersion := "640.0.0"
-	updateCheck := true
-	noEventType := ""
-	noEventResult := ""
-	completedEventType := "3"
-	sucessEventResult := "1"
-	eventPreviousVersion := ""
-
-	omahaResp := doOmahaRequest(t, a, tAppCoreos.ID, expectedAppVersion, validUnregisteredBootID, tGroup1.ID, validUnregisteredIP, updateCheck, noEventType, noEventResult, eventPreviousVersion)
+	// Expect no update
+	omahaResp = doOmahaRequest(t, a, tAppCoreos.ID, tPkgCoreos640.Version, validUnregisteredBootID, tGroup.ID, validUnregisteredIP, true, "", "", "")
 	checkOmahaResponse(t, omahaResp, tAppCoreos.ID, "ok")
-	checkOmahaUpdateResponse(t, omahaResp, expectedAppVersion, "", "", "noupdate")
-
-	omahaResp = doOmahaRequest(t, a, tAppCoreos.ID, expectedAppVersion, validUnregisteredBootID, tGroup1.ID, validUnregisteredIP, !updateCheck, completedEventType, sucessEventResult, eventPreviousVersion)
-	checkOmahaResponse(t, omahaResp, tAppCoreos.ID, "ok")
+	checkOmahaUpdateResponse(t, omahaResp, tPkgCoreos640.Version, "", "", "noupdate")
 }
 
 func doOmahaRequest(t *testing.T, a *api.API, appID, appVersion, appMachineID, appTrack, ip string, updateCheck bool, eventType, eventResult, eventPreviousVersion string) *omahaSpec.Response {
