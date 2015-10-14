@@ -46,7 +46,11 @@ class List extends React.Component {
     // Removed success style if no instances with last version
     if (lastVersionBD !== lastVersionChannel) {
       styles.shift()
-    }    
+    } 
+
+    if (_.isEmpty(lastVersionChannel)) {
+      styles = ["default"]
+    }   
 
     return(
       <div className="coreRollerTable">

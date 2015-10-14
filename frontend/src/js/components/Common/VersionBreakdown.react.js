@@ -32,8 +32,10 @@ class VersionBreakdown extends React.Component {
       entries = _.map(versions, function (version, i) {
         let barStyle = "default"
 
-        if (i < styles.length) {
-          barStyle = styles[i]
+        if (!_.isEmpty(lastVersionChannel)) {
+          if (i < styles.length) {
+            barStyle = styles[i]
+          }
         }
         return <ProgressBar striped key={i} bsStyle={barStyle} now={version.percentage} label={version.version} />
       })

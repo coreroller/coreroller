@@ -55,7 +55,7 @@ class ItemExtended extends React.Component {
     if (group) {
       name = group.name
       description = group.description ? group.description : ""
-      channel = group.channel
+      channel = group.channel ? group.channel : {}
       instancesNum = group.instances_stats ? group.instances_stats.total : 0
       policyMaxUpdatesPerDay = group.policy_max_updates_per_period ? group.policy_max_updates_per_period : 0
       policyPeriodInterval = group.policy_period_interval ? group.policy_period_interval : 0
