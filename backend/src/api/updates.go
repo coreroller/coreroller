@@ -13,6 +13,11 @@ var (
 	// not succeed.
 	ErrRegisterInstanceFailed = errors.New("coreroller: register instance failed")
 
+	// ErrUpdateInProgressOnInstance indicates that an update is currently in
+	// progress on the instance requesting an update package, so the request
+	// will be rejected.
+	ErrUpdateInProgressOnInstance = errors.New("coreroller: update in progress on instance")
+
 	// ErrNoPackageFound indicates that the group doesn't have a channel
 	// assigned or that the channel doesn't have a package assigned.
 	ErrNoPackageFound = errors.New("coreroller: no package found")
@@ -53,6 +58,13 @@ func (api *API) GetUpdatePackage(instanceID, instanceIP, instanceVersion, appID,
 	instance, err := api.RegisterInstance(instanceID, instanceIP, instanceVersion, appID, groupID)
 	if err != nil {
 		return nil, ErrRegisterInstanceFailed
+	}
+
+	if instance.Application.Status.Valid {
+		switch int(instance.Application.Status.Int64) {
+		case InstanceStatusUpdateGranted, InstanceStatusDownloading, InstanceStatusDownloaded, InstanceStatusInstalled:
+			return nil, ErrUpdateInProgressOnInstance
+		}
 	}
 
 	group, err := api.GetGroup(groupID)

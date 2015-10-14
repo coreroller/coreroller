@@ -92,6 +92,8 @@ func handleRolloutPolicyErrors(err error) (string, error) {
 		return "error-updatesDisabled", err
 	case err == api.ErrGetUpdatesStatsFailed:
 		return "error-couldNotCheckUpdatesStats", err
+	case err == api.ErrUpdateInProgressOnInstance:
+		return "error-updateInProgressOnInstance", err
 	}
 	return "", nil
 }
