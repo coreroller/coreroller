@@ -48,11 +48,14 @@ class ItemExtended extends React.Component {
         version_breakdown = [],
         policyUpdates,
         safeMode,
-        officeHours
+        officeHours,
+        groupChannel,
+        styleGroupChannel
 
     if (group) {
       name = group.name
       description = group.description ? group.description : ""
+      channel = group.channel
       instancesNum = group.instances_stats ? group.instances_stats.total : 0
       policyMaxUpdatesPerDay = group.policy_max_updates_per_period ? group.policy_max_updates_per_period : 0
       policyPeriodInterval = group.policy_period_interval ? group.policy_period_interval : 0
@@ -60,10 +63,9 @@ class ItemExtended extends React.Component {
       safeMode = group.policy_safe_mode ? group.policy_safe_mode : null
       officeHours = group.policy_office_hours ? group.policy_office_hours : null
       version_breakdown = group.version_breakdown ? group.version_breakdown : []
+      groupChannel = _.isEmpty(group.channel) ? "No channel provided" : <ChannelLabel channel={group.channel} />
+      styleGroupChannel = _.isEmpty(group.channel) ? "italicText" : ""
     }
-
-    let groupChannel = _.isEmpty(channel) ? "No channel provided" : <ChannelLabel channel={channel} />
-    let styleGroupChannel = _.isEmpty(channel) ? "italicText" : ""
 
 		return (
       <Row>
@@ -101,7 +103,7 @@ class ItemExtended extends React.Component {
                         <Switch checked={officeHours} disabled={true} checkedChildren={"✔"} unCheckedChildren={"✘"} />                      
                       </div>
                       <span className="subtitle displayInline">Safe mode:</span>
-                      <div className="displayInline lastSwicth">
+                      <div className="displayInline">
                         <Switch checked={safeMode} disabled={true} checkedChildren={"✔"} unCheckedChildren={"✘"} />                      
                       </div>
                     </Col>
