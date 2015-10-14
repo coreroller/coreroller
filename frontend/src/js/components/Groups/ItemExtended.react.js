@@ -86,10 +86,12 @@ class ItemExtended extends React.Component {
                     </Col>
                   </Row>
                   <Row className="groups--resume">
-                    <Col xs={6}>
+                    <Col xs={12}>
                       <span className="subtitle">Rollout policy:</span> Max {policyMaxUpdatesPerDay} updates per {policyPeriodInterval} &nbsp;|&nbsp; Updates timeout 10 minutes
                     </Col>
-                    <Col xs={6} className="alignRight">
+                  </Row>
+                  <Row className="groups--resume">
+                    <Col xs={12}>
                       <span className="subtitle displayInline">Updates enabled:</span>
                       <div className="displayInline">
                         <Switch checked={policyUpdates} disabled={true} checkedChildren={"✔"} unCheckedChildren={"✘"} />                      
