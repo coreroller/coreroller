@@ -1,6 +1,7 @@
 import React, { PropTypes } from "react"
 import Item from "./Item.react"
 import _ from "underscore"
+import semver from "semver"
 
 class List extends React.Component {
 
@@ -33,24 +34,9 @@ class List extends React.Component {
   }
 
   render() {
-    let versions = this.props.version_breakdown ? this.props.version_breakdown : []
-    
-    let versionNumbers = _.map(versions, (version, i) => {
-      return version.version
-    })
-    
-    let lastVersionChannel = this.props.channel.package ? this.props.channel.package.version : "",
-        lastVersionBD = versionNumbers[0] ? versionNumbers[0] : "",
-        styles = ["success", "warning", "danger"]
-
-    // Removed success style if no instances with last version
-    if (lastVersionBD !== lastVersionChannel) {
-      styles.shift()
-    } 
-
-    if (_.isEmpty(lastVersionChannel)) {
-      styles = ["default"]
-    }   
+    let versions = this.props.version_breakdown ? this.props.version_breakdown : [],
+        lastVersionChannel = this.props.channel.package ? this.props.channel.package.version : "",
+        versionNumbers = (_.map(versions, function(version) {return version.version})).sort(semver.rcompare)
 
     return(
       <div className="coreRollerTable">
@@ -62,7 +48,7 @@ class List extends React.Component {
           <div className="coreRollerTable-cell">Last check</div>
         </div>
         {this.props.instances.map((instance, i) =>
-          <Item key={i} instance={instance} styles={styles} versionNumbers={versionNumbers} selected={this.state.selections[instance.id]} onToggle={this.onItemToggle} />
+          <Item key={i} instance={instance} lastVersionChannel={lastVersionChannel} versionNumbers={versionNumbers} selected={this.state.selections[instance.id]} onToggle={this.onItemToggle} />
         )}
       </div>
     )

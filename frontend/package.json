@@ -18,7 +18,8 @@
     "react-color": "~1.1.2",
     "react-router": "~0.13.4",
     "react-router-bootstrap": "~0.18.1",
-    "underscore": "~1.8.3"
+    "underscore": "~1.8.3",
+    "semver": "~5.0.3"
   },
   "devDependencies": {
     "browserify": "~11.2.0",

@@ -3,6 +3,8 @@ import React, { PropTypes } from "react"
 import moment from "moment"
 import { Label } from "react-bootstrap"
 import StatusHistoryContainer from "./StatusHistoryContainer.react"
+import semver from "semver"
+import _ from "underscore"
 
 class Item extends React.Component {
 
@@ -19,7 +21,7 @@ class Item extends React.Component {
     key: React.PropTypes.number.isRequired,
     selected: React.PropTypes.bool,
     versionNumbers: React.PropTypes.array,
-    styles: React.PropTypes.array
+    lastVersionChannel: React.PropTypes.string
   }
 
   fetchStatusFromStore() {
@@ -55,15 +57,31 @@ class Item extends React.Component {
     let date = moment.utc(this.props.instance.application.last_check_for_updates + "+00:00").local().format("DD/MM/YYYY, hh:mma"),
         active = this.props.selected ? " active" : "",
         index = this.props.versionNumbers.indexOf(this.props.instance.application.version),
-        boxStyle = "default"
-    
-    if (index >= 0 && index < this.props.styles.length) {
-      boxStyle = this.props.styles[index]
-    }
-
-    let downloadingIcon = this.state.status.spinning ? <img src="img/mini_loading.gif" /> : "",
+        downloadingIcon = this.state.status.spinning ? <img src="img/mini_loading.gif" /> : "",
         statusIcon = this.state.status.icon ? <i className={this.state.status.icon}></i> : "",
-        instanceLabel = this.state.status.className ? <Label>{statusIcon} {downloadingIcon} {this.state.status.description}</Label> : <div>&nbsp;</div>
+        instanceLabel = this.state.status.className ? <Label>{statusIcon} {downloadingIcon} {this.state.status.description}</Label> : <div>&nbsp;</div>,
+        version = this.props.instance.application.version,
+        currentVersionIndex = this.props.lastVersionChannel ? _.indexOf(this.props.versionNumbers, this.props.lastVersionChannel) : null,
+        versionStyle = "default"
+
+
+    if (!_.isEmpty(this.props.lastVersionChannel)) {      
+      if (version == this.props.lastVersionChannel) {
+        versionStyle = "success"
+      } else if (semver.gt(version, this.props.lastVersionChannel)) {
+        versionStyle = "info"
+      } else {
+        let indexDiff = _.indexOf(this.props.versionNumbers, version) - currentVersionIndex
+        switch (indexDiff) {
+          case 1:
+            versionStyle = "warning"
+            break
+          case 2:
+            versionStyle = "danger"
+            break
+        }
+      }
+    }
 
     return(
       <div className="instance">
@@ -81,7 +99,7 @@ class Item extends React.Component {
             {instanceLabel}
           </div>
           <div className="coreRollerTable-cell">
-            <p className={"box--" + boxStyle}>{this.props.instance.application.version}</p>
+            <p className={"box--" + versionStyle}>{version}</p>
           </div>
           <div className="coreRollerTable-cell">
             <p>{date}</p>

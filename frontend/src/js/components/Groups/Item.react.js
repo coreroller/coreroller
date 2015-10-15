@@ -33,6 +33,7 @@ class Item extends React.Component {
     let version_breakdown = (this.props.group && this.props.group.version_breakdown) ? this.props.group.version_breakdown : [],
         instances_total = this.props.group.instances_stats ? this.props.group.instances_stats.total : 0,
         description = this.props.group.description ? this.props.group.description : "No description provided",
+        channel = this.props.group.channel ? this.props.group.channel : {},
         styleDescription = this.props.group.description ? "" : " italicText",
         popoverContent = {
           type: "group",
@@ -82,7 +83,7 @@ class Item extends React.Component {
             </Col>
           </Row>
           <Row className="groups--resume">
-            <VersionBreakdown version_breakdown={version_breakdown} channel={this.props.group.channel} />
+            <VersionBreakdown version_breakdown={version_breakdown} channel={channel} />
           </Row>
         </div>
       </div>
