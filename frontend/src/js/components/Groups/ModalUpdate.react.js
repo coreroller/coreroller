@@ -142,7 +142,7 @@ class ModalUpdate extends React.Component {
                     </div>
                   </div>
                   <div className="form-group noMargin">
-                    <OverlayTrigger trigger="hover" container={this} placement="bottom" overlay={tooltipOfficeHours}>                    
+                    <OverlayTrigger trigger={["hover", "focus"]} container={this} placement="bottom" overlay={tooltipOfficeHours}>                    
                       <label className="normalText" htmlFor="policyOfficeHours"><i className="fa fa-question-circle"></i> Only office hours:</label>
                     </OverlayTrigger>
                     <div className="displayInline">
@@ -150,7 +150,7 @@ class ModalUpdate extends React.Component {
                     </div>
                   </div>
                   <div className="form-group noMargin">
-                    <OverlayTrigger trigger="hover" container={this} placement="bottom" overlay={tooltipSafeMode}>
+                    <OverlayTrigger trigger={["hover", "focus"]} container={this} placement="bottom" overlay={tooltipSafeMode}>
                       <label className="normalText" htmlFor="safeModeNewGroup"><i className="fa fa-question-circle"></i> Safe mode:</label>
                     </OverlayTrigger>
                     <div className="displayInline lastCheck">
