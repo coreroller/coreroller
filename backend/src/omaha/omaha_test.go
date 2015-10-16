@@ -55,23 +55,23 @@ func TestInvalidRequests(t *testing.T) {
 	assert.NoError(t, err)
 
 	validUnregisteredIP := "127.0.0.1"
-	validUnregisteredBootID := "some-id"
+	validUnregisteredMachineID := "some-id"
 	validUnverifiedAppVersion := "100.0.1"
 	updateCheck := true
 	noEventType := ""
 	noEventResult := ""
 	eventPreviousVersion := ""
 
-	omahaResp := doOmahaRequest(t, a, tApp.ID, validUnverifiedAppVersion, validUnregisteredBootID, "invalid-track", validUnregisteredIP, updateCheck, noEventType, noEventResult, eventPreviousVersion)
+	omahaResp := doOmahaRequest(t, a, tApp.ID, validUnverifiedAppVersion, validUnregisteredMachineID, "invalid-track", validUnregisteredIP, updateCheck, noEventType, noEventResult, eventPreviousVersion)
 	checkOmahaResponse(t, omahaResp, tApp.ID, "error-instanceRegistrationFailed")
 
-	omahaResp = doOmahaRequest(t, a, tApp.ID, validUnverifiedAppVersion, validUnregisteredBootID, tGroup.ID, "invalid-ip", updateCheck, noEventType, noEventResult, eventPreviousVersion)
+	omahaResp = doOmahaRequest(t, a, tApp.ID, validUnverifiedAppVersion, validUnregisteredMachineID, tGroup.ID, "invalid-ip", updateCheck, noEventType, noEventResult, eventPreviousVersion)
 	checkOmahaResponse(t, omahaResp, tApp.ID, "error-instanceRegistrationFailed")
 
-	omahaResp = doOmahaRequest(t, a, "invalid-app-uuid", validUnverifiedAppVersion, validUnregisteredBootID, tGroup.ID, validUnregisteredIP, updateCheck, noEventType, noEventResult, eventPreviousVersion)
+	omahaResp = doOmahaRequest(t, a, "invalid-app-uuid", validUnverifiedAppVersion, validUnregisteredMachineID, tGroup.ID, validUnregisteredIP, updateCheck, noEventType, noEventResult, eventPreviousVersion)
 	checkOmahaResponse(t, omahaResp, "invalid-app-uuid", "error-instanceRegistrationFailed")
 
-	omahaResp = doOmahaRequest(t, a, tApp.ID, "", validUnregisteredBootID, tGroup.ID, validUnregisteredIP, updateCheck, noEventType, noEventResult, eventPreviousVersion)
+	omahaResp = doOmahaRequest(t, a, tApp.ID, "", validUnregisteredMachineID, tGroup.ID, validUnregisteredIP, updateCheck, noEventType, noEventResult, eventPreviousVersion)
 	checkOmahaResponse(t, omahaResp, tApp.ID, "error-instanceRegistrationFailed")
 }
 
@@ -88,35 +88,35 @@ func TestAppNoUpdateForAppWithChannelAndPackageName(t *testing.T) {
 	assert.NoError(t, err)
 
 	validUnregisteredIP := "127.0.0.1"
-	validUnregisteredBootID := "65e1266d-6f54-4b87-9080-23b99ca9c12f"
+	validUnregisteredMachineID := "65e1266d-6f54-4b87-9080-23b99ca9c12f"
 	expectedAppVersion := "640.0.0"
 
 	// Now with an error event tag, no updatecheck tag
-	omahaResp := doOmahaRequest(t, a, tAppCoreos.ID, expectedAppVersion, validUnregisteredBootID, tGroup.ID, validUnregisteredIP, false, "3", "0", "268437959")
+	omahaResp := doOmahaRequest(t, a, tAppCoreos.ID, expectedAppVersion, validUnregisteredMachineID, tGroup.ID, validUnregisteredIP, false, "3", "0", "268437959")
 	checkOmahaResponse(t, omahaResp, tAppCoreos.ID, "ok")
 	checkOmahaEventResponse(t, omahaResp, tAppCoreos.ID, 1)
 	checkOmahaNoUpdateResponse(t, omahaResp)
 
 	// Now updatetag, successful event, no previous version
-	omahaResp = doOmahaRequest(t, a, tAppCoreos.ID, expectedAppVersion, validUnregisteredBootID, tGroup.ID, validUnregisteredIP, true, "3", "2", "0.0.0.0")
+	omahaResp = doOmahaRequest(t, a, tAppCoreos.ID, expectedAppVersion, validUnregisteredMachineID, tGroup.ID, validUnregisteredIP, true, "3", "2", "0.0.0.0")
 	checkOmahaResponse(t, omahaResp, tAppCoreos.ID, "ok")
 	checkOmahaEventResponse(t, omahaResp, tAppCoreos.ID, 1)
 	checkOmahaUpdateResponse(t, omahaResp, expectedAppVersion, "", "", "noupdate")
 
 	// Now updatetag, successful event, no previous version
-	omahaResp = doOmahaRequest(t, a, tAppCoreos.ID, expectedAppVersion, validUnregisteredBootID, tGroup.ID, validUnregisteredIP, true, "3", "2", "")
+	omahaResp = doOmahaRequest(t, a, tAppCoreos.ID, expectedAppVersion, validUnregisteredMachineID, tGroup.ID, validUnregisteredIP, true, "3", "2", "")
 	checkOmahaResponse(t, omahaResp, tAppCoreos.ID, "ok")
 	checkOmahaEventResponse(t, omahaResp, tAppCoreos.ID, 1)
 	checkOmahaUpdateResponse(t, omahaResp, expectedAppVersion, "", "", "noupdate")
 
 	// Now updatetag, successful event, with previous version
-	omahaResp = doOmahaRequest(t, a, tAppCoreos.ID, expectedAppVersion, validUnregisteredBootID, tGroup.ID, validUnregisteredIP, true, "3", "2", "614.0.0")
+	omahaResp = doOmahaRequest(t, a, tAppCoreos.ID, expectedAppVersion, validUnregisteredMachineID, tGroup.ID, validUnregisteredIP, true, "3", "2", "614.0.0")
 	checkOmahaResponse(t, omahaResp, tAppCoreos.ID, "ok")
 	checkOmahaEventResponse(t, omahaResp, tAppCoreos.ID, 1)
 	checkOmahaUpdateResponse(t, omahaResp, expectedAppVersion, "", "", "noupdate")
 
 	// Now updatetag, successful event, with previous version, greater than current active version
-	omahaResp = doOmahaRequest(t, a, tAppCoreos.ID, "666.0.0", validUnregisteredBootID, tGroup.ID, validUnregisteredIP, true, "3", "2", "614.0.0")
+	omahaResp = doOmahaRequest(t, a, tAppCoreos.ID, "666.0.0", validUnregisteredMachineID, tGroup.ID, validUnregisteredIP, true, "3", "2", "614.0.0")
 	checkOmahaResponse(t, omahaResp, tAppCoreos.ID, "ok")
 	checkOmahaEventResponse(t, omahaResp, tAppCoreos.ID, 1)
 	checkOmahaUpdateResponse(t, omahaResp, expectedAppVersion, "", "", "noupdate")
@@ -135,7 +135,7 @@ func TestAppRegistrationForAppWithChannelAndPackageName(t *testing.T) {
 	assert.NoError(t, err)
 
 	validUnregisteredIP := "127.0.0.1"
-	validUnregisteredBootID := "65e1266d-6f54-4b87-9080-23b99ca9c12f"
+	validUnregisteredMachineID := "65e1266d-6f54-4b87-9080-23b99ca9c12f"
 	expectedAppVersion := "640.0.0"
 	updateCheck := true
 	noEventType := ""
@@ -144,11 +144,11 @@ func TestAppRegistrationForAppWithChannelAndPackageName(t *testing.T) {
 	sucessEventResult := "1"
 	eventPreviousVersion := ""
 
-	omahaResp := doOmahaRequest(t, a, tAppCoreos.ID, expectedAppVersion, validUnregisteredBootID, tGroup.ID, validUnregisteredIP, updateCheck, noEventType, noEventResult, eventPreviousVersion)
+	omahaResp := doOmahaRequest(t, a, tAppCoreos.ID, expectedAppVersion, validUnregisteredMachineID, tGroup.ID, validUnregisteredIP, updateCheck, noEventType, noEventResult, eventPreviousVersion)
 	checkOmahaResponse(t, omahaResp, tAppCoreos.ID, "ok")
 	checkOmahaUpdateResponse(t, omahaResp, expectedAppVersion, "", "", "noupdate")
 
-	omahaResp = doOmahaRequest(t, a, tAppCoreos.ID, expectedAppVersion, validUnregisteredBootID, tGroup.ID, validUnregisteredIP, !updateCheck, completedEventType, sucessEventResult, eventPreviousVersion)
+	omahaResp = doOmahaRequest(t, a, tAppCoreos.ID, expectedAppVersion, validUnregisteredMachineID, tGroup.ID, validUnregisteredIP, !updateCheck, completedEventType, sucessEventResult, eventPreviousVersion)
 	checkOmahaResponse(t, omahaResp, tAppCoreos.ID, "ok")
 }
 
@@ -167,36 +167,36 @@ func TestAppUpdateForAppWithChannelAndPackageName(t *testing.T) {
 	assert.NoError(t, err)
 
 	validUnregisteredIP := "127.0.0.1"
-	validUnregisteredBootID := "65e1266d-6f54-4b87-9080-23b99ca9c12f"
+	validUnregisteredMachineID := "65e1266d-6f54-4b87-9080-23b99ca9c12f"
 	oldAppVersion := "610.0.0"
 
-	omahaResp := doOmahaRequest(t, a, tAppCoreos.ID, oldAppVersion, validUnregisteredBootID, tGroup.ID, validUnregisteredIP, true, "3", "2", oldAppVersion)
+	omahaResp := doOmahaRequest(t, a, tAppCoreos.ID, oldAppVersion, validUnregisteredMachineID, tGroup.ID, validUnregisteredIP, true, "3", "2", oldAppVersion)
 	checkOmahaResponse(t, omahaResp, tAppCoreos.ID, "ok")
 	checkOmahaUpdateResponse(t, omahaResp, tPkgCoreos640.Version, tFilenameCoreos, tPkgCoreos640.URL, "ok")
 	checkOmahaCoreosAction(t, coreosAction, omahaResp.Apps[0].UpdateCheck.Manifest.Actions.Actions[0])
 
 	// Send download started
-	omahaResp = doOmahaRequest(t, a, tAppCoreos.ID, oldAppVersion, validUnregisteredBootID, tGroup.ID, validUnregisteredIP, false, "13", "1", "")
+	omahaResp = doOmahaRequest(t, a, tAppCoreos.ID, oldAppVersion, validUnregisteredMachineID, tGroup.ID, validUnregisteredIP, false, "13", "1", "")
 	checkOmahaResponse(t, omahaResp, tAppCoreos.ID, "ok")
 	checkOmahaNoUpdateResponse(t, omahaResp)
 
 	// Send download finished
-	omahaResp = doOmahaRequest(t, a, tAppCoreos.ID, oldAppVersion, validUnregisteredBootID, tGroup.ID, validUnregisteredIP, false, "14", "1", "")
+	omahaResp = doOmahaRequest(t, a, tAppCoreos.ID, oldAppVersion, validUnregisteredMachineID, tGroup.ID, validUnregisteredIP, false, "14", "1", "")
 	checkOmahaResponse(t, omahaResp, tAppCoreos.ID, "ok")
 	checkOmahaNoUpdateResponse(t, omahaResp)
 
 	// Send complete
-	omahaResp = doOmahaRequest(t, a, tAppCoreos.ID, oldAppVersion, validUnregisteredBootID, tGroup.ID, validUnregisteredIP, false, "3", "1", "")
+	omahaResp = doOmahaRequest(t, a, tAppCoreos.ID, oldAppVersion, validUnregisteredMachineID, tGroup.ID, validUnregisteredIP, false, "3", "1", "")
 	checkOmahaResponse(t, omahaResp, tAppCoreos.ID, "ok")
 	checkOmahaNoUpdateResponse(t, omahaResp)
 
 	// Send rebooted
-	omahaResp = doOmahaRequest(t, a, tAppCoreos.ID, tPkgCoreos640.Version, validUnregisteredBootID, tGroup.ID, validUnregisteredIP, true, "3", "2", oldAppVersion)
+	omahaResp = doOmahaRequest(t, a, tAppCoreos.ID, tPkgCoreos640.Version, validUnregisteredMachineID, tGroup.ID, validUnregisteredIP, true, "3", "2", oldAppVersion)
 	checkOmahaResponse(t, omahaResp, tAppCoreos.ID, "ok")
 	checkOmahaUpdateResponse(t, omahaResp, tPkgCoreos640.Version, "", "", "noupdate")
 
 	// Expect no update
-	omahaResp = doOmahaRequest(t, a, tAppCoreos.ID, tPkgCoreos640.Version, validUnregisteredBootID, tGroup.ID, validUnregisteredIP, true, "", "", "")
+	omahaResp = doOmahaRequest(t, a, tAppCoreos.ID, tPkgCoreos640.Version, validUnregisteredMachineID, tGroup.ID, validUnregisteredIP, true, "", "", "")
 	checkOmahaResponse(t, omahaResp, tAppCoreos.ID, "ok")
 	checkOmahaUpdateResponse(t, omahaResp, tPkgCoreos640.Version, "", "", "noupdate")
 }

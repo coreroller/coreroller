@@ -243,7 +243,7 @@ func addCoreosExtraInfo(a *api.API, pkg *api.Package, m *omahaSpec.Manifest) err
 	return nil
 }
 
-func processEvent(a *api.API, bootID string, appID string, group string, event *omahaSpec.Event) error {
+func processEvent(a *api.API, machineID string, appID string, group string, event *omahaSpec.Event) error {
 	logger.Info("processEvent", "appID", appID, "group", group, "event", event.Type+"."+event.Result, "eventError", event.ErrorCode, "previousVersion", event.PreviousVersion)
 	eventType, err := strconv.Atoi(event.Type)
 	if err != nil {
@@ -253,7 +253,7 @@ func processEvent(a *api.API, bootID string, appID string, group string, event *
 	if err != nil {
 		return err
 	}
-	if err := a.RegisterEvent(bootID, appID, group, eventType, eventResult, event.PreviousVersion, event.ErrorCode); err != nil {
+	if err := a.RegisterEvent(machineID, appID, group, eventType, eventResult, event.PreviousVersion, event.ErrorCode); err != nil {
 		return err
 	}
 	return nil
