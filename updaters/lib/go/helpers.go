@@ -113,6 +113,7 @@ func buildOmahaUpdateRequest(instanceID, appID, groupID, version string) *omaha.
 func buildOmahaEventRequest(instanceID, appID, groupID string, eventType, eventResult int) *omaha.Request {
 	req := &omaha.Request{}
 	app := req.AddApp(appID, "")
+	app.MachineID = instanceID
 	app.BootId = instanceID
 	app.Track = groupID
 	event := app.AddEvent()
