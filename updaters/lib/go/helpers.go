@@ -6,6 +6,7 @@ import (
 	"errors"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"strconv"
 
 	"github.com/coreos/go-omaha/omaha"
@@ -19,7 +20,7 @@ type Update struct {
 }
 
 const (
-	CoreRollerOmahaURL = "http://localhost:8000/omaha/"
+	defaultOmahaURL = "http://localhost:8000/omaha/"
 
 	// Event types
 	EventUpdateComplete         = 3
@@ -124,6 +125,11 @@ func buildOmahaEventRequest(instanceID, appID, groupID string, eventType, eventR
 }
 
 func doOmahaRequest(req *omaha.Request) (*omaha.Response, error) {
+	omahaURL := os.Getenv("CR_OMAHA_URL")
+	if omahaURL == "" {
+		omahaURL = defaultOmahaURL
+	}
+
 	httpClient := &http.Client{}
 
 	payload, err := xml.Marshal(req)
@@ -131,7 +137,7 @@ func doOmahaRequest(req *omaha.Request) (*omaha.Response, error) {
 		return nil, err
 	}
 
-	resp, err := httpClient.Post(CoreRollerOmahaURL, "text/xml", bytes.NewReader(payload))
+	resp, err := httpClient.Post(omahaURL, "text/xml", bytes.NewReader(payload))
 	if err != nil {
 		return nil, err
 	}
