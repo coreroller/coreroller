@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/coreos/go-semver/semver"
-	"gopkg.in/mgutz/dat.v1"
 )
 
 var (
@@ -154,7 +153,7 @@ func (api *API) enforceRolloutPolicy(instance *Instance, group *Group, updatesSt
 func (api *API) grantUpdate(instanceID, appID, version string) error {
 	_, err := api.dbR.
 		Update("instance_application").
-		Set("last_update_granted_ts", dat.NOW).
+		Set("last_update_granted_ts", nowUTC).
 		Set("last_update_version", version).
 		Set("update_in_progress", true).
 		Where("instance_id = $1 AND application_id = $2", instanceID, appID).

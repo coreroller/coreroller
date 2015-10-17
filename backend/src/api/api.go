@@ -16,6 +16,7 @@ import (
 
 const (
 	defaultDbURL = "postgres://postgres@127.0.0.1:5432/coreroller?sslmode=disable&connect_timeout=10"
+	nowUTC       = dat.UnsafeString("now() at time zone 'utc'")
 )
 
 var logger = log.New("api")

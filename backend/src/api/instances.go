@@ -119,7 +119,7 @@ func (api *API) RegisterInstance(instanceID, instanceIP, instanceVersion, appID,
 	result, err = tx.
 		Upsert("instance_application").
 		Columns("instance_id", "application_id", "group_id", "version", "last_check_for_updates").
-		Values(instanceID, appID, groupID, instanceVersion, dat.NOW).
+		Values(instanceID, appID, groupID, instanceVersion, nowUTC).
 		Where("instance_id = $1 AND application_id = $2", instanceID, appID).
 		Exec()
 
@@ -267,7 +267,7 @@ func (api *API) instancesQuery(p InstancesQueryParams) *dat.SelectDocBuilder {
 		Select("instance_id").
 		From("instance_application").
 		Where("application_id = $1 AND group_id = $2", p.ApplicationID, p.GroupID).
-		Where("last_check_for_updates > current_timestamp - interval '7 days'").
+		Where("last_check_for_updates > now() at time zone 'utc' - interval '7 days'").
 		OrderBy("last_check_for_updates DESC").
 		Paginate(p.Page, p.PerPage)
 

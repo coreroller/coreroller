@@ -212,9 +212,9 @@ func (api *API) getGroupUpdatesStats(group *Group) (*UpdatesStats, error) {
 			count(*) total_instances,
 			sum(case when last_update_version = $1 then 1 else 0 end) updates_to_current_version_granted, 
 			sum(case when update_in_progress = 'false' and last_update_version = $1 then 1 else 0 end) updates_to_current_version_completed, 
-			sum(case when last_update_granted_ts > current_timestamp - interval $2 then 1 else 0 end) updates_granted_in_last_period,
-			sum(case when update_in_progress = 'true' and current_timestamp - last_update_granted_ts <= interval $3 then 1 else 0 end) updates_in_progress,
-			sum(case when update_in_progress = 'true' and current_timestamp - last_update_granted_ts > interval $4 then 1 else 0 end) updates_timed_out
+			sum(case when last_update_granted_ts > now() at time zone 'utc' - interval $2 then 1 else 0 end) updates_granted_in_last_period,
+			sum(case when update_in_progress = 'true' and now() at time zone 'utc' - last_update_granted_ts <= interval $3 then 1 else 0 end) updates_in_progress,
+			sum(case when update_in_progress = 'true' and now() at time zone 'utc' - last_update_granted_ts > interval $4 then 1 else 0 end) updates_timed_out
 		FROM instance_application
 		WHERE group_id=$5`,
 		packageVersion, group.PolicyPeriodInterval, group.PolicyUpdateTimeout, group.PolicyUpdateTimeout, group.ID,
