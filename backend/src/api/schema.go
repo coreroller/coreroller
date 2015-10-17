@@ -125,11 +125,11 @@ DROP TABLE IF EXISTS instance_status_history CASCADE;
 CREATE TABLE instance_status_history (
 	id serial PRIMARY KEY,
 	status integer,
-	version SEMVER NOT NULL,
+	version SEMVER,
 	created_ts timestamp WITHOUT TIME ZONE DEFAULT (now() at time zone 'utc') NOT NULL,
 	instance_id varchar(50) NOT NULL REFERENCES instance (id) ON DELETE CASCADE,
 	application_id UUID NOT NULL REFERENCES application (id) ON DELETE CASCADE,
-	group_id UUID NOT NULL REFERENCES groups (id) ON DELETE CASCADE
+	group_id UUID REFERENCES groups (id) ON DELETE CASCADE
 );
 
 DROP TABLE IF EXISTS event_type CASCADE;

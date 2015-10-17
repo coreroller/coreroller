@@ -234,7 +234,7 @@ func (api *API) updateInstanceStatus(instanceID, appID string, newStatus int) er
 		query.Set("update_in_progress", false)
 	}
 
-	var lastUpdateVersion, groupID string
+	var lastUpdateVersion, groupID dat.NullString
 
 	if err := query.QueryScalar(&lastUpdateVersion, &groupID); err != nil {
 		return err
