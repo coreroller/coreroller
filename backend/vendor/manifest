@@ -34,6 +34,12 @@
 			"path": "/semver"
 		},
 		{
+			"importpath": "github.com/denisenkom/go-mssqldb",
+			"repository": "https://github.com/denisenkom/go-mssqldb",
+			"revision": "f6e253f56773336c1ae060de1f9238e2f9cd8cf2",
+			"branch": "master"
+		},
+		{
 			"importpath": "github.com/garyburd/redigo/internal",
 			"repository": "https://github.com/garyburd/redigo",
 			"revision": "9c474d0715937065f7e5b9f8d724a72ba55763e7",
@@ -46,6 +52,12 @@
 			"revision": "9c474d0715937065f7e5b9f8d724a72ba55763e7",
 			"branch": "master",
 			"path": "/redis"
+		},
+		{
+			"importpath": "github.com/go-sql-driver/mysql",
+			"repository": "https://github.com/go-sql-driver/mysql",
+			"revision": "527bcd55aab2e53314f1a150922560174b493034",
+			"branch": "master"
 		},
 		{
 			"importpath": "github.com/goji/param",
@@ -84,6 +96,12 @@
 			"branch": "master"
 		},
 		{
+			"importpath": "github.com/mattn/go-sqlite3",
+			"repository": "https://github.com/mattn/go-sqlite3",
+			"revision": "b808f01f660667b1510acf216aa2b9fe7f555ddb",
+			"branch": "master"
+		},
+		{
 			"importpath": "github.com/mgutz/ansi",
 			"repository": "https://github.com/mgutz/ansi",
 			"revision": "c286dcecd19ff979eeb73ea444e479b903f2cfcb",
@@ -115,15 +133,33 @@
 			"branch": "master"
 		},
 		{
+			"importpath": "github.com/mitchellh/cli",
+			"repository": "https://github.com/mitchellh/cli",
+			"revision": "8102d0ed5ea2709ade1243798785888175f6e415",
+			"branch": "master"
+		},
+		{
 			"importpath": "github.com/nozzle/throttler",
 			"repository": "https://github.com/nozzle/throttler",
 			"revision": "d9b45f19996c645d38c9266d1f5cf1990e930119",
 			"branch": "master"
 		},
 		{
+			"importpath": "github.com/olekukonko/tablewriter",
+			"repository": "https://github.com/olekukonko/tablewriter",
+			"revision": "b9346ac189c55dd419f85c7ad2cd56f810bf19d6",
+			"branch": "master"
+		},
+		{
 			"importpath": "github.com/pmylund/go-cache",
 			"repository": "https://github.com/pmylund/go-cache",
 			"revision": "93d85800f2fa6bd0a739e7bd612bfa3bc008b72d",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/rubenv/sql-migrate",
+			"repository": "https://github.com/rubenv/sql-migrate",
+			"revision": "53184e1edfb4f9655b0fa8dd2c23e7763f452bda",
 			"branch": "master"
 		},
 		{
@@ -146,6 +182,13 @@
 			"branch": "master"
 		},
 		{
+			"importpath": "golang.org/x/crypto/md4",
+			"repository": "https://go.googlesource.com/crypto",
+			"revision": "c8b9e6388ef638d5a8a9d865c634befdc46a6784",
+			"branch": "master",
+			"path": "/md4"
+		},
+		{
 			"importpath": "golang.org/x/crypto/ssh/terminal",
 			"repository": "https://go.googlesource.com/crypto",
 			"revision": "aedad9a179ec1ea11b7064c57cbc6dc30d7724ec",
@@ -159,10 +202,22 @@
 			"branch": "master"
 		},
 		{
+			"importpath": "gopkg.in/gorp.v1",
+			"repository": "https://gopkg.in/gorp.v1",
+			"revision": "c87af80f3cc5036b55b83d77171e156791085e2e",
+			"branch": "master"
+		},
+		{
 			"importpath": "gopkg.in/mgutz/dat.v1",
 			"repository": "https://gopkg.in/mgutz/dat.v1",
 			"revision": "1a548c71882f3597d93dc002382f6f1c983704af",
 			"branch": "master"
+		},
+		{
+			"importpath": "gopkg.in/yaml.v1",
+			"repository": "https://gopkg.in/yaml.v1",
+			"revision": "9f9df34309c04878acc86042b16630b0f696e1de",
+			"branch": "v1"
 		}
 	]
 }

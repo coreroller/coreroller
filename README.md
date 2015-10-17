@@ -128,7 +128,7 @@ The backend source code is located inside `backend/src` and is structured as fol
 
 - **Cmd `rollerd`**: is the main backend process, exposing the functionality described above in the different packages through its http server. It provides several http endpoints used to drive most of the functionality of the dashboard as well as handling the Omaha updates and events requests received from your servers and applications.
 
-- **Cmd `initdb`**: is just a helper to initialize your database, creating the necessary tables and populating them with some initial data.
+- **Cmd `initdb`**: is just a helper to reset and initialize your database, creating the necessary tables and populating them with some initial data. `rollerd` will initialize/migrate the database automatically when needed, so this process should only be used to wipe out all your data and start from a clean state.
 
 Please make sure that your code is formatted using `gofmt` and makes [gometalinter](https://github.com/alecthomas/gometalinter) happy :) 
 
@@ -145,8 +145,6 @@ If you plan to install it yourself locally, please be aware that the [semver](ht
 	psql -U postgres -c "create database coreroller_tests;"
 	psql -U postgres -d coreroller_tests -c "create extension \"uuid-ossp\";"
 	psql -U postgres -d coreroller_tests -c "create extension semver;
-
-Once your database is up and ready you can initialize it using the `initdb` binary you'll find inside the `backend/bin` folder after doing a `gb build` inside the project.
 
 ### Frontend
 
