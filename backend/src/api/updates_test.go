@@ -118,7 +118,7 @@ func TestGetUpdatePackage_MaxUpdatesLimitsReached(t *testing.T) {
 	defer a.Close()
 
 	maxUpdatesPerPeriod := 2
-	periodInterval := "50 milliseconds"
+	periodInterval := "100 milliseconds"
 
 	tTeam, _ := a.AddTeam(&Team{Name: "test_team"})
 	tApp, _ := a.AddApp(&Application{Name: "test_app", TeamID: tTeam.ID})
@@ -137,7 +137,7 @@ func TestGetUpdatePackage_MaxUpdatesLimitsReached(t *testing.T) {
 	_, err = a.GetUpdatePackage(uuid.NewV4().String(), "10.0.0.3", "12.0.0", tApp.ID, tGroup.ID)
 	assert.Equal(t, ErrMaxUpdatesPerPeriodLimitReached, err)
 
-	time.Sleep(50 * time.Millisecond)
+	time.Sleep(100 * time.Millisecond)
 
 	_, err = a.GetUpdatePackage(uuid.NewV4().String(), "10.0.0.3", "12.0.0", tApp.ID, tGroup.ID)
 	assert.Equal(t, ErrMaxConcurrentUpdatesLimitReached, err, "Period interval is over, but there are still two updates not completed or failed.")
@@ -153,8 +153,8 @@ func TestGetUpdatePackage_MaxTimedOutUpdatesLimitReached(t *testing.T) {
 	defer a.Close()
 
 	maxUpdatesPerPeriod := 2
-	periodInterval := "50 milliseconds"
-	updateTimeout := "100 milliseconds"
+	periodInterval := "100 milliseconds"
+	updateTimeout := "200 milliseconds"
 
 	tTeam, _ := a.AddTeam(&Team{Name: "test_team"})
 	tApp, _ := a.AddApp(&Application{Name: "test_app", TeamID: tTeam.ID})
@@ -168,12 +168,12 @@ func TestGetUpdatePackage_MaxTimedOutUpdatesLimitReached(t *testing.T) {
 	_, err = a.GetUpdatePackage(uuid.NewV4().String(), "10.0.0.2", "12.0.0", tApp.ID, tGroup.ID)
 	assert.NoError(t, err)
 
-	time.Sleep(50 * time.Millisecond)
+	time.Sleep(100 * time.Millisecond)
 
 	_, err = a.GetUpdatePackage(uuid.NewV4().String(), "10.0.0.3", "12.0.0", tApp.ID, tGroup.ID)
 	assert.Equal(t, ErrMaxConcurrentUpdatesLimitReached, err)
 
-	time.Sleep(50 * time.Millisecond)
+	time.Sleep(100 * time.Millisecond)
 
 	_, err = a.GetUpdatePackage(uuid.NewV4().String(), "10.0.0.3", "12.0.0", tApp.ID, tGroup.ID)
 	assert.Equal(t, ErrMaxTimedOutUpdatesLimitReached, err)
