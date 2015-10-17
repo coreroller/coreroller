@@ -89,6 +89,30 @@ func TestGetUpdatePackage_MaxUpdatesPerPeriodLimitReached_SafeMode(t *testing.T)
 	assert.Equal(t, ErrMaxUpdatesPerPeriodLimitReached, err, "Safe mode is enabled, first update should be completed before letting more through.")
 }
 
+func TestGetUpdatePackage_MaxUpdatesPerPeriodLimitReached_LimitUpdated(t *testing.T) {
+	a, _ := New(OptionInitDB)
+	defer a.Close()
+
+	tTeam, _ := a.AddTeam(&Team{Name: "test_team"})
+	tApp, _ := a.AddApp(&Application{Name: "test_app", TeamID: tTeam.ID})
+	tPkg, _ := a.AddPackage(&Package{Type: PkgTypeOther, URL: "http://sample.url/pkg", Version: "12.1.0", ApplicationID: tApp.ID})
+	tChannel, _ := a.AddChannel(&Channel{Name: "test_channel", Color: "blue", ApplicationID: tApp.ID, PackageID: dat.NullStringFrom(tPkg.ID)})
+	tGroup, _ := a.AddGroup(&Group{Name: "group", ApplicationID: tApp.ID, ChannelID: dat.NullStringFrom(tChannel.ID), PolicyUpdatesEnabled: true, PolicySafeMode: false, PolicyPeriodInterval: "15 minutes", PolicyMaxUpdatesPerPeriod: 1, PolicyUpdateTimeout: "60 minutes"})
+
+	instanceID := uuid.NewV4().String()
+	_, err := a.GetUpdatePackage(instanceID, "10.0.0.1", "12.0.0", tApp.ID, tGroup.ID)
+	assert.NoError(t, err)
+
+	_, err = a.GetUpdatePackage(uuid.NewV4().String(), "10.0.0.2", "12.0.0", tApp.ID, tGroup.ID)
+	assert.Equal(t, ErrMaxUpdatesPerPeriodLimitReached, err, "Max 1 update per period, limit reached")
+
+	tGroup.PolicyMaxUpdatesPerPeriod = 2
+	_ = a.UpdateGroup(tGroup)
+
+	_, err = a.GetUpdatePackage(uuid.NewV4().String(), "10.0.0.2", "12.0.0", tApp.ID, tGroup.ID)
+	assert.NoError(t, err)
+}
+
 func TestGetUpdatePackage_MaxUpdatesLimitsReached(t *testing.T) {
 	a, _ := New(OptionInitDB)
 	defer a.Close()
