@@ -15,11 +15,11 @@ class ApplicationItemGroupsList extends React.Component {
 
   render() {
     return(
-      <span className="apps--groupsList">(
+      <span className="apps--groupsList">
         {this.props.groups.map((group, i) =>
           <Item key={i} group={group} appID={this.props.appID} appName={this.props.appName} />
         )}
-      )</span>
+      </span>
     )
   }
 

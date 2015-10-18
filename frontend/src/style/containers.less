@@ -186,6 +186,28 @@
       padding: 0px 5px;
       color: @font-color;
     }
+
+    & > a:first-child:before {
+      content: "(";
+      padding: 0px;
+      color: @font-color;
+
+      &:hover {
+        text-decoration: none;
+        color: @font-color;
+      }
+    }
+
+    & > a:last-child:after {
+      content: ")";
+      padding: 0px;
+      color: @font-color;
+
+      &:hover {
+        text-decoration: none;
+        color: @font-color;
+      }
+    }
   }
 
   .apps--channelsList .channelLabel {
