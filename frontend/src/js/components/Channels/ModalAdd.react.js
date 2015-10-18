@@ -106,6 +106,9 @@ class ModalAdd extends React.Component {
                   <option value={packageItem.id} key={i}>{packageItem.version}</option>
                 )}
               </Input>
+              <div className="form--legend minlegend marginBottom15">
+                <b>NOTE:</b> updates only happen when a <b>higher</b> version is available. This means that if your instances are running version {"1.3.0"} and the channel is updated pointing it to a lower version (lets say {"1.2.0"}), they won’t execute a downgrade. Only after the channel is pointing to a version higher than {"1.3.0"} they will receive an update.
+              </div>   
               <div className="modal--footer">
                 <Row>
                   <Col xs={8}>
