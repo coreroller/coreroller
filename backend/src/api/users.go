@@ -45,14 +45,14 @@ func (api *API) GetUser(username string) (*User, error) {
 
 // UpdateUserPassword updates the password of the provided user.
 func (api *API) UpdateUserPassword(username, newPassword string) error {
-	h := md5.New()
-	if _, err := io.WriteString(h, username+":"+realm+":"+newPassword); err != nil {
+	secret, err := generateSecret(username, newPassword, realm)
+	if err != nil {
 		return err
 	}
 
 	result, err := api.dbR.
 		Update("users").
-		Set("secret", fmt.Sprintf("%x", h.Sum(nil))).
+		Set("secret", secret).
 		Where("username = $1", username).
 		Exec()
 
@@ -62,4 +62,13 @@ func (api *API) UpdateUserPassword(username, newPassword string) error {
 	}
 
 	return nil
+}
+
+func generateSecret(username, password, realm string) (string, error) {
+	h := md5.New()
+	if _, err := io.WriteString(h, username+":"+realm+":"+password); err != nil {
+		return "", err
+	}
+
+	return fmt.Sprintf("%x", h.Sum(nil)), nil
 }
