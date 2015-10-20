@@ -7,9 +7,6 @@ Requires=docker.service postgres.service
 User=core
 TimeoutStartSec=0
 
-# To seed the database for the first time, please run this manually before starting this unit.
-#   /usr/bin/docker run coreroller/rollerd bin/initdb
-
 ExecStartPre=-/usr/bin/docker kill rollerd
 ExecStartPre=-/usr/bin/docker rm rollerd
 ExecStart=/usr/bin/docker run --name rollerd \

@@ -21,7 +21,4 @@ CREATE EXTENSION "uuid-ossp";
 CREATE EXTENSION semver;
 EOF
 
-echo "Installing the coreroller database with CoreRoller schema..."
-$COREROLLER_DIR/backend/bin/initdb
-
 rm -f /.firstrun

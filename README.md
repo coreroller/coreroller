@@ -26,7 +26,7 @@ Screenshots:
 - Dashboard to control and monitor your applications updates
 - Manage updates for your own applications, not just for CoreOS
 - Define your own groups and channels, even for the CoreOS application (pre-installed)
-- Define rollout policies per group, controlling how updates should be applied to a set of instances
+- Define roll-out policies per group, controlling how updates should be applied to a set of instances
 - Pause/resume updates at any time at the group level
 - Statistics about versions installed in your instances, updates progress status, etc
 - Activity stream to get notified about important events or errors
@@ -59,11 +59,18 @@ and you should be ready to go. Default username/password is `admin/admin`.
 
 This demo container runs `PostgreSQL` (the datastore used by CoreRoller) and the `CoreRoller server` (aka rollerd).
 
-In addition to this image that bundles everything you need to have a quick look at CoreRoller, there are some other images available in the docker hub that may be helpful to you in you plan to do a more serious deployment.
+In addition to this [coreroller/demo](https://hub.docker.com/r/coreroller/demo) image, there are some other images available in the docker hub that may be helpful to you in you plan to do a more serious deployment.
 
-- **coreroller/postgres**: this image runs PostgreSQL but it contains the required extensions already installed and the databases used by CoreRoller created. Do not forget to setup properly the volumes in the container to avoid any data loss.
+- **[coreroller/postgres](https://hub.docker.com/r/coreroller/postgres)**: this image runs PostgreSQL but it contains the required extensions already installed and the databases used by CoreRoller created. Do not forget to setup properly the volumes in the container to avoid any data loss.
 
-- **coreroller/rollerd**: this image runs the backend server, a dependency free Golang binary that will power the dashboard and serve all Omaha updates and events requests.
+- **[coreroller/rollerd](https://hub.docker.com/r/coreroller/rollerd)**: this image runs the backend server, a dependency free Golang binary that will power the dashboard and serve all Omaha updates and events requests.
+
+You don't have to build these images yourself since they all have been made available in Docker Hub, and will be rebuild automatically.
+
+If you'd like to build one yourself - to try something for example, just do the following (let's say for rollerd):
+
+	cd coreroller/rollerd
+	docker build -t coreroller/rollerd .
 
 You will find the Dockerfiles used to build these images in `backend/docker`. Additionally, in the `backend/systemd` directory there are some systemd unit files that might be handy in case you want to deploy CoreRoller in your CoreOS cluster using `fleet`.
 
@@ -120,7 +127,7 @@ The CoreRoller backend (aka rollerd) is a Golang application. Builds and vendore
 
 The backend source code is located inside `backend/src` and is structured as follows:
 
-- **Package `api`**: provides functionality to do CRUD operations on all elements found in CoreRoller (applications, groups, channels, packages, etc), abstracting the rest of the components from the underlying datastore (PostgreSQL). It also controls the groups' rollout policy logic and the instances/events registration.
+- **Package `api`**: provides functionality to do CRUD operations on all elements found in CoreRoller (applications, groups, channels, packages, etc), abstracting the rest of the components from the underlying datastore (PostgreSQL). It also controls the groups' roll-out policy logic and the instances/events registration.
 
 - **Package `omaha`**: provides functionality to validate, handle, process and reply to Omaha updates and events requests received from the Omaha clients. It relies on the `api` package to get update packages, store events, or register instances when needed.
 
@@ -128,7 +135,7 @@ The backend source code is located inside `backend/src` and is structured as fol
 
 - **Cmd `rollerd`**: is the main backend process, exposing the functionality described above in the different packages through its http server. It provides several http endpoints used to drive most of the functionality of the dashboard as well as handling the Omaha updates and events requests received from your servers and applications.
 
-- **Cmd `initdb`**: is just a helper to reset and initialize your database, creating the necessary tables and populating them with some initial data. `rollerd` will initialize/migrate the database automatically when needed, so this process should only be used to wipe out all your data and start from a clean state.
+- **Cmd `initdb`**: is just a helper to reset your database, and causing the migration to be re-run. `rollerd` will apply all database migrations automatically, so this process should only be used to wipe out all your data and start from a clean state.
 
 Please make sure that your code is formatted using `gofmt` and makes [gometalinter](https://github.com/alecthomas/gometalinter) happy :) 
 
