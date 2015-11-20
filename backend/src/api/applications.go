@@ -213,5 +213,6 @@ func (api *API) appPackagesQuery() *dat.SelectDocBuilder {
 		SelectDoc("*").
 		From("package").
 		Where("application_id = application.id").
-		OrderBy("version DESC")
+		OrderBy("version DESC").
+		Limit(10)
 }
