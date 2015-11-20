@@ -267,7 +267,7 @@ func (api *API) instancesQuery(p InstancesQueryParams) *dat.SelectDocBuilder {
 		Select("instance_id").
 		From("instance_application").
 		Where("application_id = $1 AND group_id = $2", p.ApplicationID, p.GroupID).
-		Where("last_check_for_updates > now() at time zone 'utc' - interval '7 days'").
+		Where("last_check_for_updates > now() at time zone 'utc' - interval '3 days'").
 		OrderBy("last_check_for_updates DESC").
 		Paginate(p.Page, p.PerPage)
 
