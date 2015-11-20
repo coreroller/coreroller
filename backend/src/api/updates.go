@@ -177,7 +177,7 @@ func inOfficeHoursNow(tz string) bool {
 	if now.Weekday() == time.Saturday || now.Weekday() == time.Sunday {
 		return false
 	}
-	if now.Hour() < 9 || now.Hour() >= 16 {
+	if now.Hour() < 9 || now.Hour() >= 17 {
 		return false
 	}
 
