@@ -17,8 +17,10 @@ class InstancesStore extends Store {
     API.getInstances(applicationID, groupID).
       done(instances => {
         let application = this.instances.hasOwnProperty(applicationID) ? this.instances[applicationID] : this.instances[applicationID] = {}
-        application[groupID] = instances
-        this.emitChange()
+        let sortedInstances = _.sortBy(instances, function(instance) { 
+          return instance.application.last_check_for_updates
+        })
+      this.emitChange()
       })
   }
 
