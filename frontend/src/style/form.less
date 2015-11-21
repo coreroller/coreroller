@@ -1,6 +1,7 @@
 // Form
 
-input[type='text'] {
+input[type='text'],
+input[type='search'] {
   height: 30px;
   border: 1px solid @grey-50;
   padding: 5px 12px;
@@ -108,7 +109,8 @@ input[type='text'] {
   }
 }
 
-.searchblock input[type='text'] + label {
+.searchblock input[type='text'] + label,
+.searchblock input[type='search'] {
   display: inline-block;
   max-width: 100%;
   /* margin-bottom: 5px; */
@@ -136,6 +138,23 @@ input[type='text'] {
 
   &.removing:before {
     opacity: 0;
+  }
+}
+
+.searchblock > div {
+
+  &:before {
+    content: "\f002";
+    font: normal normal normal 14px/1 FontAwesome;
+    position: absolute;
+    top: 38px;
+    right: 10px;
+    z-index: 1;
+  }
+  
+  input[type='search'] {
+    top: 30px;
+    font-weight: normal;
   }
 }
 

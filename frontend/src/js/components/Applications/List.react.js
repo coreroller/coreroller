@@ -1,16 +1,19 @@
 import { applicationsStore } from "../../stores/Stores"
 import React, { PropTypes } from "react"
-import { Col, Row } from "react-bootstrap"
+import { Col, Row, Button } from "react-bootstrap"
 import ModalButton from "../Common/ModalButton.react"
 import Item from "./Item.react"
 import _ from "underscore"
+import Loader from "halogen/ScaleLoader"
+import SearchInput from "react-search-input"
 
 class List extends React.Component {
 
   constructor(props) {
     super(props)
-    this.onChange = this.onChange.bind(this);
-    this.state = {applications: applicationsStore.getCachedApplications()}
+    this.onChange = this.onChange.bind(this)
+    this.searchUpdated = this.searchUpdated.bind(this)
+    this.state = {applications: applicationsStore.getCachedApplications(), loading: true, searchTerm: ""}
   }
 
   componentDidMount() {
@@ -23,16 +26,32 @@ class List extends React.Component {
 
   onChange() {
     this.setState({
+      loading: false,
       applications: applicationsStore.getCachedApplications()
     })
   }
 
+  searchUpdated(term) {
+    this.setState({searchTerm: term})
+  }
+
   render() {
-    let applications = this.state.applications ? this.state.applications : []
-    let entries = ""
+    let applications = this.state.applications ? this.state.applications : [],
+        entries = ""
+
+    if (this.refs.search) {
+      var filters = ["name"]
+      applications = applications.filter(this.refs.search.filter(filters))
+    }
 
     if (_.isEmpty(applications)) {
-      entries = <div className="emptyBox">Ops, it looks like you have not created any application yet..<br/><br/> Now is a great time to create your first one, just click on the plus symbol above.</div>
+      if (this.state.loading) {
+        entries = <div className="icon-loading-container"><Loader color="#00AEEF" size="35px" margin="2px"/></div>
+      } else if (this.state.searchTerm) {
+        entries = <div className="emptyBox">No results found.</div>        
+      } else {
+        entries = <div className="emptyBox">Ops, it looks like you have not created any application yet..<br/><br/> Now is a great time to create your first one, just click on the plus symbol above.</div>
+      }
     } else {
       entries = _.map(applications, (application, i) => {
         return <Item key={application.id} application={application} />
@@ -48,7 +67,7 @@ class List extends React.Component {
           </Col>
           <Col xs={7} className="alignRight">
             <div className="searchblock">
-              <input type="text" name="searchApps" id="searchApps" placeholder="Search..." autoComplete="off" />
+              <SearchInput ref="search" onChange={this.searchUpdated} placeholder="Search..." />
               <label htmlFor="searchApps"></label>
             </div>
           </Col>            
