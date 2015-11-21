@@ -3,13 +3,14 @@ import React, { PropTypes } from "react"
 import { Row, Col } from "react-bootstrap"
 import List from "./List.react"
 import _ from "underscore"
+import Loader from "halogen/ScaleLoader"
 
 class Container extends React.Component {
 
   constructor(props) {
     super(props)
     this.onChange = this.onChange.bind(this);
-    this.state = {instances: instancesStore.getInstances(props.appID, props.groupID)}
+    this.state = {instances: instancesStore.getInstances(props.appID, props.groupID), loading: true}
   }
 
   static PropTypes: {
@@ -29,6 +30,7 @@ class Container extends React.Component {
 
   onChange() {
     this.setState({
+      loading: false,
       instances: instancesStore.getAll()
     })
   }
@@ -39,7 +41,11 @@ class Container extends React.Component {
     let entries = ""
 
     if (_.isEmpty(groupInstances)) {
-      entries = <div className="emptyBox">No instances have registered yet in this group.<br/><br/>Registration will happen automatically the first time the instance requests an update.</div>
+      if (this.state.loading) {
+        entries = <div className="icon-loading-container"><Loader color="#00AEEF" size="35px" margin="2px"/></div>
+      } else {
+        entries = <div className="emptyBox">No instances have registered yet in this group.<br/><br/>Registration will happen automatically the first time the instance requests an update.</div>
+      }
     } else {
       entries = <List 
               instances={groupInstances} 
