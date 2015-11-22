@@ -20,7 +20,8 @@ class InstancesStore extends Store {
         let sortedInstances = _.sortBy(instances, function(instance) { 
           return instance.application.last_check_for_updates
         })
-      this.emitChange()
+        application[groupID] = sortedInstances.reverse()
+        this.emitChange()
       })
   }
 
