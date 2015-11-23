@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"time"
 
 	"gopkg.in/mgutz/dat.v1"
@@ -179,7 +180,12 @@ func (api *API) appsQuery() *dat.SelectDocBuilder {
 // appInstancesQuery returns a SQL query prepared to return the number of
 // instances running a given application.
 func (api *API) appInstancesQuery() string {
-	return "SELECT count(*) FROM instance_application WHERE application_id = application.id"
+	return fmt.Sprintf(`
+	SELECT count(*)
+	FROM instance_application 
+	WHERE application_id = application.id AND 
+	      last_check_for_updates > now() at time zone 'utc' - interval '%s'
+	`, validityInterval)
 }
 
 // appChannelsQuery returns a SelectDocBuilder prepared to return all channels

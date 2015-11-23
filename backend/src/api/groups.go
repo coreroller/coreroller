@@ -207,18 +207,20 @@ func (api *API) getGroupUpdatesStats(group *Group) (*UpdatesStats, error) {
 		packageVersion = group.Channel.Package.Version
 	}
 
-	err := api.dbR.SQL(`
-		SELECT
-			count(*) total_instances,
-			sum(case when last_update_version = $1 then 1 else 0 end) updates_to_current_version_granted, 
-			sum(case when update_in_progress = 'false' and last_update_version = $1 then 1 else 0 end) updates_to_current_version_completed, 
-			sum(case when last_update_granted_ts > now() at time zone 'utc' - interval $2 then 1 else 0 end) updates_granted_in_last_period,
-			sum(case when update_in_progress = 'true' and now() at time zone 'utc' - last_update_granted_ts <= interval $3 then 1 else 0 end) updates_in_progress,
-			sum(case when update_in_progress = 'true' and now() at time zone 'utc' - last_update_granted_ts > interval $4 then 1 else 0 end) updates_timed_out
-		FROM instance_application
-		WHERE group_id=$5`,
-		packageVersion, group.PolicyPeriodInterval, group.PolicyUpdateTimeout, group.PolicyUpdateTimeout, group.ID,
-	).QueryStruct(&updatesStats)
+	query := fmt.Sprintf(`
+	SELECT
+		count(*) total_instances,
+		sum(case when last_update_version = $1 then 1 else 0 end) updates_to_current_version_granted, 
+		sum(case when update_in_progress = 'false' and last_update_version = $1 then 1 else 0 end) updates_to_current_version_completed, 
+		sum(case when last_update_granted_ts > now() at time zone 'utc' - interval $2 then 1 else 0 end) updates_granted_in_last_period,
+		sum(case when update_in_progress = 'true' and now() at time zone 'utc' - last_update_granted_ts <= interval $3 then 1 else 0 end) updates_in_progress,
+		sum(case when update_in_progress = 'true' and now() at time zone 'utc' - last_update_granted_ts > interval $4 then 1 else 0 end) updates_timed_out
+	FROM instance_application
+	WHERE group_id=$5 AND last_check_for_updates > now() at time zone 'utc' - interval '%s'
+	`, validityInterval)
+
+	err := api.dbR.SQL(query, packageVersion, group.PolicyPeriodInterval, group.PolicyUpdateTimeout, group.PolicyUpdateTimeout, group.ID).
+		QueryStruct(&updatesStats)
 	if err != nil {
 		return nil, err
 	}
@@ -278,12 +280,17 @@ func (api *API) groupChannelQuery() *dat.SelectDocBuilder {
 // groupVersionBreakdownQuery returns a SQL query prepared to return the version
 // breakdown of all instances running on a given group.
 func (api *API) groupVersionBreakdownQuery() string {
-	return `
+	return fmt.Sprintf(`
 	SELECT version, count(*) as instances, (count(*) * 100.0 / total) as percentage
-	FROM instance_application, (SELECT count(*) as total FROM instance_application WHERE group_id=groups.id) totals
-	WHERE group_id=groups.id
+	FROM instance_application, (
+		SELECT count(*) as total 
+		FROM instance_application 
+		WHERE group_id=groups.id AND last_check_for_updates > now() at time zone 'utc' - interval '%s'
+		) totals
+	WHERE group_id=groups.id AND last_check_for_updates > now() at time zone 'utc' - interval '%s'
 	GROUP BY version, total
-	ORDER BY version desc`
+	ORDER BY version desc
+	`, validityInterval, validityInterval)
 }
 
 // groupInstancesStatusQuery returns a SQL query prepared to return a summary
@@ -301,7 +308,7 @@ func (api *API) groupInstancesStatusQuery() string {
 		sum(case when status = %d then 1 else 0 end) downloading,
 		sum(case when status = %d then 1 else 0 end) onhold
 	FROM instance_application
-	WHERE group_id=groups.id`,
+	WHERE group_id=groups.id AND last_check_for_updates > now() at time zone 'utc' - interval '%s'`,
 		InstanceStatusError, InstanceStatusUpdateGranted, InstanceStatusComplete, InstanceStatusInstalled,
-		InstanceStatusDownloaded, InstanceStatusDownloading, InstanceStatusOnHold)
+		InstanceStatusDownloaded, InstanceStatusDownloading, InstanceStatusOnHold, validityInterval)
 }

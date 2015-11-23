@@ -42,6 +42,10 @@ const (
 	InstanceStatusOnHold
 )
 
+const (
+	validityInterval = "1 days"
+)
+
 // Instance represents an instance running one or more applications for which
 // CoreRoller can provide updates.
 type Instance struct {
@@ -255,7 +259,8 @@ func (api *API) instanceAppQuery(appID string) *dat.SelectDocBuilder {
 	return api.dbR.
 		SelectDoc("version", "status", "last_check_for_updates", "last_update_version", "update_in_progress", "application_id", "group_id").
 		From("instance_application").
-		Where("instance_id = instance.id AND application_id = $1", appID)
+		Where("instance_id = instance.id AND application_id = $1", appID).
+		Where(fmt.Sprintf("last_check_for_updates > now() at time zone 'utc' - interval '%s'", validityInterval))
 }
 
 // instancesQuery returns a SelectDocBuilder prepared to return all instances
@@ -267,7 +272,7 @@ func (api *API) instancesQuery(p InstancesQueryParams) *dat.SelectDocBuilder {
 		Select("instance_id").
 		From("instance_application").
 		Where("application_id = $1 AND group_id = $2", p.ApplicationID, p.GroupID).
-		Where("last_check_for_updates > now() at time zone 'utc' - interval '3 days'").
+		Where(fmt.Sprintf("last_check_for_updates > now() at time zone 'utc' - interval '%s'", validityInterval)).
 		Paginate(p.Page, p.PerPage)
 
 	if p.Status != 0 {
