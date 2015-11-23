@@ -39,12 +39,12 @@ class Item extends React.Component {
   render() {
     let ampm = moment.utc(this.props.entry.created_ts + "+00:00").local().format("a"),
         time = moment.utc(this.props.entry.created_ts + "+00:00").local().format("HH:mm"),
-        subtitle = "GROUP:",
-        name = this.state.entryClass.groupName
+        subtitle = "",
+        name = ""
 
-    if (this.state.entryClass.type == "activityChannelPackageUpdated") {
-      subtitle = "APPLICATION:"
-      name = this.state.entryClass.appName
+    if (this.state.entryClass.type !== "activityChannelPackageUpdated") {
+      subtitle = "GROUP:"
+      name = this.state.entryClass.groupName
     }
 
     return ( 
