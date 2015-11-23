@@ -1,7 +1,11 @@
 package api
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
+	"net/http"
+	"os"
 	"time"
 
 	"gopkg.in/mgutz/dat.v1"
@@ -26,6 +30,14 @@ const (
 const (
 	pgDateFormat = "2006-01-02 150405.000"
 )
+
+// activityContext represents the context of a given activity entry.
+type activityContext struct {
+	appID      string
+	groupID    string
+	channelID  string
+	instanceID string
+}
 
 // Activity represents a CoreRoller activity entry.
 type Activity struct {
@@ -136,7 +148,17 @@ func (api *API) newGroupActivityEntry(class int, severity int, version, appID, g
 		Values(class, severity, version, appID, groupID).
 		Exec()
 
-	return err
+	if err != nil {
+		return err
+	}
+
+	ctx := &activityContext{
+		appID:   appID,
+		groupID: groupID,
+	}
+	go api.postHipchat(class, severity, version, ctx)
+
+	return nil
 }
 
 // newChannelActivityEntry creates a new activity entry related to a specific
@@ -147,7 +169,17 @@ func (api *API) newChannelActivityEntry(class int, severity int, version, appID,
 		Values(class, severity, version, appID, channelID).
 		Exec()
 
-	return err
+	if err != nil {
+		return err
+	}
+
+	ctx := &activityContext{
+		appID:     appID,
+		channelID: channelID,
+	}
+	go api.postHipchat(class, severity, version, ctx)
+
+	return nil
 }
 
 // newInstanceActivityEntry creates a new activity entry related to a specific
@@ -158,5 +190,81 @@ func (api *API) newInstanceActivityEntry(class int, severity int, version, appID
 		Values(class, severity, version, appID, groupID, instanceID).
 		Exec()
 
-	return err
+	if err != nil {
+		return err
+	}
+
+	ctx := &activityContext{
+		appID:      appID,
+		groupID:    groupID,
+		instanceID: instanceID,
+	}
+	go api.postHipchat(class, severity, version, ctx)
+
+	return nil
+}
+
+// EXPERIMENTAL! This is an experiment playing a bit with Hipchat
+//
+// postHipchat builds and posts a message representing the activity entry
+// provided to Hipchat. This is just an experiment.
+func (api *API) postHipchat(class, severity int, version string, ctx *activityContext) {
+	room := os.Getenv("CR_HIPCHAT_ROOM")
+	token := os.Getenv("CR_HIPCHAT_TOKEN")
+	if room == "" || token == "" {
+		return
+	}
+
+	var msg bytes.Buffer
+	var color string
+
+	app, _ := api.GetApp(ctx.appID)
+	fmt.Fprintf(&msg, "<b>%s</b> ", app.Name)
+
+	if ctx.groupID != "" {
+		group, _ := api.GetGroup(ctx.groupID)
+		fmt.Fprintf(&msg, "> <b>%s</b>", group.Name)
+	}
+	fmt.Fprint(&msg, "<br/>")
+
+	switch class {
+	case activityPackageNotFound:
+		fmt.Fprint(&msg, "An update request could not be processed because the group's channel is not linked to any package")
+		color = "red"
+	case activityRolloutStarted:
+		fmt.Fprintf(&msg, "Version <i>%s</i> roll out started", version)
+		color = "purple"
+	case activityRolloutFinished:
+		fmt.Fprintf(&msg, "Version <i>%s</i> successfully rolled out", version)
+		color = "green"
+	case activityRolloutFailed:
+		fmt.Fprintf(&msg, "There was an error rolling out version <i>%s</i> as the first update attempt failed. Group's updates have been disabled", version)
+		color = "red"
+	case activityInstanceUpdateFailed:
+		instance, _ := api.GetInstance(ctx.instanceID, ctx.appID)
+		fmt.Fprintf(&msg, "Instance <i>%s</i> reported an error while processing update to version <i>%s</i>", instance.IP, version)
+		color = "yellow"
+	case activityChannelPackageUpdated:
+		channel, _ := api.GetChannel(ctx.channelID)
+		fmt.Fprintf(&msg, "Channel <i>%s</i> is now pointing to version <i>%s</i>", channel.Name, version)
+		color = "purple"
+	}
+
+	body := map[string]interface{}{
+		"message_format": "html",
+		"message":        msg.String(),
+		"color":          color,
+		"notify":         true,
+	}
+	bodyJSON, err := json.Marshal(body)
+	if err != nil {
+		return
+	}
+
+	url := "https://api.hipchat.com/v2/room/%s/notification?auth_token=%s"
+	resp, err := http.Post(fmt.Sprintf(url, room, token), "application/json", bytes.NewReader(bodyJSON))
+	if err != nil {
+		return
+	}
+	resp.Body.Close()
 }
