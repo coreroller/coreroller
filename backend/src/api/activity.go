@@ -93,7 +93,7 @@ func (api *API) activityQuery(teamID string, p ActivityQueryParams) *dat.SelectD
 		From(`
 			activity a 
 			INNER JOIN application app ON (a.application_id = app.id)
-			INNER JOIN groups g ON (a.group_id = g.id)
+			LEFT JOIN groups g ON (a.group_id = g.id)
 			LEFT JOIN channel c ON (a.channel_id = c.id)
 		`).
 		Where("app.team_id = $1", teamID).
