@@ -123,7 +123,7 @@ func (api *API) enforceRolloutPolicy(instance *Instance, group *Group, updatesSt
 	}
 
 	effectiveMaxUpdates := group.PolicyMaxUpdatesPerPeriod
-	if group.PolicySafeMode && updatesStats.UpdatesToCurrentVersionCompleted == 0 {
+	if group.PolicySafeMode && updatesStats.UpdatesToCurrentVersionAttempted == 0 {
 		effectiveMaxUpdates = 1
 	}
 

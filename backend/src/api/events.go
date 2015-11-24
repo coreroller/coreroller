@@ -151,7 +151,7 @@ func (api *API) triggerEventConsequences(instanceID, appID, groupID, lastUpdateV
 		if err != nil {
 			return err
 		}
-		if updatesStats.UpdatesToCurrentVersionCompleted == updatesStats.TotalInstances {
+		if updatesStats.UpdatesToCurrentVersionSucceeded == updatesStats.TotalInstances {
 			_ = api.setGroupRolloutInProgress(groupID, false)
 			_ = api.newGroupActivityEntry(activityRolloutFinished, activitySuccess, lastUpdateVersion, appID, groupID)
 		}
@@ -177,14 +177,10 @@ func (api *API) triggerEventConsequences(instanceID, appID, groupID, lastUpdateV
 		if err != nil {
 			return err
 		}
-		if updatesStats.UpdatesToCurrentVersionCompleted == 1 {
+		if updatesStats.UpdatesToCurrentVersionAttempted == 1 {
 			_ = api.disableUpdates(groupID)
 			_ = api.setGroupRolloutInProgress(groupID, false)
 			_ = api.newGroupActivityEntry(activityRolloutFailed, activityError, lastUpdateVersion, appID, groupID)
-		}
-		if updatesStats.UpdatesToCurrentVersionCompleted == updatesStats.TotalInstances {
-			_ = api.setGroupRolloutInProgress(groupID, false)
-			_ = api.newGroupActivityEntry(activityRolloutFinished, activitySuccess, lastUpdateVersion, appID, groupID)
 		}
 	}
 

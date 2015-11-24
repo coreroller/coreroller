@@ -187,7 +187,7 @@ func TestGetUpdatePackage_RolloutStats(t *testing.T) {
 	tApp, _ := a.AddApp(&Application{Name: "test_app", TeamID: tTeam.ID})
 	tPkg, _ := a.AddPackage(&Package{Type: PkgTypeOther, URL: "http://sample.url/pkg", Version: "12.1.0", ApplicationID: tApp.ID})
 	tChannel, _ := a.AddChannel(&Channel{Name: "test_channel", Color: "blue", ApplicationID: tApp.ID, PackageID: dat.NullStringFrom(tPkg.ID)})
-	tGroup, _ := a.AddGroup(&Group{Name: "test_group", ApplicationID: tApp.ID, ChannelID: dat.NullStringFrom(tChannel.ID), PolicyUpdatesEnabled: true, PolicySafeMode: true, PolicyPeriodInterval: "15 minutes", PolicyMaxUpdatesPerPeriod: 3, PolicyUpdateTimeout: "60 minutes"})
+	tGroup, _ := a.AddGroup(&Group{Name: "test_group", ApplicationID: tApp.ID, ChannelID: dat.NullStringFrom(tChannel.ID), PolicyUpdatesEnabled: true, PolicySafeMode: true, PolicyPeriodInterval: "15 minutes", PolicyMaxUpdatesPerPeriod: 4, PolicyUpdateTimeout: "60 minutes"})
 
 	instance1, _ := a.RegisterInstance(uuid.NewV4().String(), "10.0.0.1", "1.0.0", tApp.ID, tGroup.ID)
 	instance2, _ := a.RegisterInstance(uuid.NewV4().String(), "10.0.0.1", "1.0.0", tApp.ID, tGroup.ID)
@@ -223,9 +223,16 @@ func TestGetUpdatePackage_RolloutStats(t *testing.T) {
 	_ = a.RegisterEvent(instance3.ID, tApp.ID, tGroup.ID, EventUpdateComplete, ResultFailed, "", "")
 
 	group, _ = a.GetGroup(tGroup.ID)
-	assert.False(t, group.RolloutInProgress)
+	assert.True(t, group.RolloutInProgress)
 	assert.Equal(t, 2, group.InstancesStats.Complete)
 	assert.Equal(t, 1, group.InstancesStats.Error)
+
+	_, _ = a.GetUpdatePackage(instance3.ID, "10.0.0.3", "12.0.0", tApp.ID, tGroup.ID)
+	_ = a.RegisterEvent(instance3.ID, tApp.ID, tGroup.ID, EventUpdateComplete, ResultSuccessReboot, "", "")
+
+	group, _ = a.GetGroup(tGroup.ID)
+	assert.False(t, group.RolloutInProgress)
+	assert.Equal(t, 3, group.InstancesStats.Complete)
 }
 
 func TestGetUpdatePackage_UpdateInProgressOnInstance(t *testing.T) {
