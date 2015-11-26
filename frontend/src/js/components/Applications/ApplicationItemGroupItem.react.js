@@ -13,10 +13,12 @@ class ApplicationItemGroupItem extends React.Component {
   }
 
   render() {
+    const instances_total = this.props.group.instances_stats.total ? "(" + this.props.group.instances_stats.total + ")" : ""
+
     return(
       <Link to="GroupLayout" params={{appID: this.props.group.application_id, groupID: this.props.group.id}}>
         <span className="activeLink lighter">
-          {this.props.group.name} <i className="fa fa-caret-right"></i>
+          {this.props.group.name} {instances_total} <i className="fa fa-caret-right"></i>
         </span> 
       </Link>
     )
