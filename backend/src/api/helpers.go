@@ -4,7 +4,7 @@ import "time"
 
 const (
 	defaultPage    uint64 = 1
-	defaultPerPage uint64 = 100
+	defaultPerPage uint64 = 25
 )
 
 // validatePaginationParams validates the pagination parameters provided,
