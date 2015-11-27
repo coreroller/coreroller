@@ -196,7 +196,7 @@ func (api *API) appChannelsQuery() *dat.SelectDocBuilder {
 		One("package", api.channelPackageQuery()).
 		From("channel").
 		Where("application_id = application.id").
-		OrderBy("created_ts DESC")
+		OrderBy("name ASC")
 }
 
 // appGroupsQuery returns a SelectDocBuilder prepared to return all groups of a
