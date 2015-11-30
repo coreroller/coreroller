@@ -15,10 +15,6 @@ import (
 
 var logger = log.New("omaha")
 
-const (
-	debug bool = true
-)
-
 var (
 	coreosAppID, _    = uuid.FromString("e96281a6-d1af-4bde-9a0a-97b76e56dc57")
 	coreosGroupAlpha  = "5b810680-e36a-4879-b98a-4f989e80b899"
@@ -269,14 +265,14 @@ func readOmahaRequest(body io.Reader) (*omahaSpec.Request, error) {
 	}
 
 	// Debug helper
-	encodeToXMLAndPrint(omahaReq, debug)
+	encodeToXMLAndPrint(omahaReq)
 
 	return omahaReq, nil
 }
 
 func writeXMLResponse(w *io.PipeWriter, v interface{}) error {
 	// Debug helper
-	encodeToXMLAndPrint(v, debug)
+	encodeToXMLAndPrint(v)
 
 	encoder := xml.NewEncoder(w)
 	if err := encoder.Encode(v); err != nil {
@@ -285,8 +281,8 @@ func writeXMLResponse(w *io.PipeWriter, v interface{}) error {
 	return nil
 }
 
-func encodeToXMLAndPrint(v interface{}, debug bool) {
-	if debug {
+func encodeToXMLAndPrint(v interface{}) {
+	if logger.IsDebug() {
 		raw, err := xml.MarshalIndent(v, "", " ")
 		if err != nil {
 			_ = logger.Error(err.Error())

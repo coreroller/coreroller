@@ -17,12 +17,10 @@ import (
 const (
 	testsDbURL string = "postgres://postgres@127.0.0.1:5432/coreroller_tests?sslmode=disable&connect_timeout=10"
 
-	showRequest  bool   = true
-	showResponse bool   = true
-	reqVersion   string = "3"
-	reqPlatform  string = "coreos"
-	reqSp        string = "linux"
-	reqArch      string = ""
+	reqVersion  string = "3"
+	reqPlatform string = "coreos"
+	reqSp       string = "linux"
+	reqArch     string = ""
 )
 
 func TestMain(m *testing.M) {
@@ -218,7 +216,7 @@ func doOmahaRequest(t *testing.T, a *api.API, appID, appVersion, appMachineID, a
 	fakeBodyReader, fakeBodyWriter := io.Pipe()
 	go xml.NewEncoder(fakeBodyWriter).Encode(omahaReq)
 
-	encodeToXMLAndPrint(omahaReq, showRequest)
+	encodeToXMLAndPrint(omahaReq)
 
 	omahaResponseReader, omahaResponseWriter := io.Pipe()
 	go HandleRequest(a, fakeBodyReader, omahaResponseWriter, ip)
@@ -226,7 +224,7 @@ func doOmahaRequest(t *testing.T, a *api.API, appID, appVersion, appMachineID, a
 	var omahaResp *omahaSpec.Response
 	xml.NewDecoder(omahaResponseReader).Decode(&omahaResp)
 
-	encodeToXMLAndPrint(omahaResp, showResponse)
+	encodeToXMLAndPrint(omahaResp)
 
 	return omahaResp
 }
