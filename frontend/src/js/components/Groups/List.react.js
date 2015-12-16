@@ -7,6 +7,7 @@ import Item from "./Item.react"
 import ModalButton from "../Common/ModalButton.react"
 import SearchInput from "react-search-input"
 import Loader from "halogen/ScaleLoader"
+import MiniLoader from "halogen/PulseLoader"
 
 class List extends React.Component {
 
@@ -14,7 +15,10 @@ class List extends React.Component {
     super(props)
     this.onChange = this.onChange.bind(this);
     this.searchUpdated = this.searchUpdated.bind(this)
-    this.state = {applications: applicationsStore.getCachedApplications(), searchTerm: ""}
+    this.state = {
+      application: applicationsStore.getCachedApplication(this.props.appID),
+      searchTerm: ""
+    }
   }
 
   static propTypes: {
@@ -31,7 +35,7 @@ class List extends React.Component {
 
   onChange() {
     this.setState({
-      applications: applicationsStore.getCachedApplications()
+      application: applicationsStore.getCachedApplication(this.props.appID)
     })
   }
 
@@ -40,7 +44,7 @@ class List extends React.Component {
   }
 
   render() {
-    let application = _.findWhere(this.state.applications, {id: this.props.appID})
+    let application = this.state.application
 
     let channels = [],
         groups = [],
@@ -48,6 +52,8 @@ class List extends React.Component {
         instances = 0,
         name = "",
         entries = ""
+
+    const miniLoader = <div className="icon-loading-container"><MiniLoader color="#00AEEF" size="12px" /></div>
 
     if (application) {
       name = application.name
@@ -63,10 +69,10 @@ class List extends React.Component {
 
       if (_.isEmpty(groups)) {
         if (this.state.searchTerm) {
-          entries = <div className="emptyBox">No results found.</div>        
+          entries = <div className="emptyBox">No results found.</div>
         } else {
-          entries = <div className="emptyBox">There are no groups for this application yet.<br/><br/>Groups help you control how you want to distribute updates to a specific set of instances.</div>          
-        } 
+          entries = <div className="emptyBox">There are no groups for this application yet.<br/><br/>Groups help you control how you want to distribute updates to a specific set of instances.</div>
+        }
       } else {
         entries = _.map(groups, (group, i) => {
           return <Item key={group.id} group={group} appName={name} channels={channels} />
@@ -89,7 +95,7 @@ class List extends React.Component {
               <SearchInput ref="search" onChange={this.searchUpdated} placeholder="Search..." />
               <label htmlFor="searchGroups"></label>
             </div>
-          </Col>            
+          </Col>
         </Row>
         <Row>
           <Col xs={12} className="groups--container">

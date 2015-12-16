@@ -7,10 +7,11 @@ class ActivityStore extends Store {
 
   constructor() {
     super()
-    this.activity = this.getActivity()
+    this.activity = []
+    this.getActivity()
 
     setInterval(() => {
-      this.activity = this.getActivity()
+      this.getActivity()
     }, 60 * 1000)
   }
 
@@ -33,7 +34,7 @@ class ActivityStore extends Store {
       let date = moment.utc(entry.created_ts).format("dddd, DD MMMM YYYY")
       if (_.has(sortedEntries, date)) {
         sortedEntries[date].push(entry)
-      } 
+      }
       else {
         sortedEntries[date] = [entry]
       }

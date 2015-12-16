@@ -10,7 +10,7 @@ class List extends React.Component {
   constructor(props) {
     super(props)
     this.onChange = this.onChange.bind(this);
-    this.state = {applications: applicationsStore.getCachedApplications()}
+    this.state = {application: applicationsStore.getCachedApplication(props.appID)}
   }
 
   static propTypes: {
@@ -27,12 +27,12 @@ class List extends React.Component {
 
   onChange() {
     this.setState({
-      applications: applicationsStore.getCachedApplications()
+      application: applicationsStore.getCachedApplication(this.props.appID)
     })
   }
 
   render() {
-    let application = _.findWhere(this.state.applications, {id: this.props.appID}),
+    let application = this.state.application,
         channels = [],
         packages = []
 
@@ -56,9 +56,9 @@ class List extends React.Component {
         <Row>
           <Col xs={12}>
             <h1 className="displayInline mainTitle">Channels</h1>
-            <ModalButton 
-              icon="plus" 
-              modalToOpen="AddChannelModal" 
+            <ModalButton
+              icon="plus"
+              modalToOpen="AddChannelModal"
               data={{packages: packages, applicationID: this.props.appID}} />
           </Col>
         </Row>

@@ -6,10 +6,11 @@ class ApplicationsStore extends Store {
 
   constructor() {
     super()
-    this.applications = this.getApplications()
+    this.applications = []
+    this.getApplications()
 
     setInterval(() => {
-      this.applications = this.getApplications()
+      this.getApplications()
     }, 60 * 1000)
   }
 
@@ -17,6 +18,10 @@ class ApplicationsStore extends Store {
 
   getCachedApplications() {
     return this.applications
+  }
+
+  getCachedApplication(applicationID) {
+    return _.findWhere(this.applications, {id: applicationID})
   }
 
   getApplications() {
@@ -43,6 +48,18 @@ class ApplicationsStore extends Store {
       })
   }
 
+  getCachedPackages(applicationID) {
+    const app = _.findWhere(this.applications, {id: applicationID}),
+          packages = app ? app.packages : []
+    return packages
+  }
+
+  getCachedChannels(applicationID) {
+    const app = _.findWhere(this.applications, {id: applicationID}),
+          channels = app ? app.channels : []
+    return channels
+  }
+
   createApplication(data, clonedApplication) {
     return API.createApplication(data, clonedApplication).
       done(application => {
@@ -59,7 +76,7 @@ class ApplicationsStore extends Store {
       done(application => {
         let applicationItem = application[0],
             applicationToUpdate = _.findWhere(this.applications, {id: applicationItem.id})
-        
+
         applicationToUpdate.name = applicationItem.name
         applicationToUpdate.description = applicationItem.description
         this.emitChange()
@@ -70,7 +87,7 @@ class ApplicationsStore extends Store {
     API.getApplication(applicationID).
       done(application => {
         let applicationItem = application[0],
-            index = _.findIndex(this.applications, {id: applicationID})      
+            index = _.findIndex(this.applications, {id: applicationID})
         this.applications[index] = applicationItem
         this.emitChange()
       })
@@ -127,7 +144,7 @@ class ApplicationsStore extends Store {
         let groupItem = group[0],
             applicationToUpdate = _.findWhere(this.applications, {id: groupItem.application_id}),
             index = _.findIndex(applicationToUpdate.groups, {id: groupItem.id})
-        
+
         if (applicationToUpdate) {
           if (applicationToUpdate.groups) {
             if (index >= 0) {
@@ -182,7 +199,7 @@ class ApplicationsStore extends Store {
     API.deletePackage(applicationID, packageID).
       done(() => {
         this.getAndUpdateApplication(applicationID)
-      })   
+      })
   }
 
   updatePackage(data) {

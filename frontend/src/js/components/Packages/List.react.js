@@ -6,11 +6,14 @@ import ModalButton from "../Common/ModalButton.react"
 import Item from "./Item.react"
 
 class List extends React.Component {
-  
+
   constructor(props) {
     super(props)
     this.onChange = this.onChange.bind(this);
-    this.state = {applications: applicationsStore.getCachedApplications()}
+    this.state = {
+      channels: applicationsStore.getCachedChannels(props.appID),
+      packages: applicationsStore.getCachedPackages(props.appID)
+    }
   }
 
   static propTypes: {
@@ -27,19 +30,14 @@ class List extends React.Component {
 
   onChange() {
     this.setState({
-      applications: applicationsStore.getCachedApplications()
+      channels: applicationsStore.getCachedChannels(this.props.appID),
+      packages: applicationsStore.getCachedPackages(this.props.appID)
     })
   }
 
   render() {
-    let application = _.findWhere(this.state.applications, {id: this.props.appID}),
-        channels = [],
-        packages = []
-
-    if (application) {
-      channels = application.channels ? application.channels : []
-      packages = application.packages ? application.packages : []
-    }
+    const channels = this.state.channels ? this.state.channels : [],
+          packages = this.state.packages ? this.state.packages : []
 
     let entries = ""
 
