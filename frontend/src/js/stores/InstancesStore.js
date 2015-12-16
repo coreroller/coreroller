@@ -9,15 +9,21 @@ class InstancesStore extends Store {
     this.instances = {}
   }
 
-  getAll() {
-    return this.instances
+  getCachedInstances(applicationID, groupID) {
+    let cachedInstances = []
+    if (this.instances.hasOwnProperty(applicationID)) {
+      if (this.instances[applicationID].hasOwnProperty(groupID)) {
+        cachedInstances = this.instances[applicationID][groupID]
+      }
+    }
+    return cachedInstances
   }
 
   getInstances(applicationID, groupID) {
     API.getInstances(applicationID, groupID).
       done(instances => {
         let application = this.instances.hasOwnProperty(applicationID) ? this.instances[applicationID] : this.instances[applicationID] = {}
-        let sortedInstances = _.sortBy(instances, function(instance) { 
+        let sortedInstances = _.sortBy(instances, function(instance) {
           return instance.application.last_check_for_updates
         })
         application[groupID] = sortedInstances.reverse()
@@ -61,7 +67,7 @@ class InstancesStore extends Store {
         spinning: false,
         icon: "glyphicon glyphicon-remove",
         description: "Error updating",
-        status: "Error",        
+        status: "Error",
         explanation: "The instance reported an error while updating to version " + version
       },
       4: {
@@ -70,7 +76,7 @@ class InstancesStore extends Store {
         spinning: false,
         icon: "glyphicon glyphicon-ok",
         description: "Update completed",
-        status: "Completed",        
+        status: "Completed",
         explanation: "The instance has been updated successfully and is now running version " + version
       },
       5: {
@@ -90,14 +96,14 @@ class InstancesStore extends Store {
         description: "Updating: downloaded",
         status: "Downloaded",
         explanation: "The instance has downloaded the update package -version " + version + "- and will install it now"
-      },  
+      },
       7: {
         type: "InstanceStatusDownloading",
         className: "warning",
         spinning: true,
         icon: "",
         description: "Updating: downloading",
-        status: "Downloading",        
+        status: "Downloading",
         explanation: "The instance has just started downloading the update package -version " + version + "-"
       },
       8: {

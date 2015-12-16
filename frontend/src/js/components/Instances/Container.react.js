@@ -1,16 +1,22 @@
-import { instancesStore } from "../../stores/Stores"
+import { instancesStore, applicationsStore } from "../../stores/Stores"
 import React, { PropTypes } from "react"
 import { Row, Col } from "react-bootstrap"
 import List from "./List.react"
 import _ from "underscore"
 import Loader from "halogen/ScaleLoader"
+import MiniLoader from "halogen/PulseLoader"
 
 class Container extends React.Component {
 
   constructor(props) {
     super(props)
-    this.onChange = this.onChange.bind(this);
-    this.state = {instances: instancesStore.getInstances(props.appID, props.groupID), loading: true}
+    this.onChangeApplications = this.onChangeApplications.bind(this)
+    this.onChangeInstances = this.onChangeInstances.bind(this)
+    this.state = {
+      instances: instancesStore.getCachedInstances(props.appID, props.groupID),
+      loading: true,
+      updating: false
+    }
   }
 
   static PropTypes: {
@@ -21,22 +27,34 @@ class Container extends React.Component {
   }
 
   componentDidMount() {
-    instancesStore.addChangeListener(this.onChange)
+    applicationsStore.addChangeListener(this.onChangeApplications)
+    instancesStore.addChangeListener(this.onChangeInstances)
   }
 
   componentWillUnmount() {
-    instancesStore.removeChangeListener(this.onChange)
+    applicationsStore.removeChangeListener(this.onChangeApplications)
+    instancesStore.removeChangeListener(this.onChangeInstances)
   }
 
-  onChange() {
+  onChangeApplications() {
+    instancesStore.getInstances(this.props.appID, this.props.groupID)
+
+    this.setState({
+      updating: true
+    })
+  }
+
+  onChangeInstances() {
     this.setState({
       loading: false,
-      instances: instancesStore.getAll()
+      updating: false,
+      instances: instancesStore.getCachedInstances(this.props.appID, this.props.groupID)
     })
   }
 
   render() {
-    let groupInstances = this.state.instances ? this.state.instances[this.props.appID][this.props.groupID] : [] 
+    let groupInstances = this.state.instances ? this.state.instances : [],
+        miniLoader = this.state.updating ? <MiniLoader color="#00AEEF" size="8px" margin="2px" /> : ""
 
     let entries = ""
 
@@ -47,16 +65,16 @@ class Container extends React.Component {
         entries = <div className="emptyBox">No instances have registered yet in this group.<br/><br/>Registration will happen automatically the first time the instance requests an update.</div>
       }
     } else {
-      entries = <List 
-              instances={groupInstances} 
-              version_breakdown={this.props.version_breakdown} 
+      entries = <List
+              instances={groupInstances}
+              version_breakdown={this.props.version_breakdown}
               channel={this.props.channel} />
     }
 
     return(
       <div>
         <Row className="noMargin" id="instances">
-          <h4 className="instancesList--title">Instances list</h4>
+          <h4 className="instancesList--title">Instances list {miniLoader}</h4>
         </Row>
         <Row>
           <Col xs={12}>
