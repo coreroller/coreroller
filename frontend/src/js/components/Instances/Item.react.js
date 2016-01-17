@@ -13,7 +13,7 @@ class Item extends React.Component {
     this.state = {status: {}, loading: false, statusHistory: {}}
     this.fetchStatusFromStore = this.fetchStatusFromStore.bind(this)
     this.onToggle = this.onToggle.bind(this)
-    this.fetchStatusHistoryFromStore = this.fetchStatusHistoryFromStore.bind(this)  
+    this.fetchStatusHistoryFromStore = this.fetchStatusHistoryFromStore.bind(this)
   }
 
   static PropTypes: {
@@ -24,9 +24,9 @@ class Item extends React.Component {
     lastVersionChannel: React.PropTypes.string
   }
 
-  fetchStatusFromStore() {
-    let status = instancesStore.getInstanceStatus(this.props.instance.application.status, this.props.instance.application.version)
-    this.setState({status: status})
+  fetchStatusFromStore(status, version) {
+    let realStatus = instancesStore.getInstanceStatus(status, version)
+    this.setState({status: realStatus})
   }
 
   fetchStatusHistoryFromStore() {
@@ -36,17 +36,12 @@ class Item extends React.Component {
 
     if (!this.props.selected) {
       instancesStore.getInstanceStatusHistory(appID, groupID, instanceID).
-        done(() => { 
+        done(() => {
           this.props.onToggle(this.props.instance.id, !this.props.selected)
         })
     } else {
-      this.props.onToggle(this.props.instance.id, !this.props.selected)      
+      this.props.onToggle(this.props.instance.id, !this.props.selected)
     }
-
-  }
-
-  componentDidMount() {
-    this.fetchStatusFromStore()
   }
 
   onToggle() {
@@ -57,15 +52,15 @@ class Item extends React.Component {
     let date = moment.utc(this.props.instance.application.last_check_for_updates + "+00:00").local().format("DD/MM/YYYY, hh:mma"),
         active = this.props.selected ? " active" : "",
         index = this.props.versionNumbers.indexOf(this.props.instance.application.version),
-        downloadingIcon = this.state.status.spinning ? <img src="img/mini_loading.gif" /> : "",
-        statusIcon = this.state.status.icon ? <i className={this.state.status.icon}></i> : "",
-        instanceLabel = this.state.status.className ? <Label>{statusIcon} {downloadingIcon} {this.state.status.description}</Label> : <div>&nbsp;</div>,
+        downloadingIcon = this.props.instance.statusInfo.spinning ? <img src="img/mini_loading.gif" /> : "",
+        statusIcon = this.props.instance.statusInfo.icon ? <i className={this.props.instance.statusInfo.icon}></i> : "",
+        instanceLabel = this.props.instance.statusInfo.className ? <Label>{statusIcon} {downloadingIcon} {this.props.instance.statusInfo.description}</Label> : <div>&nbsp;</div>,
         version = this.props.instance.application.version,
         currentVersionIndex = this.props.lastVersionChannel ? _.indexOf(this.props.versionNumbers, this.props.lastVersionChannel) : null,
         versionStyle = "default"
 
 
-    if (!_.isEmpty(this.props.lastVersionChannel)) {      
+    if (!_.isEmpty(this.props.lastVersionChannel)) {
       if (version == this.props.lastVersionChannel) {
         versionStyle = "success"
       } else if (semver.gt(version, this.props.lastVersionChannel)) {
@@ -88,7 +83,7 @@ class Item extends React.Component {
         <div className="coreRollerTable-body">
           <div className="coreRollerTable-cell lightText">
             <p onClick={this.onToggle} className="activeLink" id={"instanceDetails-" + this.props.key}>
-              {this.props.instance.ip} 
+              {this.props.instance.ip}
               &nbsp;<i className="fa fa-caret-right"></i>
             </p>
           </div>
@@ -103,7 +98,7 @@ class Item extends React.Component {
           </div>
           <div className="coreRollerTable-cell">
             <p>{date}</p>
-          </div>   
+          </div>
         </div>
         <StatusHistoryContainer active={active} instance={this.props.instance} key={this.props.instance.id} />
       </div>

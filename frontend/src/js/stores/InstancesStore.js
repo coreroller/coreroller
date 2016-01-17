@@ -7,6 +7,7 @@ class InstancesStore extends Store {
   constructor() {
     super()
     this.instances = {}
+    this.getInstanceStatus = this.getInstanceStatus.bind(this)
   }
 
   getCachedInstances(applicationID, groupID) {
@@ -23,7 +24,8 @@ class InstancesStore extends Store {
     API.getInstances(applicationID, groupID).
       done(instances => {
         let application = this.instances.hasOwnProperty(applicationID) ? this.instances[applicationID] : this.instances[applicationID] = {}
-        let sortedInstances = _.sortBy(instances, function(instance) {
+        let sortedInstances = _.sortBy(instances, (instance) => {
+          instance.statusInfo = this.getInstanceStatus(instance.application.status, instance.application.version)
           return instance.application.last_check_for_updates
         })
         application[groupID] = sortedInstances.reverse()
@@ -121,7 +123,6 @@ class InstancesStore extends Store {
 
     return statusDetails
   }
-
 }
 
 export default InstancesStore
