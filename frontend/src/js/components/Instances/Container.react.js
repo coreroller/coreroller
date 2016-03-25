@@ -12,10 +12,12 @@ class Container extends React.Component {
     super(props)
     this.onChangeApplications = this.onChangeApplications.bind(this)
     this.onChangeInstances = this.onChangeInstances.bind(this)
+    this.onChangeSelectedInstance = this.onChangeSelectedInstance.bind(this)
     this.state = {
       instances: instancesStore.getCachedInstances(props.appID, props.groupID),
       loading: true,
-      updating: false
+      updating: false,
+      selectedInstance: ""
     }
   }
 
@@ -36,8 +38,18 @@ class Container extends React.Component {
     instancesStore.removeChangeListener(this.onChangeInstances)
   }
 
+  onChangeSelectedInstance(selectedInstance) {
+    this.setState({
+      selectedInstance: selectedInstance
+    })
+  }
+
   onChangeApplications() {
     instancesStore.getInstances(this.props.appID, this.props.groupID)
+
+    if (this.state.selectedInstance) {
+      instancesStore.getInstanceStatusHistory(this.props.appID, this.props.groupID, this.state.selectedInstance)
+    }
 
     this.setState({
       updating: true
@@ -68,7 +80,8 @@ class Container extends React.Component {
       entries = <List
               instances={groupInstances}
               version_breakdown={this.props.version_breakdown}
-              channel={this.props.channel} />
+              channel={this.props.channel}
+              onChangeSelectedInstance={this.onChangeSelectedInstance} />
     }
 
     return(

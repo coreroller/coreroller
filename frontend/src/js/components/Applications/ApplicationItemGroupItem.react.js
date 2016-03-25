@@ -18,8 +18,8 @@ class ApplicationItemGroupItem extends React.Component {
     return(
       <Link to="GroupLayout" params={{appID: this.props.group.application_id, groupID: this.props.group.id}}>
         <span className="activeLink lighter">
-          {this.props.group.name} {instances_total} <i className="fa fa-caret-right"></i>
-        </span> 
+          {this.props.group.name} {instances_total}&nbsp;<i className="fa fa-caret-right"></i>
+        </span>
       </Link>
     )
   }

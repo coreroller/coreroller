@@ -25,9 +25,14 @@ class List extends React.Component {
           selections[key] = false;
         }
       })
+      // Save opened instance
+      this.props.onChangeSelectedInstance(id)
+    } else {
+      // Remove opened instance
+      this.props.onChangeSelectedInstance("")
     }
-    selections[id] = selected;
 
+    selections[id] = selected;
     this.setState({
       selections: selections
     })

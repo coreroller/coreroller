@@ -11,7 +11,6 @@ class Item extends React.Component {
   constructor(props) {
     super(props)
     this.state = {status: {}, loading: false, statusHistory: {}}
-    this.fetchStatusFromStore = this.fetchStatusFromStore.bind(this)
     this.onToggle = this.onToggle.bind(this)
     this.fetchStatusHistoryFromStore = this.fetchStatusHistoryFromStore.bind(this)
   }
@@ -22,11 +21,6 @@ class Item extends React.Component {
     selected: React.PropTypes.bool,
     versionNumbers: React.PropTypes.array,
     lastVersionChannel: React.PropTypes.string
-  }
-
-  fetchStatusFromStore(status, version) {
-    let realStatus = instancesStore.getInstanceStatus(status, version)
-    this.setState({status: realStatus})
   }
 
   fetchStatusHistoryFromStore() {

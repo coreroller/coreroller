@@ -59,29 +59,33 @@ class Item extends React.Component {
         </Row>
         <div className="apps--boxContent">
           <Row className="apps--resume">
-            <Col xs={12}>
+            <Col xs={2}>
               <span className="subtitle">
                 Instances:
               </span>
-              <span> 
-                {instances} 
+              <span>
+                {instances}
               </span>
-              <div className="divider">|</div>
+            </Col>
+            <Col xs={10}>
+              <div className="divider abs-divider">|</div>
               <span className="subtitle">
                 Groups:
               </span>
-              <span> 
-                {groups.length} 
+              <span>
+                {groups.length}
               </span>
-              <GroupsList 
-                groups={groups} 
-                appID={this.props.application.id} 
+              <GroupsList
+                groups={groups}
+                appID={this.props.application.id}
                 appName={this.props.application.name} />
             </Col>
           </Row>
           <Row className="apps--resume">
-            <Col xs={12}>
+            <Col xs={1}>
               <span className="subtitle">Channels:</span>
+            </Col>
+            <Col xs={11}>
               <ChannelsList channels={channels} />
             </Col>
           </Row>

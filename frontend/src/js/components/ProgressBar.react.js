@@ -26,7 +26,9 @@ class ProgressBar extends React.Component {
       easing: "easeInOut"
     }
     this.line = new ProgressBarJS.Line(React.findDOMNode(lineContainer), lineOptions)
+  }
 
+  componentWillMount() {
     PubSub.subscribe(this.props.name, (t, m) => { return this.handleMsg(m) })
   }
 
@@ -48,7 +50,9 @@ class ProgressBar extends React.Component {
           this.inProgressCount++
           break
         case "done":
-          this.inProgressCount--
+          if (this.inProgressCount > 0) {
+            this.inProgressCount--
+          }
           if (this.inProgressCount == 0) {
             this.line.animate(1.0, {duration: 200}, () => {
               this.line.set(0)
