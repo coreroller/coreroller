@@ -64,7 +64,13 @@ class ModalUpdate extends React.Component {
     this.setState({ channelColor: "#" + color.hex })
   }
 
-  render() { 
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      channelColor: nextProps.data.channel.color, 
+    })
+  }
+
+  render() {
     let packages = this.props.data.packages ? this.props.data.packages : [],
         selectedPackage = this.props.data.channel.package_id ? this.props.data.channel.package_id : "",
         popupPosition = {

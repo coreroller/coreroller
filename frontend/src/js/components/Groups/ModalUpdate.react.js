@@ -17,9 +17,9 @@ class ModalUpdate extends React.Component {
     this.changePolicyUpdates = this.changePolicyUpdates.bind(this)
     this.changePolicyOfficeHours = this.changePolicyOfficeHours.bind(this)
     this.state = {
-      safeMode: this.props.data.group.policy_safe_mode,
-      policyUpdates: this.props.data.group.policy_updates_enabled,
-      policyOfficeHours: this.props.data.group.policy_office_hours,
+      safeMode: props.data.group.policy_safe_mode,
+      policyUpdates: props.data.group.policy_updates_enabled,
+      policyOfficeHours: props.data.group.policy_office_hours,
       isLoading: false,
       alertVisible: false,
       timezoneError: false
@@ -107,12 +107,20 @@ class ModalUpdate extends React.Component {
     })
   }
 
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      safeMode: nextProps.data.group.policy_safe_mode,
+      policyUpdates: nextProps.data.group.policy_updates_enabled,
+      policyOfficeHours: nextProps.data.group.policy_office_hours
+    })
+  }
+
   render() {
     let current_period_interval = this.props.data.group.policy_period_interval.split(" "),
         current_update_timeout = this.props.data.group.policy_update_timeout.split(" "),
         channels = this.props.data.channels ? this.props.data.channels : [],
         btnStyle = this.state.isLoading ? " loading" : "",
-        btnContent = this.state.isLoading ? "Please wait" : "Submit", 
+        btnContent = this.state.isLoading ? "Please wait" : "Submit",
         timezones = moment.tz.names(),
         timezoneError = this.state.timezoneError ? {bsStyle: "error"} : ""
 
