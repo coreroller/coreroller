@@ -136,3 +136,16 @@
   -ms-transform-origin:     @x @y;
   -o-transform-origin:      @x @y;
 }
+
+.font-face(@font-name: arial, @family: arial, @weight: normal, @style: normal){
+    @font-face{
+        font-family: @font-name;
+        src:url('../fonts/@{family}.eot');
+        src:url('../fonts/@{family}.eot?#iefix') format('embedded-opentype'),
+            url('../fonts/@{family}.woff') format('woff'),
+            url('../fonts/@{family}.ttf') format('truetype'),
+            url('../fonts/@{family}.svg#icon') format('svg');
+        font-weight: @weight;
+        font-style: @style;
+    }
+}
