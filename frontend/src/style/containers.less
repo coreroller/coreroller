@@ -60,6 +60,7 @@
     margin-bottom: 5px;
 
     span.apps--id, span.groups--id {
+      font-family: @font-family-Lato-Light;
       font-variant: normal;
       font-size: 12px;
       font-weight: 300;
@@ -73,13 +74,13 @@
       transition: color .3s ease-out;
       -webkit-transition: color .3s ease-out;
 
-      &:hover {  
+      &:hover {
         color: @brand-color;
       }
     }
   }
 
-  .apps--description, .groups--description { 
+  .apps--description, .groups--description {
     color: @grey-75;
     font-family: @font-family-Roboto;
     font-size: .90em;
@@ -99,7 +100,8 @@
   }
 
   .apps--boxContent, .groups--boxContent {
-    padding: 20px 16px; 
+    padding: 20px 16px;
+    padding-bottom: 10px;
   }
 
   .apps--resume, .groups--resume {
@@ -117,7 +119,7 @@
         text-transform: lowercase;
       }
     }
-    
+
     span.fa {
       padding-left: 5px;
     }
@@ -150,6 +152,10 @@
     display: inline-block;
     padding-left: 8px;
     vertical-align: middle;
+
+    &--extraPadding {
+      margin-bottom: 10px;
+    }
   }
 
   .groups--channelList {
@@ -219,12 +225,13 @@
     text-transform: uppercase;
     color: @grey-75;
     font-weight: 800;
+    font-family: @font-family-Lato-Bold;
   }
 
   .progress {
     margin-bottom: 0px;
     height: 30px;
-  
+
     .progress-bar {
       font-size: 1em;
       line-height: 30px;
@@ -257,7 +264,7 @@
     margin-left: 5px;
 
     &.fa-edit {
-      margin-left: 15px;    
+      margin-left: 15px;
     }
   }
 
@@ -321,7 +328,7 @@
         padding: 15px;
         padding-left: 23px;
       }
-    }    
+    }
 
     &.container-2 {
       &:before {

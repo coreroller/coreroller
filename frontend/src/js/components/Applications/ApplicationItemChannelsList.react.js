@@ -20,12 +20,12 @@ class ApplicationItemChannelsList extends React.Component {
       entries = "-"
     } else {
       entries = _.map(channels, (channel, i) => {
-        return <ChannelLabel channel={channel} key={i} /> 
+        return <ChannelLabel channel={channel} key={i} />
       })
     }
 
     return(
-      <ul className="apps--channelsList">
+      <ul className={_.isEmpty(channels) ? "apps--channelsList apps--channelsList--extraPadding" : "apps--channelsList"}>
         {entries}
       </ul>
     )
