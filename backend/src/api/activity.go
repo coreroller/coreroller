@@ -41,8 +41,7 @@ type activityContext struct {
 
 // Activity represents a CoreRoller activity entry.
 type Activity struct {
-	ID              int            `db:"id" json:"id"`
-	CreatedTs       time.Time      `db:"created_ts" json:"-"`
+	CreatedTs       time.Time      `db:"created_ts" json:"created_ts"`
 	Class           int            `db:"class" json:"class"`
 	Severity        int            `db:"severity" json:"severity"`
 	Version         string         `db:"version" json:"version"`
@@ -75,12 +74,6 @@ func (api *API) GetActivity(teamID string, p ActivityQueryParams) ([]*Activity, 
 	err := api.activityQuery(teamID, p).QueryStructs(&activityEntries)
 
 	return activityEntries, err
-}
-
-// GetActivityJSON returns a list of activity entries that match the specified
-// criteria in the query parameters in JSON format.
-func (api *API) GetActivityJSON(teamID string, p ActivityQueryParams) ([]byte, error) {
-	return api.activityQuery(teamID, p).QueryJSON()
 }
 
 // activityQuery returns a SelectDocBuilder prepared to return all activity

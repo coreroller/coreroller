@@ -18,7 +18,7 @@ type Channel struct {
 	ID            string         `db:"id" json:"id"`
 	Name          string         `db:"name" json:"name"`
 	Color         string         `db:"color" json:"color"`
-	CreatedTs     time.Time      `db:"created_ts" json:"-"`
+	CreatedTs     time.Time      `db:"created_ts" json:"created_ts"`
 	ApplicationID string         `db:"application_id" json:"application_id"`
 	PackageID     dat.NullString `db:"package_id" json:"package_id"`
 	Package       *Package       `db:"package" json:"package"`
@@ -107,34 +107,18 @@ func (api *API) GetChannel(channelID string) (*Channel, error) {
 	return &channel, nil
 }
 
-// GetChannelJSON returns the channel identified by the id provided in JSON
-// format.
-func (api *API) GetChannelJSON(channelID string) ([]byte, error) {
-	return api.channelsQuery().
-		Where("id = $1", channelID).
-		QueryJSON()
-}
-
 // GetChannels returns all channels associated to the application provided.
-func (api *API) GetChannels(appID string) ([]*Channel, error) {
+func (api *API) GetChannels(appID string, page, perPage uint64) ([]*Channel, error) {
+	page, perPage = validatePaginationParams(page, perPage)
+
 	var channels []*Channel
 
 	err := api.channelsQuery().
 		Where("application_id = $1", appID).
+		Paginate(page, perPage).
 		QueryStructs(&channels)
 
 	return channels, err
-}
-
-// GetChannelsJSON returns all channels associated to the application provided
-// in JSON format.
-func (api *API) GetChannelsJSON(appID string, page, perPage uint64) ([]byte, error) {
-	page, perPage = validatePaginationParams(page, perPage)
-
-	return api.channelsQuery().
-		Where("application_id = $1", appID).
-		Paginate(page, perPage).
-		QueryJSON()
 }
 
 // validatePackage checks if a package belongs to the application provided,

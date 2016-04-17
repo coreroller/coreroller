@@ -51,7 +51,7 @@ const (
 type Instance struct {
 	ID          string              `db:"id" json:"id"`
 	IP          string              `db:"ip" json:"ip"`
-	CreatedTs   time.Time           `db:"created_ts" json:"-"`
+	CreatedTs   time.Time           `db:"created_ts" json:"created_ts"`
 	Application InstanceApplication `db:"application" json:"application,omitempty"`
 }
 
@@ -59,13 +59,13 @@ type Instance struct {
 // a given instance: current version of the app, last time the instance checked
 // for updates for this app, etc.
 type InstanceApplication struct {
-	InstanceID          string         `db:"instance_id" json:"instance_id"`
+	InstanceID          string         `db:"instance_id" json:"instance_id,omitempty"`
 	ApplicationID       string         `db:"application_id" json:"application_id"`
 	GroupID             dat.NullString `db:"group_id" json:"group_id"`
 	Version             string         `db:"version" json:"version"`
-	CreatedTs           time.Time      `db:"created_ts" json:"-"`
+	CreatedTs           time.Time      `db:"created_ts" json:"created_ts"`
 	Status              dat.NullInt64  `db:"status" json:"status"`
-	LastCheckForUpdates time.Time      `db:"last_check_for_updates" json:"-"`
+	LastCheckForUpdates time.Time      `db:"last_check_for_updates" json:"last_check_for_updates"`
 	LastUpdateGrantedTs dat.NullTime   `db:"last_update_granted_ts" json:"last_update_granted_ts"`
 	LastUpdateVersion   dat.NullString `db:"last_update_version" json:"last_update_version"`
 	UpdateInProgress    bool           `db:"update_in_progress" json:"update_in_progress"`
@@ -149,7 +149,6 @@ func (api *API) GetInstance(instanceID, appID string) (*Instance, error) {
 
 	if err != nil {
 		return nil, err
-
 	}
 
 	return &instance, nil
@@ -165,12 +164,6 @@ func (api *API) GetInstanceStatusHistory(instanceID, appID, groupID string, limi
 	return instanceStatusHistory, err
 }
 
-// GetInstanceStatusHistoryJSON returns the status history of an instance in the
-// context of the application/group provided in JSON format.
-func (api *API) GetInstanceStatusHistoryJSON(instanceID, appID, groupID string, limit uint64) ([]byte, error) {
-	return api.instanceStatusHistoryQuery(instanceID, appID, groupID, limit).QueryJSON()
-}
-
 // GetInstances returns all instances that match with the provided criteria.
 func (api *API) GetInstances(p InstancesQueryParams) ([]*Instance, error) {
 	var instances []*Instance
@@ -178,12 +171,6 @@ func (api *API) GetInstances(p InstancesQueryParams) ([]*Instance, error) {
 	err := api.instancesQuery(p).QueryStructs(&instances)
 
 	return instances, err
-}
-
-// GetInstancesJSON returns all instances that match with the provided criteria
-// in JSON format.
-func (api *API) GetInstancesJSON(p InstancesQueryParams) ([]byte, error) {
-	return api.instancesQuery(p).QueryJSON()
 }
 
 // validateApplicationAndGroup validates if the group provided belongs to the

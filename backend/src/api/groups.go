@@ -23,7 +23,7 @@ type Group struct {
 	ID                        string                   `db:"id" json:"id"`
 	Name                      string                   `db:"name" json:"name"`
 	Description               string                   `db:"description" json:"description"`
-	CreatedTs                 time.Time                `db:"created_ts" json:"-"`
+	CreatedTs                 time.Time                `db:"created_ts" json:"created_ts"`
 	RolloutInProgress         bool                     `db:"rollout_in_progress" json:"rollout_in_progress"`
 	ApplicationID             string                   `db:"application_id" json:"application_id"`
 	ChannelID                 dat.NullString           `db:"channel_id" json:"channel_id"`
@@ -89,7 +89,7 @@ func (api *API) AddGroup(group *Group) (*Group, error) {
 	err := api.dbR.
 		InsertInto("groups").
 		Whitelist("name", "description", "application_id", "channel_id", "policy_updates_enabled", "policy_safe_mode", "policy_office_hours",
-		"policy_timezone", "policy_period_interval", "policy_max_updates_per_period", "policy_update_timeout").
+			"policy_timezone", "policy_period_interval", "policy_max_updates_per_period", "policy_update_timeout").
 		Record(group).
 		Returning("*").
 		QueryStruct(group)
@@ -118,7 +118,7 @@ func (api *API) UpdateGroup(group *Group) error {
 	result, err := api.dbR.
 		Update("groups").
 		SetWhitelist(group, "name", "description", "channel_id", "policy_updates_enabled", "policy_safe_mode", "policy_office_hours",
-		"policy_timezone", "policy_period_interval", "policy_max_updates_per_period", "policy_update_timeout").
+			"policy_timezone", "policy_period_interval", "policy_max_updates_per_period", "policy_update_timeout").
 		Where("id = $1", group.ID).
 		Exec()
 
@@ -158,33 +158,18 @@ func (api *API) GetGroup(groupID string) (*Group, error) {
 	return &group, nil
 }
 
-// GetGroupJSON returns the group identified by the id provided in JSON format.
-func (api *API) GetGroupJSON(groupID string) ([]byte, error) {
-	return api.groupsQuery().
-		Where("id = $1", groupID).
-		QueryJSON()
-}
-
 // GetGroups returns all groups that belong to the application provided.
-func (api *API) GetGroups(appID string) ([]*Group, error) {
+func (api *API) GetGroups(appID string, page, perPage uint64) ([]*Group, error) {
+	page, perPage = validatePaginationParams(page, perPage)
+
 	var groups []*Group
 
 	err := api.groupsQuery().
 		Where("application_id = $1", appID).
+		Paginate(page, perPage).
 		QueryStructs(&groups)
 
 	return groups, err
-}
-
-// GetGroupsJSON returns all groups that belong to the application provided in
-// JSON format.
-func (api *API) GetGroupsJSON(appID string, page, perPage uint64) ([]byte, error) {
-	page, perPage = validatePaginationParams(page, perPage)
-
-	return api.groupsQuery().
-		Where("application_id = $1", appID).
-		Paginate(page, perPage).
-		QueryJSON()
 }
 
 // validateChannel checks if a channel belongs to the application provided.

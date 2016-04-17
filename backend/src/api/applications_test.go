@@ -130,13 +130,13 @@ func TestGetApps(t *testing.T) {
 	tApp2, _ := a.AddApp(&Application{Name: "test_app2", TeamID: tTeam.ID})
 	tChannel, _ := a.AddChannel(&Channel{Name: "test_channel", Color: "blue", ApplicationID: tApp1.ID})
 
-	apps, err := a.GetApps(tTeam.ID)
+	apps, err := a.GetApps(tTeam.ID, 0, 0)
 	assert.NoError(t, err)
 	assert.Equal(t, 2, len(apps))
 	assert.Equal(t, tApp1.Name, apps[1].Name)
 	assert.Equal(t, tApp2.Name, apps[0].Name)
 	assert.Equal(t, tChannel.Name, apps[1].Channels[0].Name)
 
-	_, err = a.GetApps(uuid.NewV4().String())
+	_, err = a.GetApps(uuid.NewV4().String(), 0, 0)
 	assert.Error(t, err, "Trying to get apps of inexisting team.")
 }

@@ -57,7 +57,6 @@ func (api *API) UpdateUserPassword(username, newPassword string) error {
 		Exec()
 
 	if err != nil || result.RowsAffected == 0 {
-		_ = logger.Error("UpdateUserPassword", "error", err)
 		return ErrUpdatingPassword
 	}
 

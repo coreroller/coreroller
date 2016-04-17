@@ -30,7 +30,7 @@ type Package struct {
 	Description   dat.NullString `db:"description" json:"description"`
 	Size          dat.NullString `db:"size" json:"size"`
 	Hash          dat.NullString `db:"hash" json:"hash"`
-	CreatedTs     time.Time      `db:"created_ts" json:"-"`
+	CreatedTs     time.Time      `db:"created_ts" json:"created_ts"`
 	ApplicationID string         `db:"application_id" json:"application_id"`
 }
 
@@ -108,34 +108,17 @@ func (api *API) GetPackageByVersion(appID, version string) (*Package, error) {
 	return &pkg, nil
 }
 
-// GetPackageJSON returns the package identified by the id provided in JSON
-// format.
-func (api *API) GetPackageJSON(pkgID string) ([]byte, error) {
-	return api.packagesQuery().
-		Where("id = $1", pkgID).
-		QueryJSON()
-}
-
 // GetPackages returns all packages associated to the application provided.
-func (api *API) GetPackages(appID string) ([]*Package, error) {
-	var pkgs []*Package
+func (api *API) GetPackages(appID string, page, perPage uint64) ([]*Package, error) {
+	page, perPage = validatePaginationParams(page, perPage)
 
+	var pkgs []*Package
 	err := api.packagesQuery().
 		Where("application_id = $1", appID).
+		Paginate(page, perPage).
 		QueryStructs(&pkgs)
 
 	return pkgs, err
-}
-
-// GetPackagesJSON returns all packages associated to the application provided
-// in JSON format.
-func (api *API) GetPackagesJSON(appID string, page, perPage uint64) ([]byte, error) {
-	page, perPage = validatePaginationParams(page, perPage)
-
-	return api.packagesQuery().
-		Where("application_id = $1", appID).
-		Paginate(page, perPage).
-		QueryJSON()
 }
 
 // packagesQuery returns a SelectDocBuilder prepared to return all packages.

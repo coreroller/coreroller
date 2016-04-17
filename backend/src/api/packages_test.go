@@ -128,15 +128,15 @@ func TestGetPackages(t *testing.T) {
 	_, _ = a.AddPackage(&Package{Type: PkgTypeOther, URL: "http://sample.url/pkg1", Version: "12.1.0", ApplicationID: tApp.ID})
 	_, _ = a.AddPackage(&Package{Type: PkgTypeOther, URL: "http://sample.url/pkg2", Version: "14.1.0", ApplicationID: tApp.ID})
 
-	pkgs, err := a.GetPackages(tApp.ID)
+	pkgs, err := a.GetPackages(tApp.ID, 0, 0)
 	assert.NoError(t, err)
 	assert.Equal(t, 2, len(pkgs))
 	assert.Equal(t, "http://sample.url/pkg2", pkgs[0].URL)
 	assert.Equal(t, "http://sample.url/pkg1", pkgs[1].URL)
 
-	_, err = a.GetPackages("invalidAppID")
+	_, err = a.GetPackages("invalidAppID", 0, 0)
 	assert.Error(t, err, "Add id must be a valid uuid.")
 
-	_, err = a.GetPackages(uuid.NewV4().String())
+	_, err = a.GetPackages(uuid.NewV4().String(), 0, 0)
 	assert.Error(t, err, "App id used must exist.")
 }

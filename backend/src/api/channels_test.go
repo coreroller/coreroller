@@ -128,13 +128,13 @@ func TestGetChannels(t *testing.T) {
 	_, err = a.AddChannel(&Channel{Name: "test_channel2", Color: "green", ApplicationID: tApp.ID})
 	_, err = a.AddChannel(&Channel{Name: "test_channel3", Color: "red", ApplicationID: tApp.ID})
 
-	channels, err := a.GetChannels(tApp.ID)
+	channels, err := a.GetChannels(tApp.ID, 0, 0)
 	assert.NoError(t, err)
 	assert.Equal(t, 3, len(channels))
 
-	_, err = a.GetChannels("invalidAppID")
+	_, err = a.GetChannels("invalidAppID", 0, 0)
 	assert.Error(t, err, "Add id must be a valid uuid.")
 
-	_, err = a.GetChannels(uuid.NewV4().String())
+	_, err = a.GetChannels(uuid.NewV4().String(), 0, 0)
 	assert.Error(t, err, "App id used must exist.")
 }

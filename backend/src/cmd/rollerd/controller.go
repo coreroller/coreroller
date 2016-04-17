@@ -69,7 +69,7 @@ func (ctl *controller) authenticate(c *web.C, h http.Handler) http.Handler {
 
 		user, err := ctl.api.GetUser(username)
 		if err != nil {
-			http.Error(w, http.StatusText(400), 400)
+			http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 			return
 		}
 
@@ -91,8 +91,8 @@ func (ctl *controller) updateUserPassword(c web.C, w http.ResponseWriter, r *htt
 		Password string
 	}
 	if err := json.NewDecoder(r.Body).Decode(&update); err != nil {
-		logger.Error("updateUserPassword", "error", err)
-		http.Error(w, http.StatusText(400), 400)
+		logger.Error("updateUserPassword", "error", err.Error())
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
 
@@ -102,10 +102,10 @@ func (ctl *controller) updateUserPassword(c web.C, w http.ResponseWriter, r *htt
 	err := ctl.api.UpdateUserPassword(username, update.Password)
 	switch err {
 	case nil:
-		http.Error(w, http.StatusText(204), 204)
+		http.Error(w, http.StatusText(http.StatusNoContent), http.StatusNoContent)
 	default:
-		logger.Error("updateUserPassword", "error", err, "team", teamID, "username", username)
-		http.Error(w, http.StatusText(400), 400)
+		logger.Error("updateUserPassword", "error", err.Error(), "team", teamID, "username", username)
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 	}
 }
 
@@ -116,60 +116,58 @@ func (ctl *controller) updateUserPassword(c web.C, w http.ResponseWriter, r *htt
 func (ctl *controller) addApp(c web.C, w http.ResponseWriter, r *http.Request) {
 	sourceAppID := r.URL.Query().Get("clone_from")
 
-	app := api.Application{}
-	if err := json.NewDecoder(r.Body).Decode(&app); err != nil {
-		logger.Error("addApp", "error", err)
-		http.Error(w, http.StatusText(400), 400)
+	app := &api.Application{}
+	if err := json.NewDecoder(r.Body).Decode(app); err != nil {
+		logger.Error("addApp - decoding payload", "error", err.Error())
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
 	app.TeamID = c.Env["team_id"].(string)
 
-	_, err := ctl.api.AddAppCloning(&app, sourceAppID)
-	switch err {
-	case nil:
-	default:
-		logger.Error("addApp", "error", err, "app", app)
-		http.Error(w, http.StatusText(400), 400)
-		return
-	}
-
-	appJSON, err := ctl.api.GetAppJSON(app.ID)
+	_, err := ctl.api.AddAppCloning(app, sourceAppID)
 	if err != nil {
-		logger.Error("addApp", "error", err, "appID", app.ID)
-		http.Error(w, http.StatusText(400), 400)
+		logger.Error("addApp - cloning app", "error", err.Error(), "app", app, "sourceAppID", sourceAppID)
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
 
-	w.Write(appJSON)
+	app, err = ctl.api.GetApp(app.ID)
+	if err != nil {
+		logger.Error("addApp - getting added app", "error", err.Error(), "appID", app.ID)
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+	if err := json.NewEncoder(w).Encode(app); err != nil {
+		logger.Error("addApp - encoding app", "error", err.Error(), "app", app)
+	}
 }
 
 func (ctl *controller) updateApp(c web.C, w http.ResponseWriter, r *http.Request) {
-	app := api.Application{}
-	if err := json.NewDecoder(r.Body).Decode(&app); err != nil {
-		logger.Error("updateApp", "error", err)
-		http.Error(w, http.StatusText(400), 400)
+	app := &api.Application{}
+	if err := json.NewDecoder(r.Body).Decode(app); err != nil {
+		logger.Error("updateApp - decoding payload", "error", err.Error())
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
 	app.ID = c.URLParams["app_id"]
 	app.TeamID = c.Env["team_id"].(string)
 
-	err := ctl.api.UpdateApp(&app)
-	switch err {
-	case nil:
-	default:
-		logger.Error("updatedApp", "error", err, "app", app)
-		http.Error(w, http.StatusText(400), 400)
-		return
-	}
-
-	appJSON, err := ctl.api.GetAppJSON(app.ID)
+	err := ctl.api.UpdateApp(app)
 	if err != nil {
-		logger.Error("updateApp", "error", err, "appID", app.ID)
-		http.Error(w, http.StatusText(400), 400)
+		logger.Error("updatedApp - updating app", "error", err.Error(), "app", app)
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
 
-	w.Write(appJSON)
+	app, err = ctl.api.GetApp(app.ID)
+	if err != nil {
+		logger.Error("updateApp - getting updated app", "error", err.Error(), "appID", app.ID)
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+	if err := json.NewEncoder(w).Encode(app); err != nil {
+		logger.Error("updateApp - encoding app", "error", err.Error(), "appID", app.ID)
+	}
 }
 
 func (ctl *controller) deleteApp(c web.C, w http.ResponseWriter, r *http.Request) {
@@ -178,25 +176,27 @@ func (ctl *controller) deleteApp(c web.C, w http.ResponseWriter, r *http.Request
 	err := ctl.api.DeleteApp(appID)
 	switch err {
 	case nil:
-		http.Error(w, http.StatusText(204), 204)
+		http.Error(w, http.StatusText(http.StatusNoContent), http.StatusNoContent)
 	default:
-		logger.Error("deleteApp", "error", err, "appID", appID)
-		http.Error(w, http.StatusText(400), 400)
+		logger.Error("deleteApp", "error", err.Error(), "appID", appID)
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 	}
 }
 
 func (ctl *controller) getApp(c web.C, w http.ResponseWriter, r *http.Request) {
 	appID := c.URLParams["app_id"]
 
-	appJSON, err := ctl.api.GetAppJSON(appID)
+	app, err := ctl.api.GetApp(appID)
 	switch err {
 	case nil:
-		w.Write(appJSON)
+		if err := json.NewEncoder(w).Encode(app); err != nil {
+			logger.Error("getApp - encoding app", "error", err.Error(), "appID", appID)
+		}
 	case sql.ErrNoRows:
-		w.Write([]byte(`[]`))
+		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
 	default:
-		logger.Error("getApp", "error", err, "appID", appID)
-		http.Error(w, http.StatusText(400), 400)
+		logger.Error("getApp - getting app", "error", err.Error(), "appID", appID)
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 	}
 }
 
@@ -205,15 +205,17 @@ func (ctl *controller) getApps(c web.C, w http.ResponseWriter, r *http.Request) 
 	page, _ := strconv.ParseUint(r.URL.Query().Get("page"), 10, 64)
 	perPage, _ := strconv.ParseUint(r.URL.Query().Get("perpage"), 10, 64)
 
-	appsJSON, err := ctl.api.GetAppsJSON(teamID, page, perPage)
+	apps, err := ctl.api.GetApps(teamID, page, perPage)
 	switch err {
 	case nil:
-		w.Write(appsJSON)
+		if err := json.NewEncoder(w).Encode(apps); err != nil {
+			logger.Error("getApps - encoding apps", "error", err.Error(), "teamID", teamID)
+		}
 	case sql.ErrNoRows:
-		w.Write([]byte(`[]`))
+		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
 	default:
-		logger.Error("getApps", "error", err, "teamID", teamID)
-		http.Error(w, http.StatusText(400), 400)
+		logger.Error("getApps - getting apps", "error", err.Error(), "teamID", teamID)
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 	}
 }
 
@@ -222,60 +224,58 @@ func (ctl *controller) getApps(c web.C, w http.ResponseWriter, r *http.Request) 
 //
 
 func (ctl *controller) addGroup(c web.C, w http.ResponseWriter, r *http.Request) {
-	group := api.Group{}
-	if err := json.NewDecoder(r.Body).Decode(&group); err != nil {
-		logger.Error("addGroup", "error", err)
-		http.Error(w, http.StatusText(400), 400)
+	group := &api.Group{}
+	if err := json.NewDecoder(r.Body).Decode(group); err != nil {
+		logger.Error("addGroup - decoding payload", "error", err.Error())
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
 	group.ApplicationID = c.URLParams["app_id"]
 
-	_, err := ctl.api.AddGroup(&group)
-	switch err {
-	case nil:
-	default:
-		logger.Error("addGroup", "error", err, "group", group)
-		http.Error(w, http.StatusText(400), 400)
-		return
-	}
-
-	groupJSON, err := ctl.api.GetGroupJSON(group.ID)
+	_, err := ctl.api.AddGroup(group)
 	if err != nil {
-		logger.Error("addGroup", "error", err, "groupID", group.ID)
-		http.Error(w, http.StatusText(400), 400)
+		logger.Error("addGroup - adding group", "error", err.Error(), "group", group)
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
 
-	w.Write(groupJSON)
+	group, err = ctl.api.GetGroup(group.ID)
+	if err != nil {
+		logger.Error("addGroup - getting added group", "error", err.Error(), "groupID", group.ID)
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+	if err := json.NewEncoder(w).Encode(group); err != nil {
+		logger.Error("addGroup - encoding group", "error", err.Error(), "group", group)
+	}
 }
 
 func (ctl *controller) updateGroup(c web.C, w http.ResponseWriter, r *http.Request) {
-	group := api.Group{}
-	if err := json.NewDecoder(r.Body).Decode(&group); err != nil {
-		logger.Error("updateGroup", "error", err)
-		http.Error(w, http.StatusText(400), 400)
+	group := &api.Group{}
+	if err := json.NewDecoder(r.Body).Decode(group); err != nil {
+		logger.Error("updateGroup - decoding payload", "error", err.Error())
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
 	group.ID = c.URLParams["group_id"]
 	group.ApplicationID = c.URLParams["app_id"]
 
-	err := ctl.api.UpdateGroup(&group)
-	switch err {
-	case nil:
-	default:
-		logger.Error("updateGroup", "error", err, "group", group)
-		http.Error(w, http.StatusText(400), 400)
-		return
-	}
-
-	groupJSON, err := ctl.api.GetGroupJSON(group.ID)
+	err := ctl.api.UpdateGroup(group)
 	if err != nil {
-		logger.Error("updateGroup", "error", err, "groupID", group.ID)
-		http.Error(w, http.StatusText(400), 400)
+		logger.Error("updateGroup - updating group", "error", err.Error(), "group", group)
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
 
-	w.Write(groupJSON)
+	group, err = ctl.api.GetGroup(group.ID)
+	if err != nil {
+		logger.Error("updateGroup - fetching updated group", "error", err.Error(), "groupID", group.ID)
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+	if err := json.NewEncoder(w).Encode(group); err != nil {
+		logger.Error("updateGroup - encoding group", "error", err.Error(), "group", group)
+	}
 }
 
 func (ctl *controller) deleteGroup(c web.C, w http.ResponseWriter, r *http.Request) {
@@ -284,25 +284,27 @@ func (ctl *controller) deleteGroup(c web.C, w http.ResponseWriter, r *http.Reque
 	err := ctl.api.DeleteGroup(groupID)
 	switch err {
 	case nil:
-		http.Error(w, http.StatusText(204), 204)
+		http.Error(w, http.StatusText(http.StatusNoContent), http.StatusNoContent)
 	default:
-		logger.Error("deleteGroup", "error", err, "groupID", groupID)
-		http.Error(w, http.StatusText(400), 400)
+		logger.Error("deleteGroup", "error", err.Error(), "groupID", groupID)
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 	}
 }
 
 func (ctl *controller) getGroup(c web.C, w http.ResponseWriter, r *http.Request) {
 	groupID := c.URLParams["group_id"]
 
-	groupJSON, err := ctl.api.GetGroupJSON(groupID)
+	group, err := ctl.api.GetGroup(groupID)
 	switch err {
 	case nil:
-		w.Write(groupJSON)
+		if err := json.NewEncoder(w).Encode(group); err != nil {
+			logger.Error("getGroup - encoding group", "error", err.Error(), "group", group)
+		}
 	case sql.ErrNoRows:
-		w.Write([]byte(`[]`))
+		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
 	default:
-		logger.Error("getGroup", "error", err, "groupID", groupID)
-		http.Error(w, http.StatusText(400), 400)
+		logger.Error("getGroup - getting group", "error", err.Error(), "groupID", groupID)
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 	}
 }
 
@@ -311,15 +313,17 @@ func (ctl *controller) getGroups(c web.C, w http.ResponseWriter, r *http.Request
 	page, _ := strconv.ParseUint(r.URL.Query().Get("page"), 10, 64)
 	perPage, _ := strconv.ParseUint(r.URL.Query().Get("perpage"), 10, 64)
 
-	groupsJSON, err := ctl.api.GetGroupsJSON(appID, page, perPage)
+	groups, err := ctl.api.GetGroups(appID, page, perPage)
 	switch err {
 	case nil:
-		w.Write(groupsJSON)
+		if err := json.NewEncoder(w).Encode(groups); err != nil {
+			logger.Error("getGroups - encoding groups", "error", err.Error(), "appID", appID)
+		}
 	case sql.ErrNoRows:
-		w.Write([]byte(`[]`))
+		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
 	default:
-		logger.Error("getGroups", "error", err, "appID", appID)
-		http.Error(w, http.StatusText(400), 400)
+		logger.Error("getGroups - getting groups", "error", err.Error(), "appID", appID)
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 	}
 }
 
@@ -328,60 +332,58 @@ func (ctl *controller) getGroups(c web.C, w http.ResponseWriter, r *http.Request
 //
 
 func (ctl *controller) addChannel(c web.C, w http.ResponseWriter, r *http.Request) {
-	channel := api.Channel{}
-	if err := json.NewDecoder(r.Body).Decode(&channel); err != nil {
-		logger.Error("addChannel", "error", err)
-		http.Error(w, http.StatusText(400), 400)
+	channel := &api.Channel{}
+	if err := json.NewDecoder(r.Body).Decode(channel); err != nil {
+		logger.Error("addChannel", "error", err.Error())
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
 	channel.ApplicationID = c.URLParams["app_id"]
 
-	_, err := ctl.api.AddChannel(&channel)
-	switch err {
-	case nil:
-	default:
-		logger.Error("addChannel", "error", err, "channel", channel)
-		http.Error(w, http.StatusText(400), 400)
-		return
-	}
-
-	channelJSON, err := ctl.api.GetChannelJSON(channel.ID)
+	_, err := ctl.api.AddChannel(channel)
 	if err != nil {
-		logger.Error("addChannel", "error", err, "channelID", channel.ID)
-		http.Error(w, http.StatusText(400), 400)
+		logger.Error("addChannel", "error", err.Error(), "channel", channel)
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
 
-	w.Write(channelJSON)
+	channel, err = ctl.api.GetChannel(channel.ID)
+	if err != nil {
+		logger.Error("addChannel", "error", err.Error(), "channelID", channel.ID)
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+	if err := json.NewEncoder(w).Encode(channel); err != nil {
+		logger.Error("addChannel - encoding channel", "error", err.Error(), "channelID", channel.ID)
+	}
 }
 
 func (ctl *controller) updateChannel(c web.C, w http.ResponseWriter, r *http.Request) {
-	channel := api.Channel{}
-	if err := json.NewDecoder(r.Body).Decode(&channel); err != nil {
-		logger.Error("updateChannel", "error", err)
-		http.Error(w, http.StatusText(400), 400)
+	channel := &api.Channel{}
+	if err := json.NewDecoder(r.Body).Decode(channel); err != nil {
+		logger.Error("updateChannel - decoding payload", "error", err.Error())
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
 	channel.ID = c.URLParams["channel_id"]
 	channel.ApplicationID = c.URLParams["app_id"]
 
-	err := ctl.api.UpdateChannel(&channel)
-	switch err {
-	case nil:
-	default:
-		logger.Error("updateChannel", "error", err, "channel", channel)
-		http.Error(w, http.StatusText(400), 400)
-		return
-	}
-
-	channelJSON, err := ctl.api.GetChannelJSON(channel.ID)
+	err := ctl.api.UpdateChannel(channel)
 	if err != nil {
-		logger.Error("updateChannel", "error", err, "channelID", channel.ID)
-		http.Error(w, http.StatusText(400), 400)
+		logger.Error("updateChannel - updating channel", "error", err.Error(), "channel", channel)
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
 
-	w.Write(channelJSON)
+	channel, err = ctl.api.GetChannel(channel.ID)
+	if err != nil {
+		logger.Error("updateChannel - getting channel updated", "error", err.Error(), "channelID", channel.ID)
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+	if err := json.NewEncoder(w).Encode(channel); err != nil {
+		logger.Error("updateChannel - encoding channel", "error", err.Error(), "channelID", channel.ID)
+	}
 }
 
 func (ctl *controller) deleteChannel(c web.C, w http.ResponseWriter, r *http.Request) {
@@ -390,25 +392,27 @@ func (ctl *controller) deleteChannel(c web.C, w http.ResponseWriter, r *http.Req
 	err := ctl.api.DeleteChannel(channelID)
 	switch err {
 	case nil:
-		http.Error(w, http.StatusText(204), 204)
+		http.Error(w, http.StatusText(http.StatusNoContent), http.StatusNoContent)
 	default:
-		logger.Error("deleteChannel", "error", err, "channelID", channelID)
-		http.Error(w, http.StatusText(400), 400)
+		logger.Error("deleteChannel", "error", err.Error(), "channelID", channelID)
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 	}
 }
 
 func (ctl *controller) getChannel(c web.C, w http.ResponseWriter, r *http.Request) {
 	channelID := c.URLParams["channel_id"]
 
-	channelJSON, err := ctl.api.GetChannelJSON(channelID)
+	channel, err := ctl.api.GetChannel(channelID)
 	switch err {
 	case nil:
-		w.Write(channelJSON)
+		if err := json.NewEncoder(w).Encode(channel); err != nil {
+			logger.Error("getChannel - encoding channel", "error", err.Error(), "channelID", channelID)
+		}
 	case sql.ErrNoRows:
-		w.Write([]byte(`[]`))
+		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
 	default:
-		logger.Error("getChannel", "error", err, "channelID", channelID)
-		http.Error(w, http.StatusText(400), 400)
+		logger.Error("getChannel - getting updated channel", "error", err.Error(), "channelID", channelID)
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 	}
 }
 
@@ -417,15 +421,17 @@ func (ctl *controller) getChannels(c web.C, w http.ResponseWriter, r *http.Reque
 	page, _ := strconv.ParseUint(r.URL.Query().Get("page"), 10, 64)
 	perPage, _ := strconv.ParseUint(r.URL.Query().Get("perpage"), 10, 64)
 
-	channelsJSON, err := ctl.api.GetChannelsJSON(appID, page, perPage)
+	channels, err := ctl.api.GetChannels(appID, page, perPage)
 	switch err {
 	case nil:
-		w.Write(channelsJSON)
+		if err := json.NewEncoder(w).Encode(channels); err != nil {
+			logger.Error("getChannels - encoding channel", "error", err.Error(), "appID", appID)
+		}
 	case sql.ErrNoRows:
-		w.Write([]byte(`[]`))
+		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
 	default:
-		logger.Error("getChannels", "error", err, "appID", appID)
-		http.Error(w, http.StatusText(400), 400)
+		logger.Error("getChannels - getting channels", "error", err.Error(), "appID", appID)
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 	}
 }
 
@@ -434,60 +440,58 @@ func (ctl *controller) getChannels(c web.C, w http.ResponseWriter, r *http.Reque
 //
 
 func (ctl *controller) addPackage(c web.C, w http.ResponseWriter, r *http.Request) {
-	pkg := api.Package{}
-	if err := json.NewDecoder(r.Body).Decode(&pkg); err != nil {
-		logger.Error("addPackage", "error", err)
-		http.Error(w, http.StatusText(400), 400)
+	pkg := &api.Package{}
+	if err := json.NewDecoder(r.Body).Decode(pkg); err != nil {
+		logger.Error("addPackage - decoding payload", "error", err.Error())
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
 	pkg.ApplicationID = c.URLParams["app_id"]
 
-	_, err := ctl.api.AddPackage(&pkg)
-	switch err {
-	case nil:
-	default:
-		logger.Error("addPackage", "error", err, "package", pkg)
-		http.Error(w, http.StatusText(400), 400)
-		return
-	}
-
-	pkgJSON, err := ctl.api.GetPackageJSON(pkg.ID)
+	_, err := ctl.api.AddPackage(pkg)
 	if err != nil {
-		logger.Error("addPackage", "error", err, "packageID", pkg.ID)
-		http.Error(w, http.StatusText(400), 400)
+		logger.Error("addPackage - adding package", "error", err.Error(), "package", pkg)
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
 
-	w.Write(pkgJSON)
+	pkg, err = ctl.api.GetPackage(pkg.ID)
+	if err != nil {
+		logger.Error("addPackage - getting added package", "error", err.Error(), "packageID", pkg.ID)
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+	if err := json.NewEncoder(w).Encode(pkg); err != nil {
+		logger.Error("addPackage - encoding package", "error", err.Error(), "packageID", pkg.ID)
+	}
 }
 
 func (ctl *controller) updatePackage(c web.C, w http.ResponseWriter, r *http.Request) {
-	pkg := api.Package{}
-	if err := json.NewDecoder(r.Body).Decode(&pkg); err != nil {
-		logger.Error("updatePackage", "error", err)
-		http.Error(w, http.StatusText(400), 400)
+	pkg := &api.Package{}
+	if err := json.NewDecoder(r.Body).Decode(pkg); err != nil {
+		logger.Error("updatePackage - decoding payload", "error", err.Error())
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
 	pkg.ID = c.URLParams["package_id"]
 	pkg.ApplicationID = c.URLParams["app_id"]
 
-	err := ctl.api.UpdatePackage(&pkg)
-	switch err {
-	case nil:
-	default:
-		logger.Error("updatePackage", "error", err, "package", pkg)
-		http.Error(w, http.StatusText(400), 400)
-		return
-	}
-
-	pkgJSON, err := ctl.api.GetPackageJSON(pkg.ID)
+	err := ctl.api.UpdatePackage(pkg)
 	if err != nil {
-		logger.Error("updatePackage", "error", err, "packageID", pkg.ID)
-		http.Error(w, http.StatusText(400), 400)
+		logger.Error("updatePackage - updating package", "error", err.Error(), "package", pkg)
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
 
-	w.Write(pkgJSON)
+	pkg, err = ctl.api.GetPackage(pkg.ID)
+	if err != nil {
+		logger.Error("addPackage - getting updated package", "error", err.Error(), "packageID", pkg.ID)
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+	if err := json.NewEncoder(w).Encode(pkg); err != nil {
+		logger.Error("updatePackage - encoding package", "error", err.Error(), "packageID", pkg.ID)
+	}
 }
 
 func (ctl *controller) deletePackage(c web.C, w http.ResponseWriter, r *http.Request) {
@@ -496,25 +500,27 @@ func (ctl *controller) deletePackage(c web.C, w http.ResponseWriter, r *http.Req
 	err := ctl.api.DeletePackage(packageID)
 	switch err {
 	case nil:
-		http.Error(w, http.StatusText(204), 204)
+		http.Error(w, http.StatusText(http.StatusNoContent), http.StatusNoContent)
 	default:
-		logger.Error("deletePackage", "error", err, "packageID", packageID)
-		http.Error(w, http.StatusText(400), 400)
+		logger.Error("deletePackage", "error", err.Error(), "packageID", packageID)
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 	}
 }
 
 func (ctl *controller) getPackage(c web.C, w http.ResponseWriter, r *http.Request) {
 	packageID := c.URLParams["package_id"]
 
-	pkgJSON, err := ctl.api.GetPackageJSON(packageID)
+	pkg, err := ctl.api.GetPackage(packageID)
 	switch err {
 	case nil:
-		w.Write(pkgJSON)
+		if err := json.NewEncoder(w).Encode(pkg); err != nil {
+			logger.Error("getPackage - encoding package", "error", err.Error(), "packageID", packageID)
+		}
 	case sql.ErrNoRows:
-		w.Write([]byte(`[]`))
+		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
 	default:
-		logger.Error("getPackage", "error", err, "packageID", packageID)
-		http.Error(w, http.StatusText(400), 400)
+		logger.Error("getPackage - getting package", "error", err.Error(), "packageID", packageID)
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 	}
 }
 
@@ -523,15 +529,17 @@ func (ctl *controller) getPackages(c web.C, w http.ResponseWriter, r *http.Reque
 	page, _ := strconv.ParseUint(r.URL.Query().Get("page"), 10, 64)
 	perPage, _ := strconv.ParseUint(r.URL.Query().Get("perpage"), 10, 64)
 
-	pkgsJSON, err := ctl.api.GetPackagesJSON(appID, page, perPage)
+	pkgs, err := ctl.api.GetPackages(appID, page, perPage)
 	switch err {
 	case nil:
-		w.Write(pkgsJSON)
+		if err := json.NewEncoder(w).Encode(pkgs); err != nil {
+			logger.Error("getPackages - encoding packages", "error", err.Error(), "appID", appID)
+		}
 	case sql.ErrNoRows:
-		w.Write([]byte(`[]`))
+		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
 	default:
-		logger.Error("getPackages", "error", err, "appID", appID)
-		http.Error(w, http.StatusText(400), 400)
+		logger.Error("getPackages - getting packages", "error", err.Error(), "appID", appID)
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 	}
 }
 
@@ -545,15 +553,17 @@ func (ctl *controller) getInstanceStatusHistory(c web.C, w http.ResponseWriter, 
 	instanceID := c.URLParams["instance_id"]
 	limit, _ := strconv.ParseUint(r.URL.Query().Get("limit"), 10, 64)
 
-	instanceStatusHistoryJSON, err := ctl.api.GetInstanceStatusHistoryJSON(instanceID, appID, groupID, limit)
+	instanceStatusHistory, err := ctl.api.GetInstanceStatusHistory(instanceID, appID, groupID, limit)
 	switch err {
 	case nil:
-		w.Write(instanceStatusHistoryJSON)
+		if err := json.NewEncoder(w).Encode(instanceStatusHistory); err != nil {
+			logger.Error("getInstanceStatusHistory - encoding status history", "error", err.Error(), "appID", appID, "groupID", groupID, "instanceID", instanceID, "limit", limit)
+		}
 	case sql.ErrNoRows:
-		w.Write([]byte(`[]`))
+		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
 	default:
-		logger.Error("getInstanceStatusHistory", "error", err, "appID", appID, "groupID", groupID, "instanceID", instanceID, "limit", limit)
-		http.Error(w, http.StatusText(400), 400)
+		logger.Error("getInstanceStatusHistory - getting status history", "error", err.Error(), "appID", appID, "groupID", groupID, "instanceID", instanceID, "limit", limit)
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 	}
 }
 
@@ -570,15 +580,17 @@ func (ctl *controller) getInstances(c web.C, w http.ResponseWriter, r *http.Requ
 	p.Page, _ = strconv.ParseUint(r.URL.Query().Get("page"), 10, 64)
 	p.PerPage, _ = strconv.ParseUint(r.URL.Query().Get("perpage"), 10, 64)
 
-	instancesJSON, err := ctl.api.GetInstancesJSON(p)
+	instances, err := ctl.api.GetInstances(p)
 	switch err {
 	case nil:
-		w.Write(instancesJSON)
+		if err := json.NewEncoder(w).Encode(instances); err != nil {
+			logger.Error("getInstances - encoding instances", "error", err.Error(), "params", p)
+		}
 	case sql.ErrNoRows:
-		w.Write([]byte(`[]`))
+		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
 	default:
-		logger.Error("getInstances", "error", err, "appID", appID, "groupID", groupID, "p", p)
-		http.Error(w, http.StatusText(400), 400)
+		logger.Error("getInstances - getting instances", "error", err.Error(), "params", p)
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 	}
 }
 
@@ -602,15 +614,17 @@ func (ctl *controller) getActivity(c web.C, w http.ResponseWriter, r *http.Reque
 	p.Page, _ = strconv.ParseUint(r.URL.Query().Get("page"), 10, 64)
 	p.PerPage, _ = strconv.ParseUint(r.URL.Query().Get("perpage"), 10, 64)
 
-	activityEntriesJSON, err := ctl.api.GetActivityJSON(teamID, p)
+	activityEntries, err := ctl.api.GetActivity(teamID, p)
 	switch err {
 	case nil:
-		w.Write(activityEntriesJSON)
+		if err := json.NewEncoder(w).Encode(activityEntries); err != nil {
+			logger.Error("getActivity - encoding activity entries", "error", err.Error(), "params", p)
+		}
 	case sql.ErrNoRows:
-		w.Write([]byte(`[]`))
+		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
 	default:
-		logger.Error("getActivity", "error", err, "teamID", teamID, "p", p)
-		http.Error(w, http.StatusText(400), 400)
+		logger.Error("getActivity", "error", err, "teamID", teamID, "params", p)
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 	}
 }
 
