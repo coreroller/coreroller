@@ -8,7 +8,9 @@ sleep 3
 echo "Creating databases..."
 sudo -u postgres psql -q <<-EOF
 CREATE DATABASE coreroller;
+ALTER DATABASE coreroller SET TIMEZONE = 'UTC';
 CREATE DATABASE coreroller_tests;
+ALTER DATABASE coreroller_tests SET TIMEZONE = 'UTC';
 EOF
 
 echo "Installing extensions..."
