@@ -74,13 +74,13 @@
 		{
 			"importpath": "github.com/jmoiron/sqlx",
 			"repository": "https://github.com/jmoiron/sqlx",
-			"revision": "3a92b1fd96032c4490fa618370fbf98ec69b680c",
+			"revision": "398dd5876282499cdfd4cb8ea0f31a672abe9495",
 			"branch": "master"
 		},
 		{
 			"importpath": "github.com/lib/pq",
 			"repository": "https://github.com/lib/pq",
-			"revision": "b269bd035a727d6c1081f76e7a239a1b00674c40",
+			"revision": "3cd0097429be7d611bb644ef85b42bfb102ceea4",
 			"branch": "master"
 		},
 		{
@@ -110,7 +110,7 @@
 		{
 			"importpath": "github.com/mgutz/logxi/v1",
 			"repository": "https://github.com/mgutz/logxi",
-			"revision": "5e85ab8bfe3b2db5d199916ef190d3f940a3d5ca",
+			"revision": "7d364cab682d1b7b9063a3293c9e8c3087194940",
 			"branch": "master",
 			"path": "/v1"
 		},

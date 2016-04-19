@@ -105,29 +105,35 @@ type Preparer interface {
 
 // determine if any of our extensions are unsafe
 func isUnsafe(i interface{}) bool {
-	switch i.(type) {
+	switch v := i.(type) {
 	case Row:
-		return i.(Row).unsafe
+		return v.unsafe
 	case *Row:
-		return i.(*Row).unsafe
+		return v.unsafe
 	case Rows:
-		return i.(Rows).unsafe
+		return v.unsafe
 	case *Rows:
-		return i.(*Rows).unsafe
+		return v.unsafe
+	case NamedStmt:
+		return v.Stmt.unsafe
+	case *NamedStmt:
+		return v.Stmt.unsafe
 	case Stmt:
-		return i.(Stmt).unsafe
+		return v.unsafe
+	case *Stmt:
+		return v.unsafe
 	case qStmt:
-		return i.(qStmt).Stmt.unsafe
+		return v.unsafe
 	case *qStmt:
-		return i.(*qStmt).Stmt.unsafe
+		return v.unsafe
 	case DB:
-		return i.(DB).unsafe
+		return v.unsafe
 	case *DB:
-		return i.(*DB).unsafe
+		return v.unsafe
 	case Tx:
-		return i.(Tx).unsafe
+		return v.unsafe
 	case *Tx:
-		return i.(*Tx).unsafe
+		return v.unsafe
 	case sql.Rows, *sql.Rows:
 		return false
 	default:
@@ -428,18 +434,18 @@ func (tx *Tx) Preparex(query string) (*Stmt, error) {
 // Stmtx returns a version of the prepared statement which runs within a transaction.  Provided
 // stmt can be either *sql.Stmt or *sqlx.Stmt.
 func (tx *Tx) Stmtx(stmt interface{}) *Stmt {
-	var st sql.Stmt
 	var s *sql.Stmt
-	switch stmt.(type) {
-	case sql.Stmt:
-		st = stmt.(sql.Stmt)
-		s = &st
+	switch v := stmt.(type) {
 	case Stmt:
-		s = stmt.(Stmt).Stmt
+		s = v.Stmt
 	case *Stmt:
-		s = stmt.(*Stmt).Stmt
+		s = v.Stmt
+	case sql.Stmt:
+		s = &v
 	case *sql.Stmt:
-		s = stmt.(*sql.Stmt)
+		s = v
+	default:
+		panic(fmt.Sprintf("non-statement type %v passed to Stmtx", reflect.ValueOf(stmt).Type()))
 	}
 	return &Stmt{Stmt: tx.Stmt(s), Mapper: tx.Mapper}
 }
@@ -738,7 +744,7 @@ func (r *Row) StructScan(dest interface{}) error {
 }
 
 // SliceScan a row, returning a []interface{} with values similar to MapScan.
-// This function is primarly intended for use where the number of columns
+// This function is primarily intended for use where the number of columns
 // is not known.  Because you can pass an []interface{} directly to Scan,
 // it's recommended that you do that as it will not have to allocate new
 // slices per row.

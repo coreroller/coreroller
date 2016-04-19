@@ -93,6 +93,20 @@ func TestBasicEmbedded(t *testing.T) {
 	}
 }
 
+func TestEmbeddedSimple(t *testing.T) {
+	type UUID [16]byte
+	type MyID struct {
+		UUID
+	}
+	type Item struct {
+		ID MyID
+	}
+	z := Item{}
+
+	m := NewMapper("db")
+	m.TypeMap(reflect.TypeOf(z))
+}
+
 func TestBasicEmbeddedWithTags(t *testing.T) {
 	type Foo struct {
 		A int `db:"a"`
@@ -197,7 +211,7 @@ func TestNestedStruct(t *testing.T) {
 	}
 	v = m.FieldByName(pv, "asset.details.active")
 	if v.Interface().(bool) != post.Asset.Details.Active {
-		t.Errorf("Expecting %s, got %s", post.Asset.Details.Active, v.Interface().(bool))
+		t.Errorf("Expecting %v, got %v", post.Asset.Details.Active, v.Interface().(bool))
 	}
 }
 
@@ -206,7 +220,7 @@ func TestInlineStruct(t *testing.T) {
 
 	type Employee struct {
 		Name string
-		Id   int
+		ID   int
 	}
 	type Boss Employee
 	type person struct {
@@ -215,7 +229,7 @@ func TestInlineStruct(t *testing.T) {
 	}
 	// employees columns: (employee.name employee.id boss.name boss.id)
 
-	em := person{Employee: Employee{Name: "Joe", Id: 2}, Boss: Boss{Name: "Dick", Id: 1}}
+	em := person{Employee: Employee{Name: "Joe", ID: 2}, Boss: Boss{Name: "Dick", ID: 1}}
 	ev := reflect.ValueOf(em)
 
 	fields := m.TypeMap(reflect.TypeOf(em))
@@ -228,8 +242,8 @@ func TestInlineStruct(t *testing.T) {
 		t.Errorf("Expecting %s, got %s", em.Employee.Name, v.Interface().(string))
 	}
 	v = m.FieldByName(ev, "boss.id")
-	if ival(v) != em.Boss.Id {
-		t.Errorf("Expecting %s, got %s", em.Boss.Id, ival(v))
+	if ival(v) != em.Boss.ID {
+		t.Errorf("Expecting %v, got %v", em.Boss.ID, ival(v))
 	}
 }
 

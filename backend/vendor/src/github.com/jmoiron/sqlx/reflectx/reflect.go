@@ -1,6 +1,6 @@
 // Package reflectx implements extensions to the standard reflect lib suitable
 // for implementing marshaling and unmarshaling packages.  The main Mapper type
-// allows for Go-compatible named atribute access, including accessing embedded
+// allows for Go-compatible named attribute access, including accessing embedded
 // struct attributes and the ability to use  functions and struct tags to
 // customize field names.
 //
@@ -41,7 +41,7 @@ func (f StructMap) GetByPath(path string) *FieldInfo {
 }
 
 // GetByTraversal returns a *FieldInfo for a given integer path.  It is
-// analagous to reflect.FieldByIndex.
+// analogous to reflect.FieldByIndex.
 func (f StructMap) GetByTraversal(index []int) *FieldInfo {
 	if len(index) == 0 {
 		return nil
@@ -270,10 +270,14 @@ func getMapping(t reflect.Type, tagName string, mapFunc, tagMapFunc func(string)
 		// pop the first item off of the queue
 		tq := queue[0]
 		queue = queue[1:]
-		tq.fi.Children = make([]*FieldInfo, tq.t.NumField())
+		nChildren := 0
+		if tq.t.Kind() == reflect.Struct {
+			nChildren = tq.t.NumField()
+		}
+		tq.fi.Children = make([]*FieldInfo, nChildren)
 
 		// iterate through all of its fields
-		for fieldPos := 0; fieldPos < tq.t.NumField(); fieldPos++ {
+		for fieldPos := 0; fieldPos < nChildren; fieldPos++ {
 			f := tq.t.Field(fieldPos)
 
 			fi := FieldInfo{}
@@ -322,7 +326,7 @@ func getMapping(t reflect.Type, tagName string, mapFunc, tagMapFunc func(string)
 			}
 
 			// skip unexported fields
-			if len(f.PkgPath) != 0 {
+			if len(f.PkgPath) != 0 && !f.Anonymous {
 				continue
 			}
 
@@ -335,7 +339,12 @@ func getMapping(t reflect.Type, tagName string, mapFunc, tagMapFunc func(string)
 
 				fi.Embedded = true
 				fi.Index = apnd(tq.fi.Index, fieldPos)
-				fi.Children = make([]*FieldInfo, Deref(f.Type).NumField())
+				nChildren := 0
+				ft := Deref(f.Type)
+				if ft.Kind() == reflect.Struct {
+					nChildren = ft.NumField()
+				}
+				fi.Children = make([]*FieldInfo, nChildren)
 				queue = append(queue, typeQueue{Deref(f.Type), &fi, pp})
 			} else if fi.Zero.Kind() == reflect.Struct || (fi.Zero.Kind() == reflect.Ptr && fi.Zero.Type().Elem().Kind() == reflect.Struct) {
 				fi.Index = apnd(tq.fi.Index, fieldPos)
