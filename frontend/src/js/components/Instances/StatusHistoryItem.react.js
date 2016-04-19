@@ -26,8 +26,8 @@ class StatusHistoryItem extends React.Component {
   }
 
   render() {
-    let date = moment.utc(this.props.entry.created_ts + "+00:00").local().format("DD/MM/YYYY"),
-        time = moment.utc(this.props.entry.created_ts + "+00:00").local().format("hh:mma"),
+    let date = moment.utc(this.props.entry.created_ts).local().format("DD/MM/YYYY"),
+        time = moment.utc(this.props.entry.created_ts).local().format("hh:mma"),
         instanceLabel = this.state.status.className ? <Label>{this.state.status.status}</Label> : <div>&nbsp;</div>
 
     return(

@@ -21,25 +21,39 @@ class InstancesStore extends Store {
   }
 
   getInstances(applicationID, groupID) {
+    let application = this.instances.hasOwnProperty(applicationID) ? this.instances[applicationID] : this.instances[applicationID] = {}
+
     API.getInstances(applicationID, groupID).
       done(instances => {
-        let application = this.instances.hasOwnProperty(applicationID) ? this.instances[applicationID] : this.instances[applicationID] = {}
         let sortedInstances = _.sortBy(instances, (instance) => {
           instance.statusInfo = this.getInstanceStatus(instance.application.status, instance.application.version)
           return instance.application.last_check_for_updates
         })
         application[groupID] = sortedInstances.reverse()
         this.emitChange()
+      }).
+      fail((error) => {
+        if (error.status === 404) {
+          application[groupID] = []
+          this.emitChange()
+        }
       })
   }
 
   getInstanceStatusHistory(applicationID, groupID, instanceID) {
+    let instancesList = this.instances[applicationID][groupID]
+    let instanceToUpdate = _.findWhere(instancesList, {id: instanceID})
+
     return API.getInstanceStatusHistory(applicationID, groupID, instanceID).
       done(statusHistory => {
-        let instancesList = this.instances[applicationID][groupID]
-        let instanceToUpdate = _.findWhere(instancesList, {id: instanceID})
         instanceToUpdate.statusHistory = statusHistory
         this.emitChange()
+      }).
+      fail((error) => {
+        if (error.status === 404) {
+          instanceToUpdate.statusHistory = []
+          this.emitChange()
+        }
       })
   }
 

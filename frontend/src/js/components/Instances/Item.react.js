@@ -32,6 +32,11 @@ class Item extends React.Component {
       instancesStore.getInstanceStatusHistory(appID, groupID, instanceID).
         done(() => {
           this.props.onToggle(this.props.instance.id, !this.props.selected)
+        }).
+        fail((error) => {
+          if (error.status === 404) {
+            this.props.onToggle(this.props.instance.id, !this.props.selected)
+          }
         })
     } else {
       this.props.onToggle(this.props.instance.id, !this.props.selected)
@@ -43,7 +48,7 @@ class Item extends React.Component {
   }
 
   render() {
-    let date = moment.utc(this.props.instance.application.last_check_for_updates + "+00:00").local().format("DD/MM/YYYY, hh:mma"),
+    let date = moment.utc(this.props.instance.application.last_check_for_updates).local().format("DD/MM/YYYY, hh:mma"),
         active = this.props.selected ? " active" : "",
         index = this.props.versionNumbers.indexOf(this.props.instance.application.version),
         downloadingIcon = this.props.instance.statusInfo.spinning ? <img src="img/mini_loading.gif" /> : "",

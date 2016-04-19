@@ -24,6 +24,12 @@ class ActivityStore extends Store {
       done(activity => {
         this.activity = this.sortActivityByDate(activity)
         this.emitChange()
+      }).
+      fail((error) => {
+        if (error.status === 404) {
+          this.activity = []
+          this.emitChange()
+        }
       })
   }
 
@@ -31,7 +37,7 @@ class ActivityStore extends Store {
     let sortedEntries = {}
 
     entries.forEach(entry => {
-      let date = moment.utc(entry.created_ts).format("dddd, DD MMMM YYYY")
+      let date = moment.utc(entry.created_ts).local().format("dddd, DD MMMM YYYY")
       if (_.has(sortedEntries, date)) {
         sortedEntries[date].push(entry)
       }

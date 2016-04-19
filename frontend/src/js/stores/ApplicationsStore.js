@@ -29,6 +29,12 @@ class ApplicationsStore extends Store {
       done(applications => {
         this.applications = applications
         this.emitChange()
+      }).
+      fail((error) => {
+        if (error.status === 404) {
+          this.applications = []
+          this.emitChange()
+        }
       })
   }
 
@@ -36,7 +42,7 @@ class ApplicationsStore extends Store {
     API.getApplication(applicationID).
       done(application => {
         if (this.applications) {
-          let applicationItem = application[0]
+          let applicationItem = application
           let index = this.applications ? _.findIndex(this.applications, {id: applicationID}) : null
           if (index >= 0) {
             this.applications[index] = applicationItem
@@ -63,7 +69,7 @@ class ApplicationsStore extends Store {
   createApplication(data, clonedApplication) {
     return API.createApplication(data, clonedApplication).
       done(application => {
-        let applicationItem = application[0]
+        let applicationItem = application
         this.applications.unshift(applicationItem)
         this.emitChange()
       })
@@ -74,7 +80,7 @@ class ApplicationsStore extends Store {
 
     return API.updateApplication(data).
       done(application => {
-        let applicationItem = application[0],
+        let applicationItem = application,
             applicationToUpdate = _.findWhere(this.applications, {id: applicationItem.id})
 
         applicationToUpdate.name = applicationItem.name
@@ -86,7 +92,7 @@ class ApplicationsStore extends Store {
   getAndUpdateApplication(applicationID) {
     API.getApplication(applicationID).
       done(application => {
-        let applicationItem = application[0],
+        let applicationItem = application,
             index = _.findIndex(this.applications, {id: applicationID})
         this.applications[index] = applicationItem
         this.emitChange()
@@ -106,7 +112,7 @@ class ApplicationsStore extends Store {
   createGroup(data) {
     return API.createGroup(data).
       done(group => {
-        let groupItem = group[0],
+        let groupItem = group,
             applicationToUpdate = _.findWhere(this.applications, {id: groupItem.application_id})
         if (applicationToUpdate.groups) {
           applicationToUpdate.groups.unshift(groupItem)
@@ -130,7 +136,7 @@ class ApplicationsStore extends Store {
   updateGroup(data) {
     return API.updateGroup(data).
       done(group => {
-        let groupItem = group[0],
+        let groupItem = group,
             applicationToUpdate = _.findWhere(this.applications, {id: groupItem.application_id}),
             index = _.findIndex(applicationToUpdate.groups, {id: groupItem.id})
         applicationToUpdate.groups[index] = groupItem
@@ -141,7 +147,7 @@ class ApplicationsStore extends Store {
   getGroup(applicationID, groupID) {
     API.getGroup(applicationID, groupID).
       done(group => {
-        let groupItem = group[0],
+        let groupItem = group,
             applicationToUpdate = _.findWhere(this.applications, {id: groupItem.application_id}),
             index = _.findIndex(applicationToUpdate.groups, {id: groupItem.id})
 
@@ -165,7 +171,7 @@ class ApplicationsStore extends Store {
   createChannel(data) {
     return API.createChannel(data).
       done(channel => {
-        let channelItem = channel[0]
+        let channelItem = channel
         this.getAndUpdateApplication(channelItem.application_id)
       })
   }
@@ -180,7 +186,7 @@ class ApplicationsStore extends Store {
   updateChannel(data) {
     return API.updateChannel(data).
       done(channel => {
-        let channelItem = channel[0]
+        let channelItem = channel
         this.getAndUpdateApplication(channelItem.application_id)
       })
   }
@@ -190,7 +196,7 @@ class ApplicationsStore extends Store {
   createPackage(data) {
     return API.createPackage(data).
       done(packageItem => {
-        let newpackage = packageItem[0]
+        let newpackage = packageItem
         this.getAndUpdateApplication(newpackage.application_id)
       })
   }
@@ -205,7 +211,7 @@ class ApplicationsStore extends Store {
   updatePackage(data) {
     return API.updatePackage(data).
       done(packageItem => {
-        let updatedpackage = packageItem[0]
+        let updatedpackage = packageItem
         this.getAndUpdateApplication(updatedpackage.application_id)
       })
   }
