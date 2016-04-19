@@ -1,5 +1,5 @@
 import API from "../api/API"
-import Store from './BaseStore'
+import Store from "./BaseStore"
 import _ from "underscore"
 
 class InstancesStore extends Store {
@@ -20,7 +20,7 @@ class InstancesStore extends Store {
     return cachedInstances
   }
 
-  getInstances(applicationID, groupID) {
+  getInstances(applicationID, groupID, selectedInstance) {
     let application = this.instances.hasOwnProperty(applicationID) ? this.instances[applicationID] : this.instances[applicationID] = {}
 
     API.getInstances(applicationID, groupID).
@@ -31,6 +31,10 @@ class InstancesStore extends Store {
         })
         application[groupID] = sortedInstances.reverse()
         this.emitChange()
+
+        if (selectedInstance) {
+          this.getInstanceStatusHistory(applicationID, groupID, selectedInstance)
+        }
       }).
       fail((error) => {
         if (error.status === 404) {

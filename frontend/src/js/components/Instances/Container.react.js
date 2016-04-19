@@ -45,11 +45,7 @@ class Container extends React.Component {
   }
 
   onChangeApplications() {
-    instancesStore.getInstances(this.props.appID, this.props.groupID)
-
-    if (this.state.selectedInstance) {
-      instancesStore.getInstanceStatusHistory(this.props.appID, this.props.groupID, this.state.selectedInstance)
-    }
+    instancesStore.getInstances(this.props.appID, this.props.groupID, this.state.selectedInstance)
 
     this.setState({
       updating: true
