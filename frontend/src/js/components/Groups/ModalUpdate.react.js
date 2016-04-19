@@ -188,7 +188,7 @@ class ModalUpdate extends React.Component {
                   <option value="days">days</option>
                 </Input>       
               </div>
-              <div className="form--legend minlegend marginBottom15">Never update more than 10 instances per 15 minute time-window.</div>
+              <div className="form--legend minlegend marginBottom15">Never update more than MAX instances per interval defined.</div>
               <div className="form-group">
                 <div className="form--limit">
                   Updates timeout
