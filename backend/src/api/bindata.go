@@ -2,6 +2,7 @@
 // sources:
 // db/drop_all_tables.sql
 // db/migrations/0001_initial.sql
+// db/migrations/0002_use_tz_in_timestamps.sql
 // DO NOT EDIT!
 
 package api
@@ -84,7 +85,7 @@ func dbDrop_all_tablesSql() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "db/drop_all_tables.sql", size: 618, mode: os.FileMode(420), modTime: time.Unix(1445077635, 0)}
+	info := bindataFileInfo{name: "db/drop_all_tables.sql", size: 618, mode: os.FileMode(420), modTime: time.Unix(1460469937, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -104,7 +105,27 @@ func dbMigrations0001_initialSql() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "db/migrations/0001_initial.sql", size: 21220, mode: os.FileMode(420), modTime: time.Unix(1445076647, 0)}
+	info := bindataFileInfo{name: "db/migrations/0001_initial.sql", size: 21220, mode: os.FileMode(420), modTime: time.Unix(1460645224, 0)}
+	a := &asset{bytes: bytes, info: info}
+	return a, nil
+}
+
+var _dbMigrations0002_use_tz_in_timestampsSql = []byte("\x1f\x8b\x08\x00\x00\x09\x6e\x88\x00\xff\xc4\x95\xdf\x4e\xf3\x20\x18\x87\xcf\x7b\x15\xef\xd9\x0e\xbe\xec\x0a\xbe\x78\x50\x37\xa2\x4b\xf6\x2f\x96\xc6\xe8\x09\x21\x0c\x37\xb2\x0e\x08\xd0\x19\xef\x5e\xdc\x34\x69\x8c\x43\x4a\x15\x8f\x96\xb5\xf0\xfc\xa0\x2f\x3c\xef\x78\x0c\xff\x0e\x62\x6b\xa8\xe3\x50\xeb\xa2\x28\xe7\x18\xdd\xc1\xb4\xc4\xe5\x75\x59\x21\x60\xca\x70\xa3\x9a\x86\x1b\xa8\x10\x06\x3c\x5b\xa0\xc7\xd5\x12\xc1\x15\x8c\x6a\x3c\x19\xfd\x7f\x1f\xef\x47\xcf\x11\x38\x4e\x0f\x70\x7e\x30\x59\xcd\xeb\xc5\x12\x98\xe1\x1e\xbc\x21\xce\x02\x7e\x58\xa3\xd3\xfc\x0a\x97\x8b\x35\xdc\xcf\xf0\xed\xe9\x2f\x9c\x78\x75\x35\x5b\xde\x74\x87\x97\xb8\xf3\xf6\x8b\xac\xd6\x72\x63\x73\x85\x51\xad\x1b\xc1\xa8\x13\x4a\xe6\x8a\xd4\x94\xed\xe9\x96\xe7\x8a\x7b\xab\xb3\xb2\x84\xb2\x9c\x7b\x64\x3b\x2a\x25\x6f\x72\xc5\x6d\x8d\x6a\x75\xb6\x33\x23\xa4\x75\x54\xb2\x6c\x15\xfc\xc8\x23\x7f\x70\x58\xbf\xcf\x6e\xa8\x75\x84\xed\x38\xdb\x93\x27\x65\x48\xab\x37\x9e\x1d\xb7\x8e\x0b\x53\x7f\x68\x4d\x67\x1c\xf1\x02\x94\x3d\xbe\xcd\x85\xa9\xd1\x6b\xf2\x3f\xae\xb5\x64\x27\xac\x53\xe6\x25\x57\x99\xf8\x91\x4b\x97\xcd\x99\x5e\x25\x47\xe1\x7e\x75\x73\x45\xb7\x7b\x4d\xd5\xb3\x2c\x06\xf5\xa3\x55\xdd\xc9\x18\xd8\x6e\x02\xac\xc4\x0b\x1a\x20\x26\x34\x8b\x00\x2d\xb9\x17\x84\x98\xfd\x55\x1f\xa0\xf5\x37\x79\x00\x96\x22\xea\x08\x5c\xaa\x87\x07\xa1\xe3\x35\x3b\x3c\x26\xca\x9c\x31\x31\xe9\x32\x0c\xd0\x7b\xbb\x2e\x74\x61\x13\x54\xf6\x09\xf7\x1a\x00\x00\xff\xff\x56\x46\xd6\x50\x67\x0b\x00\x00")
+
+func dbMigrations0002_use_tz_in_timestampsSqlBytes() ([]byte, error) {
+	return bindataRead(
+		_dbMigrations0002_use_tz_in_timestampsSql,
+		"db/migrations/0002_use_tz_in_timestamps.sql",
+	)
+}
+
+func dbMigrations0002_use_tz_in_timestampsSql() (*asset, error) {
+	bytes, err := dbMigrations0002_use_tz_in_timestampsSqlBytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindataFileInfo{name: "db/migrations/0002_use_tz_in_timestamps.sql", size: 2919, mode: os.FileMode(420), modTime: time.Unix(1460903152, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -161,8 +182,9 @@ func AssetNames() []string {
 
 // _bindata is a table, holding each asset generator, mapped to its name.
 var _bindata = map[string]func() (*asset, error){
-	"db/drop_all_tables.sql":         dbDrop_all_tablesSql,
+	"db/drop_all_tables.sql": dbDrop_all_tablesSql,
 	"db/migrations/0001_initial.sql": dbMigrations0001_initialSql,
+	"db/migrations/0002_use_tz_in_timestamps.sql": dbMigrations0002_use_tz_in_timestampsSql,
 }
 
 // AssetDir returns the file names below a certain
@@ -204,12 +226,12 @@ type bintree struct {
 	Func     func() (*asset, error)
 	Children map[string]*bintree
 }
-
 var _bintree = &bintree{nil, map[string]*bintree{
 	"db": &bintree{nil, map[string]*bintree{
 		"drop_all_tables.sql": &bintree{dbDrop_all_tablesSql, map[string]*bintree{}},
 		"migrations": &bintree{nil, map[string]*bintree{
 			"0001_initial.sql": &bintree{dbMigrations0001_initialSql, map[string]*bintree{}},
+			"0002_use_tz_in_timestamps.sql": &bintree{dbMigrations0002_use_tz_in_timestampsSql, map[string]*bintree{}},
 		}},
 	}},
 }}
@@ -260,3 +282,4 @@ func _filePath(dir, name string) string {
 	cannonicalName := strings.Replace(name, "\\", "/", -1)
 	return filepath.Join(append([]string{dir}, strings.Split(cannonicalName, "/")...)...)
 }
+

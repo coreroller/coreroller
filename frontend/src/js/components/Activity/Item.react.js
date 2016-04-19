@@ -37,8 +37,8 @@ class Item extends React.Component {
   }
 
   render() {
-    let ampm = moment.utc(this.props.entry.created_ts + "+00:00").local().format("a"),
-        time = moment.utc(this.props.entry.created_ts + "+00:00").local().format("HH:mm"),
+    let ampm = moment.utc(this.props.entry.created_ts).local().format("a"),
+        time = moment.utc(this.props.entry.created_ts).local().format("HH:mm"),
         subtitle = "",
         name = ""
 

@@ -29,7 +29,7 @@ class Item extends React.Component {
   render() {
     let filename = this.props.packageItem.filename ? this.props.packageItem.filename : "",
         url = this.props.packageItem.url ? this.props.packageItem.url : "#",
-        date = moment.utc(this.props.packageItem.created_ts + "+00:00").local().format("hh:mma, DD/MM"),
+        date = moment.utc(this.props.packageItem.created_ts).local().format("hh:mma, DD/MM"),
         type = this.props.packageItem.type ? this.props.packageItem.type : 1,
         processedChannels = _.where(this.props.channels, {package_id: this.props.packageItem.id}),
         popoverContent = {

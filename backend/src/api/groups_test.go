@@ -138,7 +138,7 @@ func TestGetGroups(t *testing.T) {
 	tGroup1, _ := a.AddGroup(&Group{Name: "test_group1", ApplicationID: tApp.ID, ChannelID: dat.NullStringFrom(tChannel.ID), PolicyUpdatesEnabled: true, PolicySafeMode: true, PolicyPeriodInterval: "15 minutes", PolicyMaxUpdatesPerPeriod: 2, PolicyUpdateTimeout: "60 minutes"})
 	tGroup2, _ := a.AddGroup(&Group{Name: "test_group2", ApplicationID: tApp.ID, PolicyUpdatesEnabled: true, PolicySafeMode: true, PolicyPeriodInterval: "15 minutes", PolicyMaxUpdatesPerPeriod: 2, PolicyUpdateTimeout: "60 minutes"})
 
-	groups, err := a.GetGroups(tApp.ID)
+	groups, err := a.GetGroups(tApp.ID, 0, 0)
 	assert.NoError(t, err)
 	assert.Equal(t, 2, len(groups))
 	assert.Equal(t, tGroup2.Name, groups[0].Name)

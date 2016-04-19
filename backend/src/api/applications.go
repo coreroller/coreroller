@@ -16,7 +16,7 @@ type Application struct {
 	ID          string     `db:"id" json:"id"`
 	Name        string     `db:"name" json:"name"`
 	Description string     `db:"description" json:"description"`
-	CreatedTs   time.Time  `db:"created_ts" json:"-"`
+	CreatedTs   time.Time  `db:"created_ts" json:"created_ts"`
 	TeamID      string     `db:"team_id" json:"-"`
 	Groups      []*Group   `db:"groups" json:"groups"`
 	Channels    []*Channel `db:"channels" json:"channels"`
@@ -65,7 +65,6 @@ func (api *API) AddAppCloning(app *Application, sourceAppID string) (*Applicatio
 			channel.PackageID = dat.NullString{}
 			channelCopy, err := api.AddChannel(channel)
 			if err != nil {
-				_ = logger.Error("AddApp, cloning channels", "error", err)
 				return app, nil // FIXME - think about what we should return to the caller
 			}
 			channelsIDsMappings[originalChannelID] = dat.NullStringFrom(channelCopy.ID)
@@ -78,7 +77,6 @@ func (api *API) AddAppCloning(app *Application, sourceAppID string) (*Applicatio
 			}
 			group.PolicyUpdatesEnabled = true
 			if _, err := api.AddGroup(group); err != nil {
-				_ = logger.Error("AddApp, cloning groups", "error", err)
 				return app, nil // FIXME - think about what we should return to the caller
 			}
 		}
@@ -132,34 +130,18 @@ func (api *API) GetApp(appID string) (*Application, error) {
 	return &app, nil
 }
 
-// GetAppJSON returns the application identified by the id provided in JSON
-// format.
-func (api *API) GetAppJSON(appID string) ([]byte, error) {
-	return api.appsQuery().
-		Where("id = $1", appID).
-		QueryJSON()
-}
-
 // GetApps returns all applications that belong to the team id provided.
-func (api *API) GetApps(teamID string) ([]*Application, error) {
+func (api *API) GetApps(teamID string, page, perPage uint64) ([]*Application, error) {
+	page, perPage = validatePaginationParams(page, perPage)
+
 	var apps []*Application
 
 	err := api.appsQuery().
 		Where("team_id = $1", teamID).
+		Paginate(page, perPage).
 		QueryStructs(&apps)
 
 	return apps, err
-}
-
-// GetAppsJSON returns all applications that belong to the team id provided in
-// JSON format.
-func (api *API) GetAppsJSON(teamID string, page, perPage uint64) ([]byte, error) {
-	page, perPage = validatePaginationParams(page, perPage)
-
-	return api.appsQuery().
-		Where("team_id = $1", teamID).
-		Paginate(page, perPage).
-		QueryJSON()
 }
 
 // appsQuery returns a SelectDocBuilder prepared to return all applications.

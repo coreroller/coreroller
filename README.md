@@ -146,10 +146,14 @@ CoreRoller uses `PostgreSQL` as datastore, so you'll also need it if you are pla
 If you plan to install it yourself locally, please be aware that the [semver](https://github.com/theory/pg-semver/) extension is required and it's not installed by default with PostgreSQL. When installing it manually instead of using the docker image, you'll also need to run the following commands to created the necessary databases and extensions:
 
 	psql -U postgres -c "create database coreroller;"
+	psql -U postgres -c "alter database coreroller set timezone = 'UTC';"
 	psql -U postgres -d coreroller -c "create extension \"uuid-ossp\";"
 	psql -U postgres -d coreroller -c "create extension semver;"
+
+To run the tests you will also need to setup the coreroller\_tests database:
 	
 	psql -U postgres -c "create database coreroller_tests;"
+	psql -U postgres -c "alter database coreroller set timezone = 'UTC';"
 	psql -U postgres -d coreroller_tests -c "create extension \"uuid-ossp\";"
 	psql -U postgres -d coreroller_tests -c "create extension semver;
 

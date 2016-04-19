@@ -5,7 +5,6 @@ import (
 	"os"
 
 	"github.com/jmoiron/sqlx"
-	"github.com/mgutz/logxi/v1"
 	"github.com/rubenv/sql-migrate"
 	"gopkg.in/mgutz/dat.v1"
 	"gopkg.in/mgutz/dat.v1/sqlx-runner"
@@ -14,12 +13,12 @@ import (
 	_ "github.com/lib/pq"
 )
 
+//go:generate go-bindata -pkg api db db/migrations
+
 const (
 	defaultDbURL = "postgres://postgres@127.0.0.1:5432/coreroller?sslmode=disable&connect_timeout=10"
 	nowUTC       = dat.UnsafeString("now() at time zone 'utc'")
 )
-
-var logger = log.New("api")
 
 var (
 	// ErrNoRowsAffected indicates that no rows were affected in an update or
