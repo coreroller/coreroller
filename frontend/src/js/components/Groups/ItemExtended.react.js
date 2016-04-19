@@ -40,6 +40,7 @@ class ItemExtended extends React.Component {
     let group = application ? _.findWhere(application.groups, {id: this.props.groupID}) : null
 
     let name = "",
+        groupId = "",
         description = "",
         instancesNum = 0,
         policyMaxUpdatesPerDay = 0,
@@ -54,6 +55,7 @@ class ItemExtended extends React.Component {
 
     if (group) {
       name = group.name
+      groupId = group.id
       description = group.description ? group.description : ""
       channel = group.channel ? group.channel : {}
       instancesNum = group.instances_stats ? group.instances_stats.total : 0
@@ -75,7 +77,10 @@ class ItemExtended extends React.Component {
               <div className="groups--box">
                 <Row className="groups--boxHeader">
                   <Col xs={12}>
-                    <h3 className="groups--boxTitle">{name}</h3>
+                    <h3 className="groups--boxTitle">
+                      {name}
+                      <span className="groups--id">(ID: {groupId})</span>
+                    </h3>
                     <span className="groups--description">{description}</span>
                   </Col>
                 </Row>
