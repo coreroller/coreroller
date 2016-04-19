@@ -141,7 +141,11 @@ func (s *Syncer) checkForUpdates() error {
 			logger.Debug("checkForUpdates, no update available", "channel", channel, "currentVersion", currentVersion, "updateStatus", update.Status)
 		}
 
-		time.Sleep(1 * time.Minute)
+		select {
+		case <-time.After(1 * time.Minute):
+		case <-s.stopCh:
+			break
+		}
 	}
 
 	return nil
