@@ -131,7 +131,9 @@ func (api *API) RegisterInstance(instanceID, instanceIP, instanceVersion, appID,
 		return nil, err
 	}
 
-	_ = tx.Commit()
+	if err := tx.Commit(); err != nil {
+		return nil, err
+	}
 
 	return api.GetInstance(instanceID, appID)
 }
