@@ -167,10 +167,9 @@ class API {
 
   static getJSON(url) {
     PubSub.publish(MAIN_PROGRESS_BAR, "add")
-    
+
     return $.getJSON(url).
-      done(() => { PubSub.publish(MAIN_PROGRESS_BAR, "done") }).
-      fail(() => { PubSub.publish(MAIN_PROGRESS_BAR, "done") })
+      always(() => { PubSub.publish(MAIN_PROGRESS_BAR, "done") })
   }
 
   static doRequest(method, url, data) {
@@ -182,8 +181,7 @@ class API {
         data: data,
         dataType: "json"
       }).
-      done(() => { PubSub.publish(MAIN_PROGRESS_BAR, "done") }).
-      fail(() => { PubSub.publish(MAIN_PROGRESS_BAR, "done") })
+      always(() => { PubSub.publish(MAIN_PROGRESS_BAR, "done") })
   }
 
 }
