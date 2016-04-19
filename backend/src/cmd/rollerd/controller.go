@@ -23,29 +23,33 @@ type controller struct {
 	syncer        *syncer.Syncer
 }
 
-func newController() (*controller, error) {
+func newController(enableSyncer bool) (*controller, error) {
 	api, err := api.New()
 	if err != nil {
 		return nil, err
 	}
 
-	syncer, err := syncer.New(api)
-	if err != nil {
-		return nil, err
-	}
-	go syncer.Start()
-
 	c := &controller{
-		api:    api,
-		syncer: syncer,
+		api: api,
 	}
 	c.authenticator = auth.NewDigestAuthenticator("coreroller.org", c.getSecret)
+
+	if enableSyncer {
+		syncer, err := syncer.New(api)
+		if err != nil {
+			return nil, err
+		}
+		c.syncer = syncer
+		go syncer.Start()
+	}
 
 	return c, nil
 }
 
 func (ctl *controller) close() {
-	ctl.syncer.Stop()
+	if ctl.syncer != nil {
+		ctl.syncer.Stop()
+	}
 	ctl.api.Close()
 }
 

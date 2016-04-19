@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"net/http"
 	"os"
 
@@ -10,10 +11,15 @@ import (
 	"github.com/zenazn/goji/web/middleware"
 )
 
-var logger = log.New("rollerd")
+var (
+	enableSyncer = flag.Bool("enable-syncer", true, "Enable CoreOS packages syncer")
+	logger       = log.New("rollerd")
+)
 
 func main() {
-	ctl, err := newController()
+	flag.Parse()
+
+	ctl, err := newController(*enableSyncer)
 	if err != nil {
 		logger.Error(err.Error())
 		os.Exit(1)
