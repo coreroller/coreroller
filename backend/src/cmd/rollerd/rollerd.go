@@ -34,6 +34,11 @@ func setupRoutes(ctl *controller) {
 	// API router setup
 	apiRouter := web.New()
 	apiRouter.Use(ctl.authenticate)
+
+	// Disable the built-in "access-log" logger
+	goji.Abandon(middleware.Logger)
+
+	// Define the API router
 	goji.Handle("/api/*", apiRouter)
 
 	// API routes
