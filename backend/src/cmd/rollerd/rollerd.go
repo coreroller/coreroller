@@ -13,6 +13,7 @@ import (
 
 var (
 	enableSyncer = flag.Bool("enable-syncer", true, "Enable CoreOS packages syncer")
+	httpLog      = flag.Bool("http-log", false, "Enable http requests logging")
 	logger       = log.New("rollerd")
 )
 
@@ -27,6 +28,10 @@ func main() {
 	defer ctl.close()
 
 	setupRoutes(ctl)
+
+	if !*httpLog {
+		goji.Abandon(middleware.Logger)
+	}
 	goji.Serve()
 }
 
@@ -34,11 +39,6 @@ func setupRoutes(ctl *controller) {
 	// API router setup
 	apiRouter := web.New()
 	apiRouter.Use(ctl.authenticate)
-
-	// Disable the built-in "access-log" logger
-	goji.Abandon(middleware.Logger)
-
-	// Define the API router
 	goji.Handle("/api/*", apiRouter)
 
 	// API routes
