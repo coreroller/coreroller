@@ -63,7 +63,7 @@ type ActivityQueryParams struct {
 	Start      time.Time `db:"start"`
 	End        time.Time `db:"end"`
 	Page       uint64    `json:"page"`
-	PerPage    uint64    `json:"per_page"`
+	PerPage    uint64    `json:"perpage"`
 }
 
 // GetActivity returns a list of activity entries that match the specified

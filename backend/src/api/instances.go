@@ -91,7 +91,7 @@ type InstancesQueryParams struct {
 	Status        int    `json:"status"`
 	Version       string `json:"version"`
 	Page          uint64 `json:"page"`
-	PerPage       uint64 `json:"per_page"`
+	PerPage       uint64 `json:"perpage"`
 }
 
 // RegisterInstance registers an instance into CoreRoller.
