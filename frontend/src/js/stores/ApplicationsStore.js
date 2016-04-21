@@ -194,6 +194,7 @@ class ApplicationsStore extends Store {
   // Packages
 
   createPackage(data) {
+    console.log(data)
     return API.createPackage(data).
       done(packageItem => {
         let newpackage = packageItem

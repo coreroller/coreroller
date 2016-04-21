@@ -196,6 +196,12 @@
 			"path": "/ssh/terminal"
 		},
 		{
+			"importpath": "gopkg.in/fatih/set.v0",
+			"repository": "https://gopkg.in/fatih/set.v0",
+			"revision": "27c40922c40b43fe04554d8223a402af3ea333f3",
+			"branch": "v0.1.1"
+		},
+		{
 			"importpath": "gopkg.in/godo.v2",
 			"repository": "https://gopkg.in/godo.v2",
 			"revision": "0969c44f5d0c73030d1417f496111768436c34ea",

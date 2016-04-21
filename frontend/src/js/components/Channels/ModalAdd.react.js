@@ -2,13 +2,14 @@ import { applicationsStore } from "../../stores/Stores"
 import React, { PropTypes } from "react"
 import { Row, Col, Modal, Input, Button, Alert } from "react-bootstrap"
 import ColorPicker from "react-color"
+import moment from "moment"
 
 class ModalAdd extends React.Component {
 
   constructor(props) {
     super(props)
     this.state = {
-      channelColor: "#777777", 
+      channelColor: "#777777",
       displayColorPicker: false,
       isLoading: false,
       alertVisible: false
@@ -38,11 +39,11 @@ class ModalAdd extends React.Component {
     }
 
     applicationsStore.createChannel(data).
-      done(() => { 
-        this.props.onHide()   
+      done(() => {
+        this.props.onHide()
         this.setState({isLoading: false})
       }).
-      fail(() => { 
+      fail(() => {
         this.setState({alertVisible: true, isLoading: false})
       })
   }
@@ -63,7 +64,7 @@ class ModalAdd extends React.Component {
     this.setState({ channelColor: "#" + color.hex })
   }
 
-  render() { 
+  render() {
     let packages = this.props.data.packages ? this.props.data.packages : [],
         popupPosition = {
           position: "absolute",
@@ -74,7 +75,7 @@ class ModalAdd extends React.Component {
           backgroundColor: this.state.channelColor
         },
         btnStyle = this.state.isLoading ? " loading" : "",
-        btnContent = this.state.isLoading ? "Please wait" : "Submit" 
+        btnContent = this.state.isLoading ? "Please wait" : "Submit"
 
     return (
       <Modal {...this.props} animation={true}>
@@ -103,12 +104,14 @@ class ModalAdd extends React.Component {
               <Input type="select" label="Package:" placeholder="" groupClassName="arrow-icon" ref="packageChannel">
                 <option value="" />
                 {packages.map((packageItem, i) =>
-                  <option value={packageItem.id} key={i}>{packageItem.version}</option>
+                  <option value={packageItem.id} key={i}>
+                    {packageItem.version} &nbsp;&nbsp;(created: {moment.utc(packageItem.created_ts).local().format("DD/MM/YYYY")})
+                  </option>
                 )}
               </Input>
               <div className="form--legend minlegend marginBottom15">
                 <b>NOTE:</b> updates only happen when a <b>higher</b> version is available. This means that if your instances are running version {"1.3.0"} and the channel is updated pointing it to a lower version (lets say {"1.2.0"}), they won’t execute a downgrade. Only after the channel is pointing to a version higher than {"1.3.0"} they will receive an update.
-              </div>   
+              </div>
               <div className="modal--footer">
                 <Row>
                   <Col xs={8}>

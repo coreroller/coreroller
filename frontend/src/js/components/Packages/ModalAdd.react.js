@@ -1,6 +1,8 @@
 import { applicationsStore } from "../../stores/Stores"
 import React, { PropTypes } from "react"
 import { Row, Col, Modal, Input, Button, Alert } from "react-bootstrap"
+import Select from "react-select"
+import _ from "underscore"
 
 class ModalAdd extends React.Component {
 
@@ -8,9 +10,11 @@ class ModalAdd extends React.Component {
     super(props)
     this.handleFocus = this.handleFocus.bind(this)
     this.createPackage = this.createPackage.bind(this)
+    this.hanldeBlacklistChange = this.hanldeBlacklistChange.bind(this)
     this.state = {
       isLoading: false,
-      alertVisible: false
+      alertVisible: false,
+      blacklist_channels: ""
     }
   }
 
@@ -28,15 +32,16 @@ class ModalAdd extends React.Component {
       type: parseInt(this.refs.typeNewPackage.getValue()),
       size: parseInt(this.refs.sizeNewPackage.getValue()),
       hash: this.refs.hashNewPackage.getValue(),
-      application_id: this.props.data.appID
+      application_id: this.props.data.appID,
+      channels_blacklist: _.isEmpty(this.state.channels_blacklist) ? null : this.state.channels_blacklist.split(",")
     }
 
     applicationsStore.createPackage(data).
-      done(() => { 
-        this.props.onHide()   
+      done(() => {
+        this.props.onHide()
         this.setState({isLoading: false})
       }).
-      fail(() => { 
+      fail(() => {
         this.setState({alertVisible: true, isLoading: false})
       })
   }
@@ -45,9 +50,18 @@ class ModalAdd extends React.Component {
     this.setState({alertVisible: false})
   }
 
+  hanldeBlacklistChange(value) {
+    this.setState({blacklist_channels: value})
+  }
+
   render() {
-    let btnStyle = this.state.isLoading ? " loading" : "",
-        btnContent = this.state.isLoading ? "Please wait" : "Submit" 
+    let packages = this.props.data.channels ? this.props.data.channels : [],
+        btnStyle = this.state.isLoading ? " loading" : "",
+        btnContent = this.state.isLoading ? "Please wait" : "Submit"
+
+    let blacklistOptions = _.map(packages, (packageItem) => {
+      return { value: packageItem.id, label: packageItem.name }
+    })
 
     return (
       <Modal {...this.props} animation={true}>
@@ -62,20 +76,35 @@ class ModalAdd extends React.Component {
                 <option value={2}>Docker image</option>
                 <option value={3}>Rocket image</option>
                 <option value={4}>Other</option>
-              </Input>     
+              </Input>
               <Input type="url" label="*Url:" ref="urlNewPackage" required={true} maxLength={256} />
               <Input type="text" label="Filename:" ref="filenameNewPackage" maxLength={100} />
               <Input type="textarea" label="Description:" ref="descriptionNewPackage" maxLength={250} />
               <Row>
                 <Col xs={6}>
-                  <Input type="text" label="*Version:" ref="versionNewPackage" required={true} />        
+                  <Input type="text" label="*Version:" ref="versionNewPackage" required={true} />
                   <div className="form--legend minlegend minlegend--formGroup">Use SemVer format (1.0.1)</div>
                 </Col>
                 <Col xs={6}>
-                  <Input type="number" label="Size:" ref="sizeNewPackage" maxLength={20} />        
+                  <Input type="number" label="Size:" ref="sizeNewPackage" maxLength={20} />
                 </Col>
               </Row>
-              <Input type="text" label="Hash:" ref="hashNewPackage" maxLength={64} />              
+              <Input type="text" label="Hash:" ref="hashNewPackage" maxLength={64} />
+              <Row>
+                <Col xs={12}>
+                  <div className="form-group">
+                    <label className="control-label">Channels Backlist</label>
+                    <Select
+                      name="channels_blacklist"
+                      value={ this.state.blacklist_channels }
+                      multi
+                      placeholder=" "
+                      options={ blacklistOptions }
+                      onChange={ this.hanldeBlacklistChange }
+                    />
+                  </div>
+                </Col>
+              </Row>
               <div className="modal--footer">
                 <Row>
                   <Col xs={8}>

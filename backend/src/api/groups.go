@@ -250,20 +250,10 @@ func (api *API) groupsQuery() *dat.SelectDocBuilder {
 	return api.dbR.
 		SelectDoc("*").
 		One("instances_stats", api.groupInstancesStatusQuery()).
-		One("channel", api.groupChannelQuery()).
+		One("channel", api.channelsQuery().Where("id = groups.channel_id")).
 		Many("version_breakdown", api.groupVersionBreakdownQuery()).
 		From("groups").
 		OrderBy("created_ts DESC")
-}
-
-// groupChannelQuery returns a SelectDocBuilder prepared to return the channel
-// of a given group.
-func (api *API) groupChannelQuery() *dat.SelectDocBuilder {
-	return api.dbR.
-		SelectDoc("*").
-		One("package", api.channelPackageQuery()).
-		From("channel").
-		Where("id = groups.channel_id")
 }
 
 // groupVersionBreakdownQuery returns a SQL query prepared to return the version
