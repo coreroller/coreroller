@@ -60,7 +60,7 @@ class Item extends React.Component {
             <br />
             <span className="subtitle">Released:</span> {date}
             { !_.isNull(this.props.packageItem.channels_blacklist) &&
-              <div>
+              <div className="label-packageItem-container">
                 <Label bsStyle="danger" className="label-packageItem"><i className="fa fa-ban"></i> { blacklistInfo }</Label>
               </div>
             }
