@@ -7,11 +7,11 @@ RUN locale-gen en_US en_US.UTF-8 && \
 
 # Set Go, HOMEDIR and locale
 ENV DEBIAN_FRONTEND=noninteractive \
-	GO_VER=1.5.1 \
+	GO_VER=1.5.4 \
     GODIR=/go1.5 \
     GOROOT=/go1.5/go \
     GOPATH=/go \
-    PGSQL_VER=9.3 \
+    PGSQL_VER=9.4 \
     COREROLLER_DIR=/coreroller \
     LANGUAGE=en_US.UTF-8 \
     LANG=en_US.UTF-8
