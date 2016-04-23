@@ -1,4 +1,4 @@
-FROM golang:latest
+FROM golang:1.5
 
 # Set Go, HOMEDIR and locale
 ENV DEBIAN_FRONTEND=noninteractive \
