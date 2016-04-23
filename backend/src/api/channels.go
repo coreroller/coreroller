@@ -11,6 +11,10 @@ var (
 	// ErrInvalidPackage error indicates that a package doesn't belong to the
 	// application it was supposed to belong to.
 	ErrInvalidPackage = errors.New("coreroller: invalid package")
+
+	// ErrBlacklistedChannel error indicates an attempt of creating/updating a
+	// channel using a package that has blacklisted the channel.
+	ErrBlacklistedChannel = errors.New("coreroller: blacklisted channel")
 )
 
 // Channel represents a CoreRoller application's channel.
@@ -27,7 +31,7 @@ type Channel struct {
 // AddChannel registers the provided channel.
 func (api *API) AddChannel(channel *Channel) (*Channel, error) {
 	if channel.PackageID.String != "" {
-		if _, err := api.validatePackage(channel.PackageID.String, channel.ApplicationID); err != nil {
+		if _, err := api.validatePackage(channel.PackageID.String, channel.ID, channel.ApplicationID); err != nil {
 			return nil, err
 		}
 	}
@@ -52,7 +56,7 @@ func (api *API) UpdateChannel(channel *Channel) error {
 
 	var pkg *Package
 	if channel.PackageID.String != "" {
-		if pkg, err = api.validatePackage(channel.PackageID.String, channelBeforeUpdate.ApplicationID); err != nil {
+		if pkg, err = api.validatePackage(channel.PackageID.String, channel.ID, channelBeforeUpdate.ApplicationID); err != nil {
 			return err
 		}
 	}
@@ -121,17 +125,24 @@ func (api *API) GetChannels(appID string, page, perPage uint64) ([]*Channel, err
 	return channels, err
 }
 
-// validatePackage checks if a package belongs to the application provided,
-// returning it if found.
-func (api *API) validatePackage(packageID, appID string) (*Package, error) {
+// validatePackage checks if a package belongs to the application provided and
+// that the channel is not in the package's channels blacklist. It returns the
+// package if everything is ok.
+func (api *API) validatePackage(packageID, channelID, appID string) (*Package, error) {
 	pkg, err := api.GetPackage(packageID)
 	if err == nil {
 		if pkg.ApplicationID != appID {
 			return nil, ErrInvalidPackage
 		}
+
+		for _, blacklistedChannelID := range pkg.ChannelsBlacklist {
+			if channelID == blacklistedChannelID {
+				return nil, ErrBlacklistedChannel
+			}
+		}
 	}
 
-	return pkg, nil
+	return pkg, err
 }
 
 // channelsQuery returns a SelectDocBuilder prepared to return all channels.
@@ -141,13 +152,7 @@ func (api *API) validatePackage(packageID, appID string) (*Package, error) {
 func (api *API) channelsQuery() *dat.SelectDocBuilder {
 	return api.dbR.
 		SelectDoc("*").
-		One("package", api.channelPackageQuery()).
+		One("package", api.packagesQuery().Where("package.id = channel.package_id")).
 		From("channel").
-		OrderBy("created_ts DESC")
-}
-
-// channelPackageQuery returns a SQL query prepared to return the package of a
-// given channel.
-func (api *API) channelPackageQuery() string {
-	return "SELECT * FROM package WHERE package.id = channel.package_id"
+		OrderBy("name ASC")
 }

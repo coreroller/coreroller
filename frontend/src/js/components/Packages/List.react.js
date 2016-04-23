@@ -54,7 +54,7 @@ class List extends React.Component {
         <Row>
           <Col xs={12}>
             <h1 className="displayInline mainTitle">Packages</h1>
-            <ModalButton icon="plus" modalToOpen="AddPackageModal" data={{appID: this.props.appID}} />
+            <ModalButton icon="plus" modalToOpen="AddPackageModal" data={{channels: channels, appID: this.props.appID}} />
           </Col>
         </Row>
         <div className="groups--packagesList">

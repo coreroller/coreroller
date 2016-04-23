@@ -2,22 +2,25 @@ import { applicationsStore } from "../../stores/Stores"
 import React, { PropTypes } from "react"
 import { Row, Col, Modal, Input, Button, Alert } from "react-bootstrap"
 import ColorPicker from "react-color"
+import moment from "moment"
+import _ from "underscore"
 
 class ModalUpdate extends React.Component {
 
   constructor(props) {
     super(props)
-    this.state = {
-      channelColor: props.data.channel.color, 
-      displayColorPicker: false,
-      isLoading: false,
-      alertVisible: false
-    }
     this.handleFocus = this.handleFocus.bind(this)
     this.changeColor = this.changeColor.bind(this)
     this.handleColorPicker = this.handleColorPicker.bind(this)
     this.handleColorPickerClose = this.handleColorPickerClose.bind(this)
     this.updateChannel = this.updateChannel.bind(this)
+    this.checkBlacklistChannels = this.checkBlacklistChannels.bind(this)
+    this.state = {
+      channelColor: props.data.channel.color,
+      displayColorPicker: false,
+      isLoading: false,
+      alertVisible: false
+    }
   }
 
   static propTypes : {
@@ -39,11 +42,11 @@ class ModalUpdate extends React.Component {
     }
 
     applicationsStore.updateChannel(data).
-      done(() => { 
-        this.props.onHide()   
+      done(() => {
+        this.props.onHide()
         this.setState({isLoading: false})
       }).
-      fail(() => { 
+      fail(() => {
         this.setState({alertVisible: true, isLoading: false})
       })
   }
@@ -66,8 +69,18 @@ class ModalUpdate extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     this.setState({
-      channelColor: nextProps.data.channel.color, 
+      channelColor: nextProps.data.channel.color,
     })
+  }
+
+  checkBlacklistChannels() {
+    let packagesWithChannelInBlacklist = _.map(this.props.data.packages, (packageItem) => {
+      const channels_blacklist = _.isNull(packageItem.channels_blacklist) ? [] : packageItem.channels_blacklist
+      if (_.indexOf(channels_blacklist, this.props.data.channel.id) > -1) {
+        return packageItem.id
+      }
+    })
+    return _.compact(packagesWithChannelInBlacklist)
   }
 
   render() {
@@ -82,7 +95,8 @@ class ModalUpdate extends React.Component {
           backgroundColor: this.state.channelColor
         },
         btnStyle = this.state.isLoading ? " loading" : "",
-        btnContent = this.state.isLoading ? "Please wait" : "Submit" 
+        btnContent = this.state.isLoading ? "Please wait" : "Submit",
+        channels_blacklist = this.checkBlacklistChannels()
 
     return (
       <Modal {...this.props} animation={true}>
@@ -111,7 +125,12 @@ class ModalUpdate extends React.Component {
               <Input type="select" label="Package:" defaultValue={selectedPackage} placeholder="" groupClassName="arrow-icon" ref="packageChannel">
                 <option value="" />
                 {packages.map((packageItem, i) =>
-                  <option value={packageItem.id} key={i}>{packageItem.version}</option>
+                  <option
+                    value={packageItem.id}
+                    disabled={ ( _.indexOf(channels_blacklist, packageItem.id) > -1) ? true : false }
+                    key={i}>
+                      {packageItem.version} &nbsp;&nbsp;(created: {moment.utc(packageItem.created_ts).local().format("DD/MM/YYYY")})
+                  </option>
                 )}
               </Input>
               <div className="form--legend minlegend marginBottom15">

@@ -151,56 +151,21 @@ func (api *API) GetApps(teamID string, page, perPage uint64) ([]*Application, er
 func (api *API) appsQuery() *dat.SelectDocBuilder {
 	return api.dbR.
 		SelectDoc("id, name, description, created_ts").
-		One("instances", api.appInstancesQuery()).
-		Many("groups", api.appGroupsQuery()).
-		Many("channels", api.appChannelsQuery()).
-		Many("packages", api.appPackagesQuery()).
+		One("instances", api.appInstancesCountQuery()).
+		Many("groups", api.groupsQuery().Where("application_id = application.id")).
+		Many("channels", api.channelsQuery().Where("application_id = application.id")).
+		Many("packages", api.packagesQuery().Where("application_id = application.id")).
 		From("application").
 		OrderBy("created_ts DESC")
 }
 
-// appInstancesQuery returns a SQL query prepared to return the number of
+// appInstancesCountQuery returns a SQL query prepared to return the number of
 // instances running a given application.
-func (api *API) appInstancesQuery() string {
+func (api *API) appInstancesCountQuery() string {
 	return fmt.Sprintf(`
 	SELECT count(*)
 	FROM instance_application 
 	WHERE application_id = application.id AND 
 	      last_check_for_updates > now() at time zone 'utc' - interval '%s'
 	`, validityInterval)
-}
-
-// appChannelsQuery returns a SelectDocBuilder prepared to return all channels
-// of a given application.
-func (api *API) appChannelsQuery() *dat.SelectDocBuilder {
-	return api.dbR.
-		SelectDoc("*").
-		One("package", api.channelPackageQuery()).
-		From("channel").
-		Where("application_id = application.id").
-		OrderBy("name ASC")
-}
-
-// appGroupsQuery returns a SelectDocBuilder prepared to return all groups of a
-// given application.
-func (api *API) appGroupsQuery() *dat.SelectDocBuilder {
-	return api.dbR.
-		SelectDoc("*").
-		One("instances_stats", api.groupInstancesStatusQuery()).
-		One("channel", api.groupChannelQuery()).
-		Many("version_breakdown", api.groupVersionBreakdownQuery()).
-		From("groups").
-		Where("application_id = application.id").
-		OrderBy("created_ts DESC")
-}
-
-// appPackagesQuery returns a SelectDocBuilder prepared to return all packages
-// of a given application.
-func (api *API) appPackagesQuery() *dat.SelectDocBuilder {
-	return api.dbR.
-		SelectDoc("*").
-		From("package").
-		Where("application_id = application.id").
-		OrderBy("version DESC").
-		Limit(10)
 }

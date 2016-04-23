@@ -1,6 +1,6 @@
 import { applicationsStore } from "../../stores/Stores"
 import React, { PropTypes } from "react"
-import { Row, Col, OverlayTrigger, Button, Popover } from "react-bootstrap"
+import { Row, Col, OverlayTrigger, Button, Popover, Label } from "react-bootstrap"
 import ConfirmationContent from "../Common/ConfirmationContent.react"
 import moment from "moment"
 import _ from "underscore"
@@ -36,14 +36,22 @@ class Item extends React.Component {
           type: "package",
           appID: this.props.packageItem.application_id,
           packageID: this.props.packageItem.id
-        }
+        },
+        blacklistInfo = null
+
+    if (this.props.packageItem.channels_blacklist) {
+      let channelsList = _.map(this.props.packageItem.channels_blacklist, (channel, index) => {
+        return (_.findWhere(this.props.channels, {id: channel})).name
+      })
+      blacklistInfo = channelsList.join(" - ")
+    }
 
     return (
       <Row>
         <Col xs={7} className="noPadding">
           <div className="package--info">
             <div className={"containerIcon container-" + type}></div>
-            <br />          
+            <br />
             <span className="subtitle">Version:</span>
             {processedChannels.map((channel, i) =>
               <VersionBullet channel={channel} key={i} />
@@ -51,10 +59,15 @@ class Item extends React.Component {
             {this.props.packageItem.version}
             <br />
             <span className="subtitle">Released:</span> {date}
+            { !_.isNull(this.props.packageItem.channels_blacklist) &&
+              <div>
+                <Label bsStyle="danger" className="label-packageItem"><i className="fa fa-ban"></i> { blacklistInfo }</Label>
+              </div>
+            }
           </div>
         </Col>
         <Col xs={5} className="alignRight marginTop7">
-          <ModalButton icon="edit" modalToOpen="UpdatePackageModal" data={{channel: this.props.packageItem}} />
+          <ModalButton icon="edit" modalToOpen="UpdatePackageModal" data={{channels: this.props.channels, channel: this.props.packageItem}} />
           <button className="cr-button displayInline fa fa-trash-o" onClick={this.deletePackage}></button>
         </Col>
       </Row>

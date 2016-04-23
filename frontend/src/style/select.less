@@ -1,0 +1,54 @@
+// Custom select
+
+.Select {
+  margin-bottom: 15px;
+
+  &-control {
+    height: 34px;
+    border: 1px solid @grey-50;
+    border-radius: 2px;
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    box-shadow: none;
+
+    &:hover {
+      box-shadow: none;
+    }
+  }
+
+  &-item {
+    background-color: transparent;
+    border-color: @font-color !important;
+    color: @font-color;
+    line-height: .75em;
+
+    &-icon {
+      border-right-color: @font-color;
+
+      &:hover,
+      &:focus {
+        background-color: lighten(@font-color, 80%);
+        color: @font-color;
+      }
+    }
+
+    &-label {
+      text-transform: uppercase;
+      font-size: 75%;
+    }
+  }
+
+  &.is-multi .Select-control {
+    padding: 0px 52px 2px 3px;
+  }
+
+  &.is-focused:not(.is-open) > .Select-control {
+    border-color: #66afe9;
+    outline: 0;
+    box-shadow: none;
+  }
+
+  &-option.is-focused {
+    background-color: @grey-15;
+  }
+}

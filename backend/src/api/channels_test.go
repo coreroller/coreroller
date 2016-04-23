@@ -51,7 +51,6 @@ func TestAddChannel(t *testing.T) {
 
 	_, err = a.AddChannel(&Channel{Name: "channel3", ApplicationID: tApp.ID, PackageID: dat.NullStringFrom(tPkg2.ID)})
 	assert.Equal(t, ErrInvalidPackage, err, "Package used must belong to the same application as the channel.")
-
 }
 
 func TestUpdateChannel(t *testing.T) {
@@ -65,6 +64,7 @@ func TestUpdateChannel(t *testing.T) {
 	tChannel, _ := a.AddChannel(&Channel{Name: "test_channel", Color: "blue", ApplicationID: tApp.ID, PackageID: dat.NullStringFrom(tPkg.ID)})
 	tPkg2, _ := a.AddPackage(&Package{Type: PkgTypeOther, URL: "http://sample.url/pkg", Version: "12.1.1", ApplicationID: tApp.ID})
 	tPkg3, _ := a.AddPackage(&Package{Type: PkgTypeOther, URL: "http://sample.url/pkg", Version: "12.1.2", ApplicationID: tApp2.ID})
+	tPkg4, _ := a.AddPackage(&Package{Type: PkgTypeOther, URL: "http://sample.url/pkg", Version: "12.1.3", ApplicationID: tApp.ID, ChannelsBlacklist: []string{tChannel.ID}})
 
 	err := a.UpdateChannel(&Channel{ID: tChannel.ID, Name: "test_channel_updated", PackageID: dat.NullStringFrom(tPkg2.ID)})
 	assert.NoError(t, err)
@@ -77,6 +77,9 @@ func TestUpdateChannel(t *testing.T) {
 
 	err = a.UpdateChannel(&Channel{ID: tChannel.ID, Name: "test_channel_updated", PackageID: dat.NullStringFrom(tPkg3.ID)})
 	assert.Equal(t, ErrInvalidPackage, err, "Package used must belong to the same application as the channel.")
+
+	err = a.UpdateChannel(&Channel{ID: tChannel.ID, PackageID: dat.NullStringFrom(tPkg4.ID)})
+	assert.Equal(t, ErrBlacklistedChannel, err, "Package used must not have blacklisted this channel.")
 }
 
 func TestDeleteChannel(t *testing.T) {

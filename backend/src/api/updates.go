@@ -76,6 +76,12 @@ func (api *API) GetUpdatePackage(instanceID, instanceIP, instanceVersion, appID,
 		return nil, ErrNoPackageFound
 	}
 
+	for _, blacklistedChannelID := range group.Channel.Package.ChannelsBlacklist {
+		if blacklistedChannelID == group.Channel.ID {
+			return nil, ErrNoUpdatePackageAvailable
+		}
+	}
+
 	instanceSemver, _ := semver.NewVersion(instanceVersion)
 	packageSemver, _ := semver.NewVersion(group.Channel.Package.Version)
 	if !instanceSemver.LessThan(*packageSemver) {

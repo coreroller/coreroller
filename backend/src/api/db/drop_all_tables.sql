@@ -13,3 +13,4 @@ DROP TABLE IF EXISTS event_type CASCADE;
 DROP TABLE IF EXISTS event CASCADE;
 DROP TABLE IF EXISTS activity CASCADE;
 DROP TABLE IF EXISTS database_migrations;
+DROP TABLE IF EXISTS package_channel_blacklist;
