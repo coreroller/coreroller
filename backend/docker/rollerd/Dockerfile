@@ -4,9 +4,7 @@ FROM golang:1.5
 ENV DEBIAN_FRONTEND=noninteractive \
     COREROLLER_DIR=/coreroller \
     LANGUAGE=en_US.UTF-8 \
-    LANG=en_US.UTF-8 \
-    POSTGRESQLD_PORT_5432_TCP_ADDR=172.17.8.101 \
-    POSTGRESQLD_PORT_5432_TCP_PORT=5432
+    LANG=en_US.UTF-8
 
 # Install basic stuff
 RUN apt-get update && \
@@ -29,6 +27,6 @@ RUN cd $COREROLLER_DIR/frontend && \
 # We could uninstall nodejs/npm at this stage to save some on image size, but at the moment
 # we make it easy for development by leaving npm so you can rebuild the UI if needed
 
-ENV COREROLLER_DB_URL="postgres://postgres@$POSTGRESQLD_PORT_5432_TCP_ADDR:$POSTGRESQLD_PORT_5432_TCP_PORT/coreroller?sslmode=disable"
+ENV COREROLLER_DB_URL="postgres://postgres@postgresqld:5432/coreroller?sslmode=disable"
 WORKDIR $COREROLLER_DIR/backend
 CMD ["bin/rollerd"]
