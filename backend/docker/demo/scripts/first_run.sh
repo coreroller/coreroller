@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Start PostgreSQL service
-sudo -u postgres /usr/lib/postgresql/9.3/bin/pg_ctl -D /data -l /tmp/logfile start
+sudo -u postgres /usr/lib/postgresql/9.4/bin/pg_ctl -D /data -l /tmp/logfile start
 sleep 3
 
 # Create dabatase
