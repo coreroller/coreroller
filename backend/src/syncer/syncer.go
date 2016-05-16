@@ -198,7 +198,7 @@ func (s *Syncer) doOmahaRequest(channel, currentVersion string) (*omaha.UpdateCh
 }
 
 // processUpdate is in charge of creating packages in the CoreOS application in
-// CoreRoller and updating the appropiate channel to point to the new channel.
+// CoreRoller and updating the appropriate channel to point to the new channel.
 func (s *Syncer) processUpdate(channelName string, update *omaha.UpdateCheck) error {
 	// Create new package and action for CoreOS application in CoreRoller if
 	// needed (package may already exist and we just need to update the channel
