@@ -12,6 +12,7 @@ import (
 	"github.com/coreos/go-omaha/omaha"
 )
 
+// Update represents some information about an update received from CR.
 type Update struct {
 	Version  string
 	URL      string
@@ -23,22 +24,29 @@ const (
 	defaultOmahaURL = "http://localhost:8000/omaha/"
 
 	// Event types
-	EventUpdateComplete         = 3
-	EventUpdateDownloadStarted  = 13
-	EventUpdateDownloadFinished = 14
-	EventUpdateInstalled        = 800
+	eventUpdateComplete         = 3
+	eventUpdateDownloadStarted  = 13
+	eventUpdateDownloadFinished = 14
+	eventUpdateInstalled        = 800
 
 	// Event results
-	ResultFailed        = 0
-	ResultSuccess       = 1
-	ResultSuccessReboot = 2
+	resultFailed        = 0
+	resultSuccess       = 1
+	resultSuccessReboot = 2
 )
 
 var (
+	// ErrInvalidOmahaResponse error indicates that the omaha response received
+	// from CR was invalid.
 	ErrInvalidOmahaResponse = errors.New("invalid omaha response")
-	ErrNoUpdate             = errors.New("no update available")
+
+	// ErrNoUpdate error indicates that there wasn't any update available for
+	// instance requesting it in the context of the appID/groupID provided.
+	ErrNoUpdate = errors.New("no update available")
 )
 
+// GetUpdate asks CR for an update for the given instance in the context of the
+// application and group provided.
 func GetUpdate(instanceID, appID, groupID, version string) (*Update, error) {
 	req := buildOmahaUpdateRequest(instanceID, appID, groupID, version)
 	resp, err := doOmahaRequest(req)
@@ -72,29 +80,37 @@ func GetUpdate(instanceID, appID, groupID, version string) (*Update, error) {
 	}
 }
 
+// EventDownloadStarted posts an event to CR to indicate that the download of
+// the update has started.
 func EventDownloadStarted(instanceID, appID, groupID string) error {
-	req := buildOmahaEventRequest(instanceID, appID, groupID, EventUpdateDownloadStarted, ResultSuccess)
+	req := buildOmahaEventRequest(instanceID, appID, groupID, eventUpdateDownloadStarted, resultSuccess)
 	_, err := doOmahaRequest(req)
 
 	return err
 }
 
+// EventDownloadFinished posts an event to CR to indicate that the download of
+// the update has finished.
 func EventDownloadFinished(instanceID, appID, groupID string) error {
-	req := buildOmahaEventRequest(instanceID, appID, groupID, EventUpdateDownloadFinished, ResultSuccess)
+	req := buildOmahaEventRequest(instanceID, appID, groupID, eventUpdateDownloadFinished, resultSuccess)
 	_, err := doOmahaRequest(req)
 
 	return err
 }
 
+// EventUpdateSucceeded posts an event to CR to indicate that the update was
+// installed successfully and the new version is working fine.
 func EventUpdateSucceeded(instanceID, appID, groupID string) error {
-	req := buildOmahaEventRequest(instanceID, appID, groupID, EventUpdateComplete, ResultSuccessReboot)
+	req := buildOmahaEventRequest(instanceID, appID, groupID, eventUpdateComplete, resultSuccessReboot)
 	_, err := doOmahaRequest(req)
 
 	return err
 }
 
+// EventUpdateFailed posts an event to CR to indicate that the update process
+// complete but it didn't succeed.
 func EventUpdateFailed(instanceID, appID, groupID string) error {
-	req := buildOmahaEventRequest(instanceID, appID, groupID, EventUpdateComplete, ResultFailed)
+	req := buildOmahaEventRequest(instanceID, appID, groupID, eventUpdateComplete, resultFailed)
 	_, err := doOmahaRequest(req)
 
 	return err

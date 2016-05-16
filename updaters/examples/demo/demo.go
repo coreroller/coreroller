@@ -21,9 +21,9 @@ const (
 var (
 	serverAddr     string
 	instanceID     string
-	appID          string = "780d6940-9a48-4414-88df-95ba63bbe9cb"
-	groupID        string = "51a32aa9-3552-49fc-a28c-6543bccf0069"
-	currentVersion string = "1.0.0"
+	appID          = "780d6940-9a48-4414-88df-95ba63bbe9cb"
+	groupID        = "51a32aa9-3552-49fc-a28c-6543bccf0069"
+	currentVersion = "1.0.0"
 )
 
 func init() {
