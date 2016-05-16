@@ -126,15 +126,15 @@ func TestGetInstances(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, 1, len(instances))
 
-	instances, err = a.GetInstances(InstancesQueryParams{GroupID: tGroup.ID, Version: "1.0.0", Page: 1, PerPage: 10})
+	_, err = a.GetInstances(InstancesQueryParams{GroupID: tGroup.ID, Version: "1.0.0", Page: 1, PerPage: 10})
 	assert.Error(t, err, "Application id must be provided.")
 
-	instances, err = a.GetInstances(InstancesQueryParams{ApplicationID: tApp.ID, Version: "1.0.0", Page: 1, PerPage: 10})
+	_, err = a.GetInstances(InstancesQueryParams{ApplicationID: tApp.ID, Version: "1.0.0", Page: 1, PerPage: 10})
 	assert.Error(t, err, "Group id must be provided.")
 
-	instances, err = a.GetInstances(InstancesQueryParams{Version: "1.0.0", Page: 1, PerPage: 10})
+	_, err = a.GetInstances(InstancesQueryParams{Version: "1.0.0", Page: 1, PerPage: 10})
 	assert.Error(t, err, "Application id and group id are required and must be valid uuids.")
 
-	instances, err = a.GetInstances(InstancesQueryParams{ApplicationID: "invalidApplicationID", GroupID: "invalidGroupID", Version: "1.0.0", Page: 1, PerPage: 10})
+	_, err = a.GetInstances(InstancesQueryParams{ApplicationID: "invalidApplicationID", GroupID: "invalidGroupID", Version: "1.0.0", Page: 1, PerPage: 10})
 	assert.Error(t, err, "Application id and group id are required and must be valid uuids.")
 }
