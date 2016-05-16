@@ -1,6 +1,11 @@
 ![Coreroller](https://github.com/coreroller/coreroller/raw/master/docs/screenshots/coreroller.png)
 
-[![Build Status](https://travis-ci.org/coreroller/coreroller.svg)](https://travis-ci.org/coreroller/coreroller)
+[![Travis Widget]][Travis] [![GoReportCard Widget]][GoReportCard]
+
+[Travis]: https://travis-ci.org/coreroller/coreroller
+[Travis Widget]: https://travis-ci.org/coreroller/coreroller.svg?branch=master
+[GoReportCard]: https://goreportcard.com/report/coreroller/coreroller
+[GoReportCard Widget]: https://goreportcard.com/badge/coreroller/coreroller
 
 ## Overview
 
