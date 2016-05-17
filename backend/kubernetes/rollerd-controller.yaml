@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: rollerd
+spec:
+  replicas: 1
+  selector:
+    app: rollerd
+  template:
+    metadata:
+      labels:
+        app: rollerd
+    spec:
+      containers:
+      - name: rollerd
+        image: coreroller/rollerd
+        ports:
+        - containerPort: 8000
+        env:
+        - name: COREROLLER_DB_URL
+          value: postgres://postgres@postgresql:5432/coreroller?sslmode=disable
