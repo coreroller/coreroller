@@ -70,14 +70,14 @@ In addition to this [coreroller/demo](https://hub.docker.com/r/coreroller/demo) 
 
 - **[coreroller/rollerd](https://hub.docker.com/r/coreroller/rollerd)**: this image runs the backend server, a dependency free Golang binary that will power the dashboard and serve all Omaha updates and events requests.
 
-You don't have to build these images yourself since they all have been made available in Docker Hub, and will be rebuild automatically.
+You don't have to build these images yourself since they all have been made available in Docker Hub, and will be rebuilt automatically.
 
 If you'd like to build one yourself - to try something for example, just do the following (let's say for rollerd):
 
 	cd coreroller/rollerd
 	docker build -t coreroller/rollerd .
 
-You will find the Dockerfiles used to build these images in `backend/docker`. Additionally, in the `backend/systemd` directory there are some systemd unit files that might be handy in case you want to deploy CoreRoller in your CoreOS cluster using `fleet`.
+You will find the Dockerfiles used to build these images in `backend/docker`. Additionally, in the `backend/systemd` directory there are some systemd unit files that might be handy in case you want to deploy CoreRoller in your CoreOS cluster using `fleet`. You can also use the sample kubernetes configuration files in the `backend/kubernetes` folder to deploy CoreRoller using `kubernetes` (`kubectl create -f backend/kubernetes`). These units and config files are just samples, feel free to adjust them to suit your specific needs.
 
 ## Managing CoreOS updates
 
