@@ -36,7 +36,7 @@ Screenshots:
 - Statistics about versions installed in your instances, updates progress status, etc
 - Activity stream to get notified about important events or errors
 - Manage updates for your CoreOS clusters out of the box
-- HTTP Restul and Golang APIs
+- HTTP Restful and Golang APIs
 - Based on the [Omaha](https://code.google.com/p/omaha/wiki/ServerProtocol) protocol developed by Google
 - Backend server built using Golang, dashboard built using React
 
