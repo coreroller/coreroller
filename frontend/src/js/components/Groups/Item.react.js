@@ -44,14 +44,14 @@ class Item extends React.Component {
     let groupChannel = _.isEmpty(this.props.group.channel) ? "No channel provided" : <ChannelLabel channel={this.props.group.channel} />
     let styleGroupChannel = _.isEmpty(this.props.group.channel) ? "italicText" : ""
 
-    return (   
+    return (
       <div className="groups--box">
         <Row className="groups--boxHeader">
           <Col xs={10}>
             <h3 className="groups--boxTitle">
               <Link to="GroupLayout" params={{groupID: this.props.group.id, appID: this.props.group.application_id}}>
-                {this.props.group.name} <i className="fa fa-caret-right"></i> 
-              </Link> 
+                {this.props.group.name} <i className="fa fa-caret-right"></i>
+              </Link>
               <span className="groups--id">(ID: {this.props.group.id})</span>
             </h3>
             <span className={"groups--description" + styleDescription}>{description}</span>
@@ -71,14 +71,14 @@ class Item extends React.Component {
               <span className="subtitle">Channel:</span> <span className={styleGroupChannel}>{groupChannel}</span>
             </Col>
           </Row>
-          <Row className="groups--resume">
+          <Row className="groups--resume noExtended">
             <Col xs={8}>
               <span className="subtitle">Rollout policy:</span> Max {this.props.group.policy_max_updates_per_period} updates per {this.props.group.policy_period_interval}
             </Col>
             <Col xs={4} className="alignRight">
               <span className="subtitle displayInline">Updates enabled:</span>
               <div className="displayInline">
-                <Switch checked={this.props.group.policy_updates_enabled} disabled={true} checkedChildren={"✔"} unCheckedChildren={"✘"} />                      
+                <Switch checked={this.props.group.policy_updates_enabled} disabled={true} checkedChildren={"✔"} unCheckedChildren={"✘"} />
               </div>
             </Col>
           </Row>

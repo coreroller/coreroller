@@ -62,9 +62,11 @@ class ModalUpdate extends React.Component {
 
     let blacklistOptions = _.map(packages, (packageItem) => {
       let option = { value: packageItem.id, label: packageItem.name }
-      if (this.props.data.channel.version === packageItem.package.version) {
-        option.disabled = true
-        option.label += " (channel pointing to this package)"
+      if (packageItem.package) {
+        if (this.props.data.channel.version === packageItem.package.version) {
+          option.disabled = true
+          option.label += " (channel pointing to this package)"
+        }
       }
       return option
     })

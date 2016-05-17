@@ -25,32 +25,37 @@ class VersionBreakdown extends React.Component {
 
     if (!_.isEmpty(versionsValues)) {
 
+      legendVersion = <span className="subtitle noTextTransform pull-right">{"No colors available as channel is not pointing to any package"}</span>
+
       entries = _.map(versions, function (version, i) {
         let barStyle = "default",
             labelLegend = version.version
 
         if (!_.isEmpty(channel)) {
-          lastVersionChannel = channel.package ? channel.package.version : ""      
+          lastVersionChannel = channel.package ? channel.package.version : ""
 
           let currentVersionIndex = _.indexOf(versionsValues, lastVersionChannel)
 
-          if (version.version == lastVersionChannel) {
-            barStyle = "success"
-            labelLegend = version.version + "*"
-            legendVersion = <span className="subtitle lowerCase pull-right">{"*Current channel version"}</span>
-          } else if (semver.gt(version.version, lastVersionChannel)) {
-            barStyle = "info"
-          } else {
-            let indexDiff = _.indexOf(versionsValues, version.version) - currentVersionIndex
-            switch (indexDiff) {
-              case 1:
-                barStyle = "warning"
-                break
-              case 2:
-                barStyle = "danger"
-                break
+          if (lastVersionChannel) {
+            if (version.version == lastVersionChannel) {
+              barStyle = "success"
+              labelLegend = version.version + "*"
+              legendVersion = <span className="subtitle lowerCase pull-right">{"*Current channel version"}</span>
+            } else if (semver.gt(version.version, lastVersionChannel)) {
+              barStyle = "info"
+            } else {
+              let indexDiff = _.indexOf(versionsValues, version.version) - currentVersionIndex
+              switch (indexDiff) {
+                case 1:
+                  barStyle = "warning"
+                  break
+                case 2:
+                  barStyle = "danger"
+                  break
+              }
             }
           }
+
         }
         return <ProgressBar striped key={i} bsStyle={barStyle} now={version.percentage} label={labelLegend} />
       })
