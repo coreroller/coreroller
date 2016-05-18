@@ -12,9 +12,10 @@ import (
 )
 
 var (
-	enableSyncer = flag.Bool("enable-syncer", true, "Enable CoreOS packages syncer")
-	httpLog      = flag.Bool("http-log", false, "Enable http requests logging")
-	logger       = log.New("rollerd")
+	enableSyncer  = flag.Bool("enable-syncer", true, "Enable CoreOS packages syncer")
+	httpLog       = flag.Bool("http-log", false, "Enable http requests logging")
+	httpStaticDir = flag.String("http-static-dir", "../frontend/built", "Path to http static files")
+	logger        = log.New("rollerd")
 )
 
 func main() {
@@ -27,7 +28,7 @@ func main() {
 	}
 	defer ctl.close()
 
-	setupRoutes(ctl)
+	setupRoutes(ctl, *httpStaticDir)
 
 	if !*httpLog {
 		goji.Abandon(middleware.Logger)
@@ -35,7 +36,7 @@ func main() {
 	goji.Serve()
 }
 
-func setupRoutes(ctl *controller) {
+func setupRoutes(ctl *controller, staticDir string) {
 	// API router setup
 	apiRouter := web.New()
 	apiRouter.Use(ctl.authenticate)
@@ -94,5 +95,5 @@ func setupRoutes(ctl *controller) {
 	staticRouter := web.New()
 	staticRouter.Use(ctl.authenticate)
 	goji.Handle("/*", staticRouter)
-	staticRouter.Handle("/*", http.FileServer(http.Dir("../frontend/built")))
+	staticRouter.Handle("/*", http.FileServer(http.Dir(staticDir)))
 }
