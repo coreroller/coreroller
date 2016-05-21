@@ -7,7 +7,7 @@ class ActivityStore extends Store {
 
   constructor() {
     super()
-    this.activity = []
+    this.activity = null
     this.getActivity()
 
     setInterval(() => {

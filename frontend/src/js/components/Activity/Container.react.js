@@ -10,7 +10,7 @@ class Container extends React.Component {
   constructor() {
     super()
     this.onChange = this.onChange.bind(this);
-    this.state = {entries: activityStore.getCachedActivity(), loading: true}
+    this.state = {entries: activityStore.getCachedActivity()}
   }
 
   componentDidMount() {
@@ -23,7 +23,6 @@ class Container extends React.Component {
 
   onChange() {
     this.setState({
-      loading: false,
       entries: activityStore.getCachedActivity()
     })
   }
@@ -31,16 +30,16 @@ class Container extends React.Component {
   render() {
     let entries = ""
 
-    if (_.isEmpty(this.state.entries)) {
-      if (this.state.loading) {
-        entries = <div className="icon-loading-container"><Loader color="#00AEEF" size="35px" margin="2px"/></div>
-      } else {      
-        entries = <div className="emptyBox">No activity found for the last week.<br/><br/>You will see here important events related to the rollout of your updates. Stay tuned!</div>
-      }
+    if (_.isNull(this.state.entries)) {
+      entries = <div className="icon-loading-container"><Loader color="#00AEEF" size="35px" margin="2px"/></div>
     } else {
-      entries = _.mapObject(this.state.entries, (entry, key) => {
-        return <List day={key} entries={entry} key={key} />
-      })
+      if (_.isEmpty(this.state.entries)) {
+        entries = <div className="emptyBox">No activity found for the last week.<br/><br/>You will see here important events related to the rollout of your updates. Stay tuned!</div>
+      } else {
+        entries = _.mapObject(this.state.entries, (entry, key) => {
+          return <List day={key} entries={entry} key={key} />
+        })
+      }      
     }
 
     return(

@@ -15,7 +15,6 @@ class Container extends React.Component {
     this.onChangeSelectedInstance = this.onChangeSelectedInstance.bind(this)
     this.state = {
       instances: instancesStore.getCachedInstances(props.appID, props.groupID),
-      loading: true,
       updating: false,
       selectedInstance: ""
     }
@@ -54,7 +53,6 @@ class Container extends React.Component {
 
   onChangeInstances() {
     this.setState({
-      loading: false,
       updating: false,
       instances: instancesStore.getCachedInstances(this.props.appID, this.props.groupID)
     })
@@ -66,18 +64,18 @@ class Container extends React.Component {
 
     let entries = ""
 
-    if (_.isEmpty(groupInstances)) {
-      if (this.state.loading) {
-        entries = <div className="icon-loading-container"><Loader color="#00AEEF" size="35px" margin="2px"/></div>
-      } else {
-        entries = <div className="emptyBox">No instances have registered yet in this group.<br/><br/>Registration will happen automatically the first time the instance requests an update.</div>
-      }
+    if (_.isNull(groupInstances)) {
+      entries = <div className="icon-loading-container"><Loader color="#00AEEF" size="35px" margin="2px"/></div>
     } else {
-      entries = <List
-              instances={groupInstances}
-              version_breakdown={this.props.version_breakdown}
-              channel={this.props.channel}
-              onChangeSelectedInstance={this.onChangeSelectedInstance} />
+      if (_.isEmpty(groupInstances)) {
+        entries = <div className="emptyBox">No instances have registered yet in this group.<br/><br/>Registration will happen automatically the first time the instance requests an update.</div>
+      } else {
+        entries = <List
+                instances={groupInstances}
+                version_breakdown={this.props.version_breakdown}
+                channel={this.props.channel}
+                onChangeSelectedInstance={this.onChangeSelectedInstance} />
+      }
     }
 
     return(

@@ -24,9 +24,6 @@ class VersionBreakdown extends React.Component {
     let versionsValues = (_.map(versions, function(version) {return version.version})).sort(semver.rcompare)
 
     if (!_.isEmpty(versionsValues)) {
-
-      legendVersion = <span className="subtitle noTextTransform pull-right">{"No colors available as channel is not pointing to any package"}</span>
-
       entries = _.map(versions, function (version, i) {
         let barStyle = "default",
             labelLegend = version.version
@@ -54,6 +51,8 @@ class VersionBreakdown extends React.Component {
                   break
               }
             }
+          } else {
+            legendVersion = <span className="subtitle noTextTransform pull-right">{"No colors available as channel is not pointing to any package"}</span>
           }
 
         }

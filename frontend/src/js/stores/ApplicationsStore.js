@@ -6,7 +6,7 @@ class ApplicationsStore extends Store {
 
   constructor() {
     super()
-    this.applications = []
+    this.applications = null
     this.getApplications()
 
     setInterval(() => {

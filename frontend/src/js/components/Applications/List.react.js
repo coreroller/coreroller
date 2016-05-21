@@ -13,7 +13,7 @@ class List extends React.Component {
     super(props)
     this.onChange = this.onChange.bind(this)
     this.searchUpdated = this.searchUpdated.bind(this)
-    this.state = {applications: applicationsStore.getCachedApplications(), loading: true, searchTerm: ""}
+    this.state = {applications: applicationsStore.getCachedApplications(), searchTerm: ""}
   }
 
   componentDidMount() {
@@ -26,7 +26,6 @@ class List extends React.Component {
 
   onChange() {
     this.setState({
-      loading: false,
       applications: applicationsStore.getCachedApplications()
     })
   }
@@ -44,18 +43,20 @@ class List extends React.Component {
       applications = applications.filter(this.refs.search.filter(filters))
     }
 
-    if (_.isEmpty(applications)) {
-      if (this.state.loading) {
-        entries = <div className="icon-loading-container"><Loader color="#00AEEF" size="35px" margin="2px"/></div>
-      } else if (this.state.searchTerm) {
-        entries = <div className="emptyBox">No results found.</div>        
-      } else {
-        entries = <div className="emptyBox">Ops, it looks like you have not created any application yet..<br/><br/> Now is a great time to create your first one, just click on the plus symbol above.</div>
-      }
+    if (_.isNull(applications)) {
+      entries = <div className="icon-loading-container"><Loader color="#00AEEF" size="35px" margin="2px"/></div>
     } else {
-      entries = _.map(applications, (application, i) => {
-        return <Item key={application.id} application={application} />
-      })
+      if (_.isEmpty(applications)) {
+        if (this.state.searchTerm) {
+          entries = <div className="emptyBox">No results found.</div>
+        } else {
+          entries = <div className="emptyBox">Ops, it looks like you have not created any application yet..<br/><br/> Now is a great time to create your first one, just click on the plus symbol above.</div>
+        }
+      } else {
+        entries = _.map(applications, (application, i) => {
+          return <Item key={application.id} application={application} />
+        })
+      }
     }
 
     return(
