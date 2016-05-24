@@ -6,7 +6,7 @@ class InstancesStore extends Store {
 
   constructor() {
     super()
-    this.instances = null
+    this.instances = {}
     this.getInstanceStatus = this.getInstanceStatus.bind(this)
   }
 

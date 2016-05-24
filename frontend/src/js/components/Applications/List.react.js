@@ -35,7 +35,7 @@ class List extends React.Component {
   }
 
   render() {
-    let applications = this.state.applications ? this.state.applications : [],
+    let applications = this.state.applications,
         entries = ""
 
     if (this.refs.search) {

@@ -57,9 +57,11 @@ class ModalAdd extends React.Component {
               <Input type="textarea" label="Description:" ref="descriptionNewApp" maxLength={250} />
               <Input type="select" label="Clone channels/groups from:" placeholder="" groupClassName="arrow-icon" ref="cloningNewApp">
                 <option value="" />
-                {this.props.data.applications.map((application, i) =>
-                  <option value={application.id} key={i}>{application.name}</option>
-                )}
+                { this.props.data.applications &&
+                  this.props.data.applications.map((application, i) =>
+                    <option value={application.id} key={i}>{application.name}</option>
+                  )
+                }
               </Input>
               <div className="modal--footer">
                 <Row>
