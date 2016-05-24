@@ -11,7 +11,7 @@ class InstancesStore extends Store {
   }
 
   getCachedInstances(applicationID, groupID) {
-    let cachedInstances = []
+    let cachedInstances = null
     if (this.instances.hasOwnProperty(applicationID)) {
       if (this.instances[applicationID].hasOwnProperty(groupID)) {
         cachedInstances = this.instances[applicationID][groupID]

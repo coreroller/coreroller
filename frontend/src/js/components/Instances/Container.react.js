@@ -59,7 +59,7 @@ class Container extends React.Component {
   }
 
   render() {
-    let groupInstances = this.state.instances ? this.state.instances : [],
+    let groupInstances = this.state.instances,
         miniLoader = this.state.updating ? <MiniLoader color="#00AEEF" size="8px" margin="2px" /> : ""
 
     let entries = ""
