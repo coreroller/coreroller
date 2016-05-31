@@ -2,10 +2,18 @@ package syncer
 
 import (
 	"bytes"
+	"crypto/sha256"
+	"encoding/base64"
 	"encoding/xml"
 	"errors"
+	"io"
 	"io/ioutil"
 	"net/http"
+	"net/url"
+	"os"
+	"path"
+	"path/filepath"
+	"strings"
 	"time"
 
 	"api"
@@ -35,13 +43,15 @@ var (
 // CoreRoller as needed (creating new packages and updating channels to point
 // to them).
 type Syncer struct {
-	api         *api.API
-	stopCh      chan struct{}
-	machinesIDs map[string]string
-	bootIDs     map[string]string
-	versions    map[string]string
-	channelsIDs map[string]string
-	httpClient  *http.Client
+	api             *api.API
+	offlineSyncPath string
+	offlineSyncURL  url.URL
+	stopCh          chan struct{}
+	machinesIDs     map[string]string
+	bootIDs         map[string]string
+	versions        map[string]string
+	channelsIDs     map[string]string
+	httpClient      *http.Client
 }
 
 // New creates a new Syncer instance.
@@ -95,10 +105,45 @@ func (s *Syncer) Stop() {
 	s.stopCh <- struct{}{}
 }
 
+// initOfflineSync does some initial setup to prepare offline syncing.
+func (s *Syncer) initOfflineSync() error {
+	offlineSyncPath := os.Getenv("CR_OFFLINE_SYNC_PATH")
+	offlineSyncURL := os.Getenv("CR_OFFLINE_SYNC_URL")
+
+	if offlineSyncPath == "" || offlineSyncURL == "" {
+		logger.Debug("offline sync disabled")
+		return nil
+	}
+
+	fi, err := os.Stat(offlineSyncPath)
+	if err != nil || !fi.IsDir() {
+		if err == nil {
+			err = errors.New(offlineSyncPath + " exists but is not a directory")
+		}
+		logger.Error("offline sync can't be enabled", "error", err)
+		return err
+	}
+
+	syncurl, err := url.Parse(offlineSyncURL)
+	if err != nil {
+		logger.Error("offline sync can't be enabled", "error", err)
+		return err
+	}
+
+	logger.Debug("offline sync enabled", "sync path", offlineSyncPath, "sync url", offlineSyncURL)
+	s.offlineSyncPath = offlineSyncPath
+	s.offlineSyncURL = *syncurl
+	return nil
+}
+
 // initialize does some initial setup to prepare the syncer, checking in
 // CoreRoller the last versions we know about for the different channels in the
 // CoreOS application and keeping track of some ids.
 func (s *Syncer) initialize() error {
+	if err := s.initOfflineSync(); err != nil {
+		return err
+	}
+
 	coreosApp, err := s.api.GetApp(coreosAppID)
 	if err != nil {
 		return err
@@ -208,9 +253,16 @@ func (s *Syncer) processUpdate(channelName string, update *omaha.UpdateCheck) er
 	// reference to it
 	pkg, err := s.api.GetPackageByVersion(coreosAppID, update.Manifest.Version)
 	if err != nil {
+		url := update.Urls.Urls[0].CodeBase
+		if s.offlineSyncPath != "" {
+			if url, err = s.downloadAndCheckPackage(update); err != nil {
+				return err
+			}
+		}
+
 		pkg = &api.Package{
 			Type:          api.PkgTypeCoreos,
-			URL:           update.Urls.Urls[0].CodeBase,
+			URL:           url,
 			Version:       update.Manifest.Version,
 			Filename:      dat.NullStringFrom(update.Manifest.Packages.Packages[0].Name),
 			Size:          dat.NullStringFrom(update.Manifest.Packages.Packages[0].Size),
@@ -253,4 +305,72 @@ func (s *Syncer) processUpdate(channelName string, update *omaha.UpdateCheck) er
 	}
 
 	return nil
+}
+
+func (s *Syncer) downloadAndCheckPackage(update *omaha.UpdateCheck) (string, error) {
+	origURL, err := url.Parse(update.Urls.Urls[0].CodeBase)
+	if err != nil {
+		return "", err
+	}
+
+	fileURL := *origURL
+	fileURL.Path = filepath.Join(fileURL.Path, path.Clean("/"+update.Manifest.Packages.Packages[0].Name))
+	logger.Debug("offline-sync: downloading coreos update", "url", fileURL.String(),
+		"SHA256", update.Manifest.Actions.Actions[0].Sha256)
+
+	p := filepath.Join(s.offlineSyncPath, path.Clean("/"+origURL.Path))
+	if err := os.MkdirAll(p, 0755); err != nil {
+		logger.Error("downloadAndCheckPackage, creating directory", "error", err)
+		return "", err
+	}
+
+	filename := filepath.Join(p, path.Clean("/"+update.Manifest.Packages.Packages[0].Name))
+	output, err := os.Create(filename)
+	if err != nil {
+		logger.Error("downloadAndCheckPackage, creating file failed", "error", err)
+		return "", err
+	}
+	defer output.Close()
+
+	success := false
+	defer func() {
+		if !success {
+			if err := os.Remove(filename); err != nil {
+				logger.Warn("downloadAndCheckPackage, removing file after failed download", "error", err)
+			}
+		}
+	}()
+
+	response, err := http.Get(fileURL.String())
+	if err != nil {
+		logger.Error("downloadAndCheckPackage, download failed", "error", err)
+		return "", err
+	}
+	if response.StatusCode != http.StatusOK {
+		logger.Error("downloadAndCheckPackage, download failed", "status-code", response.StatusCode)
+		return "", errors.New("download failed")
+	}
+	defer response.Body.Close()
+
+	hash := sha256.New()
+	if _, err := io.Copy(output, io.TeeReader(response.Body, hash)); err != nil {
+		logger.Error("downloadAndCheckPackage, download failed", "error", err)
+		return "", err
+	}
+	var hashSum []byte
+	hashSum64 := base64.StdEncoding.EncodeToString(hash.Sum(hashSum))
+
+	if strings.Compare(hashSum64, update.Manifest.Actions.Actions[0].Sha256) != 0 {
+		logger.Error("downloadAndCheckPackage, downloaded file hash mismatch",
+			"expected", update.Manifest.Actions.Actions[0].Sha256, "downloaded-file", hashSum64)
+		return "", errors.New("download failed")
+	}
+	logger.Debug("downloadAndCheckPackage, successfully downloaded", "file", filename, "SHA256", hashSum64)
+	success = true
+
+	rewrittenURL := s.offlineSyncURL
+	rewrittenURL.Path = filepath.Join(rewrittenURL.Path, path.Clean("/"+origURL.Path)) + "/"
+
+	logger.Debug("downloadAndCheckPackage, rewrote url", "rewritten-url", rewrittenURL.String(), "offline-sync-url", s.offlineSyncURL.String())
+	return rewrittenURL.String(), nil
 }
