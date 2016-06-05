@@ -638,7 +638,6 @@ func (ctl *controller) getActivity(c web.C, w http.ResponseWriter, r *http.Reque
 //
 
 func (ctl *controller) processOmahaRequest(c web.C, w http.ResponseWriter, r *http.Request) {
-	defer r.Body.Close()
 	ctl.omahaHandler.Handle(r.Body, w, getRequestIP(r))
 }
 
