@@ -3,7 +3,6 @@ package main
 import (
 	"database/sql"
 	"encoding/json"
-	"io"
 	"net"
 	"net/http"
 	"strconv"
@@ -19,6 +18,7 @@ import (
 
 type controller struct {
 	api           *api.API
+	omahaHandler  *omaha.Handler
 	authenticator *auth.DigestAuth
 	syncer        *syncer.Syncer
 }
@@ -30,7 +30,8 @@ func newController(enableSyncer bool) (*controller, error) {
 	}
 
 	c := &controller{
-		api: api,
+		api:          api,
+		omahaHandler: omaha.NewHandler(api),
 	}
 	c.authenticator = auth.NewDigestAuthenticator("coreroller.org", c.getSecret)
 
@@ -637,9 +638,8 @@ func (ctl *controller) getActivity(c web.C, w http.ResponseWriter, r *http.Reque
 //
 
 func (ctl *controller) processOmahaRequest(c web.C, w http.ResponseWriter, r *http.Request) {
-	pipeReader, pipeWriter := io.Pipe()
-	go omaha.HandleRequest(ctl.api, r.Body, pipeWriter, getRequestIP(r))
-	io.Copy(w, pipeReader)
+	defer r.Body.Close()
+	ctl.omahaHandler.Handle(r.Body, w, getRequestIP(r))
 }
 
 // ----------------------------------------------------------------------------
