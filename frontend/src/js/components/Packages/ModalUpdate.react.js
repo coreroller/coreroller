@@ -121,9 +121,9 @@ class ModalUpdate extends React.Component {
                 </Col>
               </Row>
               <Input type="text" label={(typeCoreOS ? "*" : "") + "Hash:"} defaultValue={this.props.data.channel.hash} ref="hashPackage" maxLength={64} required={typeCoreOS} />
-              <div className="form--legend minlegend minlegend--formGroup">Tip: cat update.gz | openssl dgst -sha1 -binary | base64</div>
+              <div className="form--legend minlegend minlegend--formGroup">{"Tip for CoreOS packages: cat update.gz | openssl dgst -sha1 -binary | base64"}</div>
               <Input type="text" label={(typeCoreOS ? "*" : "") + "CoreOS action sha256:"} value={this.state.coreOSSha256Package} ref="coreOSSha256Package" className={this.state.disabledCoreOSSha256 ? "disabled" : ""} disabled={this.state.disabledCoreOSSha256} onChange={this.handleChangeCoreOSSha256} required={typeCoreOS} />
-              <div className="form--legend minlegend minlegend--formGroup">Tip: cat update.gz | openssl dgst -sha256 -binary | base64</div>
+              <div className="form--legend minlegend minlegend--formGroup">{"Tip for CoreOS packages: cat update.gz | openssl dgst -sha256 -binary | base64"}</div>
               <Row>
                 <Col xs={12}>
                   <div className="form-group">
