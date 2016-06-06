@@ -42,6 +42,7 @@ type Package struct {
 	CreatedTs         time.Time      `db:"created_ts" json:"created_ts"`
 	ChannelsBlacklist []string       `db:"channels_blacklist" json:"channels_blacklist"`
 	ApplicationID     string         `db:"application_id" json:"application_id"`
+	CoreosAction      *CoreosAction  `db:"coreos_action" json:"coreos_action"`
 }
 
 // AddPackage registers the provided package.
@@ -77,6 +78,18 @@ func (api *API) AddPackage(pkg *Package) (*Package, error) {
 		}
 	}
 
+	if pkg.Type == PkgTypeCoreos && pkg.CoreosAction != nil {
+		err = tx.InsertInto("coreos_action").
+			Columns("package_id", "sha256").
+			Values(pkg.ID, pkg.CoreosAction.Sha256).
+			Returning("*").
+			QueryStruct(pkg.CoreosAction)
+
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	if err := tx.Commit(); err != nil {
 		return nil, err
 	}
@@ -109,6 +122,19 @@ func (api *API) UpdatePackage(pkg *Package) error {
 
 	if err := api.updatePackageBlacklistedChannels(tx, pkg); err != nil {
 		return err
+	}
+
+	if pkg.Type == PkgTypeCoreos && pkg.CoreosAction != nil {
+		err = tx.Upsert("coreos_action").
+			Columns("package_id", "sha256").
+			Values(pkg.ID, pkg.CoreosAction.Sha256).
+			Where("package_id = $1", pkg.ID).
+			Returning("*").
+			QueryStruct(pkg.CoreosAction)
+
+		if err != nil {
+			return err
+		}
 	}
 
 	if err := tx.Commit(); err != nil {
@@ -187,6 +213,7 @@ func (api *API) packagesQuery() *dat.SelectDocBuilder {
 			package.*, 
 			array_agg(pcb.channel_id) FILTER (WHERE pcb.channel_id IS NOT NULL) as channels_blacklist
 		`).
+		One("coreos_action", "SELECT * FROM coreos_action WHERE package_id = package.id").
 		From("package LEFT JOIN package_channel_blacklist pcb ON package.id = pcb.package_id").
 		GroupBy("package.id").
 		OrderBy("version DESC")

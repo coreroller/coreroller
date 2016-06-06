@@ -11,10 +11,15 @@ class ModalAdd extends React.Component {
     this.handleFocus = this.handleFocus.bind(this)
     this.createPackage = this.createPackage.bind(this)
     this.hanldeBlacklistChange = this.hanldeBlacklistChange.bind(this)
+    this.handleChangeTypeNewPackage = this.handleChangeTypeNewPackage.bind(this)
+    this.handleChangeCoreOSSha256 = this.handleChangeCoreOSSha256.bind(this)
     this.state = {
       isLoading: false,
       alertVisible: false,
-      blacklist_channels: ""
+      blacklist_channels: "",
+      typeCoreOS: false,
+      disabledCoreOSSha256: true,
+      coreOSSha256NewPackage: ""
     }
   }
 
@@ -36,6 +41,10 @@ class ModalAdd extends React.Component {
       channels_blacklist: _.isEmpty(this.state.channels_blacklist) ? null : this.state.channels_blacklist.split(",")
     }
 
+    if (this.state.typeCoreOS) {
+      data.coreos_action = {sha256: this.state.coreOSSha256NewPackage}
+    }
+
     applicationsStore.createPackage(data).
       done(() => {
         this.props.onHide()
@@ -54,10 +63,24 @@ class ModalAdd extends React.Component {
     this.setState({blacklist_channels: value})
   }
 
+  handleChangeTypeNewPackage() {
+    const selectedTypeNewPackage = this.refs.typeNewPackage.getValue()
+    if (selectedTypeNewPackage == 1) {
+      this.setState({disabledCoreOSSha256: false, typeCoreOS: true})
+    } else {
+      this.setState({disabledCoreOSSha256: true, typeCoreOS: false, coreOSSha256NewPackage: ""})
+    }
+  }
+
+  handleChangeCoreOSSha256(e) {
+    this.setState({coreOSSha256NewPackage: e.target.value})
+  }
+
   render() {
     let packages = this.props.data.channels ? this.props.data.channels : [],
         btnStyle = this.state.isLoading ? " loading" : "",
-        btnContent = this.state.isLoading ? "Please wait" : "Submit"
+        btnContent = this.state.isLoading ? "Please wait" : "Submit",
+        typeCoreOS = this.state.typeCoreOS
 
     let blacklistOptions = _.map(packages, (packageItem) => {
       return { value: packageItem.id, label: packageItem.name }
@@ -71,25 +94,28 @@ class ModalAdd extends React.Component {
         <Modal.Body>
           <div className="modal--form">
             <form role="form" action="" onFocus={this.handleFocus}>
-              <Input type="select" label="*Type:" defaultValue={4} placeholder="" groupClassName="arrow-icon" ref="typeNewPackage" required={true}>
+              <Input type="select" label="*Type:" defaultValue={4} placeholder="" groupClassName="arrow-icon" ref="typeNewPackage" required={true} onChange={this.handleChangeTypeNewPackage}>
                 <option value={1}>Coreos</option>
                 <option value={2}>Docker image</option>
                 <option value={3}>Rocket image</option>
                 <option value={4}>Other</option>
               </Input>
               <Input type="url" label="*Url:" ref="urlNewPackage" required={true} maxLength={256} />
-              <Input type="text" label="Filename:" ref="filenameNewPackage" maxLength={100} />
-              <Input type="textarea" label="Description:" ref="descriptionNewPackage" maxLength={250} />
+              <Input type="text" label={(typeCoreOS ? "*" : "") + "Filename:"} ref="filenameNewPackage" maxLength={100} required={typeCoreOS} />
+              <Input type="textarea" label="Description:" ref="descriptionNewPackage" maxLength={250} className="smallHeight" />
               <Row>
                 <Col xs={6}>
                   <Input type="text" label="*Version:" ref="versionNewPackage" required={true} />
                   <div className="form--legend minlegend minlegend--formGroup">Use SemVer format (1.0.1)</div>
                 </Col>
                 <Col xs={6}>
-                  <Input type="number" label="Size:" ref="sizeNewPackage" maxLength={20} />
+                  <Input type="number" label={(typeCoreOS ? "*" : "") + "Size (bytes):"} ref="sizeNewPackage" maxLength={20} required={typeCoreOS} />
                 </Col>
               </Row>
-              <Input type="text" label="Hash:" ref="hashNewPackage" maxLength={64} />
+              <Input type="text" label={(typeCoreOS ? "*" : "") + "Hash:"} ref="hashNewPackage" maxLength={64} required={typeCoreOS} />
+              <div className="form--legend minlegend minlegend--formGroup">Tip: cat update.gz | openssl dgst -sha1 -binary | base64</div>
+              <Input type="text" label={(typeCoreOS ? "*" : "") + "CoreOS action sha256:"} value={this.state.coreOSSha256NewPackage} ref="coreOSSha256NewPackage" className={this.state.disabledCoreOSSha256 ? "disabled" : ""} disabled={this.state.disabledCoreOSSha256} onChange={this.handleChangeCoreOSSha256} required={typeCoreOS} />
+              <div className="form--legend minlegend minlegend--formGroup">Tip: cat update.gz | openssl dgst -sha256 -binary | base64</div>
               <Row>
                 <Col xs={12}>
                   <div className="form-group">
