@@ -160,7 +160,7 @@ To run the tests you will also need to setup the coreroller\_tests database:
 	psql -U postgres -c "create database coreroller_tests;"
 	psql -U postgres -c "alter database coreroller set timezone = 'UTC';"
 	psql -U postgres -d coreroller_tests -c "create extension \"uuid-ossp\";"
-	psql -U postgres -d coreroller_tests -c "create extension semver;
+	psql -U postgres -d coreroller_tests -c "create extension semver;"
 
 ### Frontend
 
