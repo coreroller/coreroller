@@ -11,10 +11,15 @@ class ModalUpdate extends React.Component {
     this.handleFocus = this.handleFocus.bind(this)
     this.updatePackage = this.updatePackage.bind(this)
     this.hanldeBlacklistChange = this.hanldeBlacklistChange.bind(this)
+    this.handleChangeTypePackage = this.handleChangeTypePackage.bind(this)
+    this.handleChangeCoreOSSha256 = this.handleChangeCoreOSSha256.bind(this)
     this.state = {
       isLoading: false,
       alertVisible: false,
-      channels_blacklist: this.props.data.channel.channels_blacklist ? this.props.data.channel.channels_blacklist.join(",") : ""
+      channels_blacklist: this.props.data.channel.channels_blacklist ? this.props.data.channel.channels_blacklist.join(",") : "",
+      typeCoreOS: this.props.data.channel.type == 1 ? true : false,
+      disabledCoreOSSha256: this.props.data.channel.type == 1 ? false : true,
+      coreOSSha256Package: this.props.data.channel.coreos_action ? this.props.data.channel.coreos_action.sha256 : ""
     }
   }
 
@@ -37,6 +42,10 @@ class ModalUpdate extends React.Component {
       channels_blacklist: _.isEmpty(this.state.channels_blacklist) ? null : this.state.channels_blacklist.split(",")
     }
 
+    if (this.state.typeCoreOS) {
+      data.coreos_action = {sha256: this.state.coreOSSha256Package}
+    }
+
     applicationsStore.updatePackage(data).
       done(() => {
         this.props.onHide()
@@ -55,10 +64,24 @@ class ModalUpdate extends React.Component {
     this.setState({channels_blacklist: value})
   }
 
+  handleChangeTypePackage() {
+    const selectedTypePackage = this.refs.typePackage.getValue()
+    if (selectedTypePackage == 1) {
+      this.setState({disabledCoreOSSha256: false, typeCoreOS: true})
+    } else {
+      this.setState({disabledCoreOSSha256: true, typeCoreOS: false, coreOSSha256Package: ""})
+    }
+  }
+
+  handleChangeCoreOSSha256(e) {
+    this.setState({coreOSSha256Package: e.target.value})
+  }
+
   render() {
     let packages = this.props.data.channels ? this.props.data.channels : [],
         btnStyle = this.state.isLoading ? " loading" : "",
-        btnContent = this.state.isLoading ? "Please wait" : "Submit"
+        btnContent = this.state.isLoading ? "Please wait" : "Submit",
+        typeCoreOS = this.state.typeCoreOS
 
     let blacklistOptions = _.map(packages, (packageItem) => {
       let option = { value: packageItem.id, label: packageItem.name }
@@ -79,25 +102,28 @@ class ModalUpdate extends React.Component {
         <Modal.Body>
           <div className="modal--form">
             <form role="form" action="" onFocus={this.handleFocus}>
-              <Input type="select" label="*Type:" defaultValue={this.props.data.channel.type} placeholder="" groupClassName="arrow-icon" ref="typePackage" required={true}>
+              <Input type="select" label="*Type:" defaultValue={this.props.data.channel.type} placeholder="" groupClassName="arrow-icon" ref="typePackage" required={true} onChange={this.handleChangeTypePackage}>
                 <option value={1}>Coreos</option>
                 <option value={2}>Docker image</option>
                 <option value={3}>Rocket image</option>
                 <option value={4}>Other</option>
               </Input>
               <Input type="url" label="*Url:" defaultValue={this.props.data.channel.url} ref="urlPackage" required={true} macLength={256} />
-              <Input type="text" label="Filename:" defaultValue={this.props.data.channel.filename} ref="filenamePackage" maxLength={100} />
-              <Input type="textarea" label="Description:" defaultValue={this.props.data.channel.description} ref="descriptionPackage" maxLength={250} />
+              <Input type="text" label={(typeCoreOS ? "*" : "") + "Filename:"} defaultValue={this.props.data.channel.filename} ref="filenamePackage" maxLength={100} required={typeCoreOS} />
+              <Input type="textarea" label="Description:" defaultValue={this.props.data.channel.description} ref="descriptionPackage" maxLength={250} className="smallHeight" />
               <Row>
                 <Col xs={6}>
                   <Input type="text" label="*Version:" defaultValue={this.props.data.channel.version} ref="versionPackage" required={true} />
                   <div className="form--legend minlegend minlegend--formGroup">Use SemVer format (1.0.1)</div>
                 </Col>
                 <Col xs={6}>
-                  <Input type="number" label="Size:" defaultValue={this.props.data.channel.size} ref="sizePackage" maxLength={20} />
+                  <Input type="number" label={(typeCoreOS ? "*" : "") + "Size (bytes):"} defaultValue={this.props.data.channel.size} ref="sizePackage" maxLength={20} required={typeCoreOS} />
                 </Col>
               </Row>
-              <Input type="text" label="Hash:" defaultValue={this.props.data.channel.hash} ref="hashPackage" maxLength={64} />
+              <Input type="text" label={(typeCoreOS ? "*" : "") + "Hash:"} defaultValue={this.props.data.channel.hash} ref="hashPackage" maxLength={64} required={typeCoreOS} />
+              <div className="form--legend minlegend minlegend--formGroup">Tip: cat update.gz | openssl dgst -sha1 -binary | base64</div>
+              <Input type="text" label={(typeCoreOS ? "*" : "") + "CoreOS action sha256:"} value={this.state.coreOSSha256Package} ref="coreOSSha256Package" className={this.state.disabledCoreOSSha256 ? "disabled" : ""} disabled={this.state.disabledCoreOSSha256} onChange={this.handleChangeCoreOSSha256} required={typeCoreOS} />
+              <div className="form--legend minlegend minlegend--formGroup">Tip: cat update.gz | openssl dgst -sha256 -binary | base64</div>
               <Row>
                 <Col xs={12}>
                   <div className="form-group">
