@@ -78,7 +78,7 @@ func (api *API) AddPackage(pkg *Package) (*Package, error) {
 		}
 	}
 
-	if pkg.Type == PkgTypeCoreos && pkg.CoreosAction != nil && pkg.CoreosAction.Sha256 != "" {
+	if pkg.Type == PkgTypeCoreos && pkg.CoreosAction != nil {
 		err = tx.InsertInto("coreos_action").
 			Columns("package_id", "sha256").
 			Values(pkg.ID, pkg.CoreosAction.Sha256).
@@ -124,7 +124,7 @@ func (api *API) UpdatePackage(pkg *Package) error {
 		return err
 	}
 
-	if pkg.Type == PkgTypeCoreos && pkg.CoreosAction != nil && pkg.CoreosAction.Sha256 != "" {
+	if pkg.Type == PkgTypeCoreos && pkg.CoreosAction != nil {
 		err = tx.Upsert("coreos_action").
 			Columns("package_id", "sha256").
 			Values(pkg.ID, pkg.CoreosAction.Sha256).
