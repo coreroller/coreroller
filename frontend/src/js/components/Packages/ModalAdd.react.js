@@ -113,9 +113,13 @@ class ModalAdd extends React.Component {
                 </Col>
               </Row>
               <Input type="text" label={(typeCoreOS ? "*" : "") + "Hash:"} ref="hashNewPackage" maxLength={64} required={typeCoreOS} />
-              <div className="form--legend minlegend minlegend--formGroup">Tip: cat update.gz | openssl dgst -sha1 -binary | base64</div>
-              <Input type="text" label={(typeCoreOS ? "*" : "") + "CoreOS action sha256:"} value={this.state.coreOSSha256NewPackage} ref="coreOSSha256NewPackage" className={this.state.disabledCoreOSSha256 ? "disabled" : ""} disabled={this.state.disabledCoreOSSha256} onChange={this.handleChangeCoreOSSha256} required={typeCoreOS} />
-              <div className="form--legend minlegend minlegend--formGroup">Tip: cat update.gz | openssl dgst -sha256 -binary | base64</div>
+              {typeCoreOS &&
+                <div>
+                  <div className="form--legend minlegend minlegend--formGroup">{"Tip: cat update.gz | openssl dgst -sha1 -binary | base64"}</div>
+                  <Input type="text" label={(typeCoreOS ? "*" : "") + "CoreOS action sha256:"} value={this.state.coreOSSha256NewPackage} ref="coreOSSha256NewPackage" className={this.state.disabledCoreOSSha256 ? "disabled" : ""} disabled={this.state.disabledCoreOSSha256} onChange={this.handleChangeCoreOSSha256} required={typeCoreOS} />
+                  <div className="form--legend minlegend minlegend--formGroup">{"Tip: cat update.gz | openssl dgst -sha256 -binary | base64"}</div>
+                </div>
+              }
               <Row>
                 <Col xs={12}>
                   <div className="form-group">
