@@ -4,6 +4,7 @@
 // db/migrations/0001_initial.sql
 // db/migrations/0002_use_tz_in_timestamps.sql
 // db/migrations/0003_package_channels_blacklist.sql
+// db/migrations/0004_coreos_action_default_values.sql
 // DO NOT EDIT!
 
 package api
@@ -86,7 +87,7 @@ func dbDrop_all_tablesSql() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "db/drop_all_tables.sql", size: 666, mode: os.FileMode(420), modTime: time.Unix(1461201771, 0)}
+	info := bindataFileInfo{name: "db/drop_all_tables.sql", size: 666, mode: os.FileMode(420), modTime: time.Unix(1461422972, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -106,7 +107,7 @@ func dbMigrations0001_initialSql() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "db/migrations/0001_initial.sql", size: 21220, mode: os.FileMode(420), modTime: time.Unix(1461196056, 0)}
+	info := bindataFileInfo{name: "db/migrations/0001_initial.sql", size: 21220, mode: os.FileMode(420), modTime: time.Unix(1460645224, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -126,7 +127,7 @@ func dbMigrations0002_use_tz_in_timestampsSql() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "db/migrations/0002_use_tz_in_timestamps.sql", size: 2919, mode: os.FileMode(420), modTime: time.Unix(1461196056, 0)}
+	info := bindataFileInfo{name: "db/migrations/0002_use_tz_in_timestamps.sql", size: 2919, mode: os.FileMode(420), modTime: time.Unix(1461059494, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -146,7 +147,27 @@ func dbMigrations0003_package_channels_blacklistSql() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "db/migrations/0003_package_channels_blacklist.sql", size: 311, mode: os.FileMode(420), modTime: time.Unix(1461197415, 0)}
+	info := bindataFileInfo{name: "db/migrations/0003_package_channels_blacklist.sql", size: 311, mode: os.FileMode(420), modTime: time.Unix(1461422972, 0)}
+	a := &asset{bytes: bytes, info: info}
+	return a, nil
+}
+
+var _dbMigrations0004_coreos_action_default_valuesSql = []byte("\x1f\x8b\x08\x00\x00\x09\x6e\x88\x00\xff\xac\xd2\xb1\x4e\xc3\x30\x10\xc6\xf1\x3d\x4f\x71\x5b\x07\xd4\x27\x60\x0a\x24\x4c\xa6\x41\x25\x19\x98\xac\x6b\x7c\x29\x16\x8e\x1d\xd9\x47\x11\x3c\x3d\xad\x50\x51\x02\xea\x60\xbb\xf3\x27\xfd\xa4\x3b\xfd\xd7\x6b\xb8\x19\xf5\xde\x23\x13\x74\x53\x51\x94\xa2\xad\xb7\xd0\x96\x77\xa2\x86\x66\x23\x5e\xa0\x77\x9e\x5c\x90\xd8\xb3\x76\x16\x7e\xe6\xfb\x46\x74\x8f\x1b\xa0\x03\x59\x86\xe7\xba\x85\xaa\x7e\x28\x3b\xd1\xc2\x6a\x72\x81\xb5\x0d\x8c\xc6\xac\x6e\xa3\xb0\xfe\xd5\xbb\xf1\x34\x1e\xc8\x87\xd3\xba\x70\x23\x31\x4b\xa4\x8e\x8b\x1a\xf5\x1f\x67\x88\x84\x74\x90\x8a\x0c\x63\x9e\xa2\x74\xc0\x9d\x21\x39\xe1\xa7\x71\xa8\xe4\x0e\xfb\x37\x37\x0c\x4b\x94\x23\xd1\x91\x18\x15\x32\xca\xa0\xf7\x16\xf9\xdd\x93\xf4\x01\xb3\xde\x36\x23\xbf\x28\x4b\x52\x84\xca\x68\xfb\x1f\x29\xe6\xc1\x55\xee\xc3\xa6\x24\x57\x6d\x9b\xa7\xb3\x9a\x59\x59\x3a\x35\x6f\x2c\x5d\xf9\x0d\x2c\x9d\xb8\x54\x57\xba\x78\x21\xad\xab\x80\xc7\xb0\x32\x4e\x3d\x67\xb5\x24\xbe\x03\x00\x00\xff\xff\x7e\x2d\x5c\xad\xc5\x04\x00\x00")
+
+func dbMigrations0004_coreos_action_default_valuesSqlBytes() ([]byte, error) {
+	return bindataRead(
+		_dbMigrations0004_coreos_action_default_valuesSql,
+		"db/migrations/0004_coreos_action_default_values.sql",
+	)
+}
+
+func dbMigrations0004_coreos_action_default_valuesSql() (*asset, error) {
+	bytes, err := dbMigrations0004_coreos_action_default_valuesSqlBytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindataFileInfo{name: "db/migrations/0004_coreos_action_default_values.sql", size: 1221, mode: os.FileMode(420), modTime: time.Unix(1465219150, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -207,6 +228,7 @@ var _bindata = map[string]func() (*asset, error){
 	"db/migrations/0001_initial.sql": dbMigrations0001_initialSql,
 	"db/migrations/0002_use_tz_in_timestamps.sql": dbMigrations0002_use_tz_in_timestampsSql,
 	"db/migrations/0003_package_channels_blacklist.sql": dbMigrations0003_package_channels_blacklistSql,
+	"db/migrations/0004_coreos_action_default_values.sql": dbMigrations0004_coreos_action_default_valuesSql,
 }
 
 // AssetDir returns the file names below a certain
@@ -255,6 +277,7 @@ var _bintree = &bintree{nil, map[string]*bintree{
 			"0001_initial.sql": &bintree{dbMigrations0001_initialSql, map[string]*bintree{}},
 			"0002_use_tz_in_timestamps.sql": &bintree{dbMigrations0002_use_tz_in_timestampsSql, map[string]*bintree{}},
 			"0003_package_channels_blacklist.sql": &bintree{dbMigrations0003_package_channels_blacklistSql, map[string]*bintree{}},
+			"0004_coreos_action_default_values.sql": &bintree{dbMigrations0004_coreos_action_default_valuesSql, map[string]*bintree{}},
 		}},
 	}},
 }}
