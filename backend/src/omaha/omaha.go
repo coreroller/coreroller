@@ -10,6 +10,7 @@ import (
 
 	omahaSpec "github.com/aquam8/go-omaha/omaha"
 	"github.com/mgutz/logxi/v1"
+	"github.com/satori/go.uuid"
 )
 
 var (
@@ -76,9 +77,11 @@ func (h *Handler) buildOmahaResponse(omahaReq *omahaSpec.Request, ip string) (*o
 		// Use Track field as the group to ask CR for updates. For the CoreOS
 		// app, map group name to its id if available.
 		group := reqApp.Track
-		if reqApp.Id == coreosAppID {
-			if coreosGroupID, ok := coreosGroups[group]; ok {
-				group = coreosGroupID
+		if reqAppUUID, err := uuid.FromString(reqApp.Id); err == nil {
+			if reqAppUUID.String() == coreosAppID {
+				if coreosGroupID, ok := coreosGroups[group]; ok {
+					group = coreosGroupID
+				}
 			}
 		}
 

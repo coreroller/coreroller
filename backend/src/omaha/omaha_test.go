@@ -194,6 +194,25 @@ func TestAppUpdateForAppWithChannelAndPackageName(t *testing.T) {
 	checkOmahaUpdateResponse(t, omahaResp, tPkgCoreos640.Version, "", "", "noupdate")
 }
 
+func TestCoreosGroupNamesConversionToIds(t *testing.T) {
+	a, _ := api.New(api.OptionInitDB)
+	defer a.Close()
+	h := NewHandler(a)
+
+	coreosAppIDWithCurlyBraces := "{" + coreosAppID + "}"
+	machineID := "65e1266d-6f54-4b87-9080-23b99ca9c12f"
+	machineIP := "10.0.0.1"
+
+	omahaResp := doOmahaRequest(t, h, coreosAppID, "2000.0.0", machineID, "invalid-group", machineIP, true, "", "", "")
+	checkOmahaResponse(t, omahaResp, coreosAppID, "error-instanceRegistrationFailed")
+
+	omahaResp = doOmahaRequest(t, h, coreosAppID, "2000.0.0", machineID, "alpha", machineIP, true, "", "", "")
+	checkOmahaResponse(t, omahaResp, coreosAppID, "ok")
+
+	omahaResp = doOmahaRequest(t, h, coreosAppIDWithCurlyBraces, "2000.0.0", machineID, "alpha", machineIP, true, "", "", "")
+	checkOmahaResponse(t, omahaResp, coreosAppIDWithCurlyBraces, "ok")
+}
+
 func doOmahaRequest(t *testing.T, h *Handler, appID, appVersion, appMachineID, appTrack, ip string, updateCheck bool, eventType, eventResult, eventPreviousVersion string) *omahaSpec.Response {
 	omahaReq := omahaSpec.NewRequest(reqVersion, reqPlatform, reqSp, reqArch)
 	app := omahaReq.AddApp(appID, appVersion)
