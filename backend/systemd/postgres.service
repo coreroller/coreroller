@@ -7,12 +7,10 @@ Requires=docker.service
 User=core
 TimeoutStartSec=0
 
-ExecStartPre=-/usr/bin/docker create -v /var/lib/postgresql/data --name postgres-data postgres
 ExecStartPre=-/usr/bin/docker kill postgresqld
 ExecStartPre=-/usr/bin/docker rm postgresqld
 ExecStart=/usr/bin/docker run --name postgresqld \
-    --hostname local-postgresqld \
-    --volumes-from postgres-data \
+    --hostname postgresqld.local \
 	-p 5432:5432 \
     coreroller/postgres
 
