@@ -35,7 +35,7 @@ class ModalAdd extends React.Component {
       url: this.refs.urlNewPackage.getValue(),
       version: this.refs.versionNewPackage.getValue(),
       type: parseInt(this.refs.typeNewPackage.getValue()),
-      size: parseInt(this.refs.sizeNewPackage.getValue()),
+      size: (this.refs.sizeNewPackage.getValue()).toString(),
       hash: this.refs.hashNewPackage.getValue(),
       application_id: this.props.data.appID,
       channels_blacklist: _.isEmpty(this.state.channels_blacklist) ? null : this.state.channels_blacklist.split(",")

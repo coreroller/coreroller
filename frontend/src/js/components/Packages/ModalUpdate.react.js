@@ -36,7 +36,7 @@ class ModalUpdate extends React.Component {
       url: this.refs.urlPackage.getValue(),
       version: this.refs.versionPackage.getValue(),
       type: parseInt(this.refs.typePackage.getValue()),
-      size: parseInt(this.refs.sizePackage.getValue()),
+      size: (this.refs.sizePackage.getValue()).toString(),
       hash: this.refs.hashPackage.getValue(),
       application_id: this.props.data.channel.application_id,
       channels_blacklist: _.isEmpty(this.state.channels_blacklist) ? null : this.state.channels_blacklist.split(",")
@@ -115,7 +115,7 @@ class ModalUpdate extends React.Component {
                   <div className="form--legend minlegend minlegend--formGroup">Use SemVer format (1.0.1)</div>
                 </Col>
                 <Col xs={6}>
-                  <Input type="number" label={(typeCoreOS ? "*" : "") + "Size (bytes):"} defaultValue={this.props.data.channel.size} ref="sizePackage" maxLength={20} required={typeCoreOS} />
+                  <Input type="number" label={(typeCoreOS ? "*" : "") + "Size (bytes):"} defaultValue={parseInt(this.props.data.channel.size)} ref="sizePackage" maxLength={20} required={typeCoreOS} />
                 </Col>
               </Row>
               <Input type="text" label={(typeCoreOS ? "*" : "") + "Hash:"} defaultValue={this.props.data.channel.hash} ref="hashPackage" maxLength={64} required={typeCoreOS} />
