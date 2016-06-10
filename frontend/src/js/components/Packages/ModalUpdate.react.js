@@ -104,8 +104,6 @@ class ModalUpdate extends React.Component {
             <form role="form" action="" onFocus={this.handleFocus}>
               <Input type="select" label="*Type:" defaultValue={this.props.data.channel.type} placeholder="" groupClassName="arrow-icon" ref="typePackage" required={true} onChange={this.handleChangeTypePackage}>
                 <option value={1}>Coreos</option>
-                <option value={2}>Docker image</option>
-                <option value={3}>Rocket image</option>
                 <option value={4}>Other</option>
               </Input>
               <Input type="url" label="*Url:" defaultValue={this.props.data.channel.url} ref="urlPackage" required={true} macLength={256} />

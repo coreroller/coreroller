@@ -96,8 +96,6 @@ class ModalAdd extends React.Component {
             <form role="form" action="" onFocus={this.handleFocus}>
               <Input type="select" label="*Type:" defaultValue={4} placeholder="" groupClassName="arrow-icon" ref="typeNewPackage" required={true} onChange={this.handleChangeTypeNewPackage}>
                 <option value={1}>Coreos</option>
-                <option value={2}>Docker image</option>
-                <option value={3}>Rocket image</option>
                 <option value={4}>Other</option>
               </Input>
               <Input type="url" label="*Url:" ref="urlNewPackage" required={true} maxLength={256} />
