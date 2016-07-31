@@ -10,6 +10,7 @@ RUN set -x \
     && cd /build \
     && git clone https://github.com/theory/pg-semver \
     && cd pg-semver \
+    && git checkout v0.12.0 \
     && make \
     && make install \
     && GOPATH=/go go get github.com/constabulary/gb/... \
