@@ -8,12 +8,6 @@
 			"branch": "master"
 		},
 		{
-			"importpath": "github.com/abbot/go-http-auth",
-			"repository": "https://github.com/abbot/go-http-auth",
-			"revision": "46b96277a30605aa35da613039628d71eab707d2",
-			"branch": "master"
-		},
-		{
 			"importpath": "github.com/aquam8/go-omaha/omaha",
 			"repository": "https://github.com/aquam8/go-omaha",
 			"revision": "65e68b0e80b1db113f482abd2aba0bb03df765dd",

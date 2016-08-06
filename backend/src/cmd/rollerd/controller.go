@@ -12,15 +12,13 @@ import (
 	"omaha"
 	"syncer"
 
-	"github.com/abbot/go-http-auth"
 	"github.com/zenazn/goji/web"
 )
 
 type controller struct {
-	api           *api.API
-	omahaHandler  *omaha.Handler
-	authenticator *auth.DigestAuth
-	syncer        *syncer.Syncer
+	api          *api.API
+	omahaHandler *omaha.Handler
+	syncer       *syncer.Syncer
 }
 
 func newController(enableSyncer bool) (*controller, error) {
@@ -33,7 +31,6 @@ func newController(enableSyncer bool) (*controller, error) {
 		api:          api,
 		omahaHandler: omaha.NewHandler(api),
 	}
-	c.authenticator = auth.NewDigestAuthenticator("coreroller.org", c.getSecret)
 
 	if enableSyncer {
 		syncer, err := syncer.New(api)
@@ -58,23 +55,29 @@ func (ctl *controller) close() {
 // Authentication
 //
 
-// getSecret returns the hashed password for the provided user.
-func (ctl *controller) getSecret(username, realm string) string {
-	user, err := ctl.api.GetUser(username)
-	if err != nil {
-		return ""
-	}
-	return user.Secret
-}
-
 // authenticate is a middleware handler in charge of authenticating requests.
 func (ctl *controller) authenticate(c *web.C, h http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
-		username := r.Header.Get("X-Authenticated-Username")
+		authError := func() {
+			w.Header().Set("WWW-Authenticate", "Basic realm="+api.Realm)
+			http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
+		}
+
+		username, password, _ := r.BasicAuth()
+		if username == "" || password == "" {
+			authError()
+			return
+		}
+
+		secret, err := ctl.api.GenerateUserSecret(username, password)
+		if err != nil {
+			authError()
+			return
+		}
 
 		user, err := ctl.api.GetUser(username)
-		if err != nil {
-			http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		if err != nil || secret != user.Secret {
+			authError()
 			return
 		}
 
@@ -84,7 +87,8 @@ func (ctl *controller) authenticate(c *web.C, h http.Handler) http.Handler {
 		w.Header()["X-Authenticated-Username"] = []string{username}
 		h.ServeHTTP(w, r)
 	}
-	return auth.JustCheck(ctl.authenticator, fn)
+
+	return http.HandlerFunc(fn)
 }
 
 // ----------------------------------------------------------------------------
