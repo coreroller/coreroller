@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	realm = "coreroller.org"
+	Realm = "coreroller.org"
 )
 
 var (
@@ -45,7 +45,7 @@ func (api *API) GetUser(username string) (*User, error) {
 
 // UpdateUserPassword updates the password of the provided user.
 func (api *API) UpdateUserPassword(username, newPassword string) error {
-	secret, err := generateSecret(username, newPassword, realm)
+	secret, err := api.GenerateUserSecret(username, newPassword)
 	if err != nil {
 		return err
 	}
@@ -63,9 +63,9 @@ func (api *API) UpdateUserPassword(username, newPassword string) error {
 	return nil
 }
 
-func generateSecret(username, password, realm string) (string, error) {
+func (api *API) GenerateUserSecret(username, password string) (string, error) {
 	h := md5.New()
-	if _, err := io.WriteString(h, username+":"+realm+":"+password); err != nil {
+	if _, err := io.WriteString(h, username+":"+Realm+":"+password); err != nil {
 		return "", err
 	}
 
