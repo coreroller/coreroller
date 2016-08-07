@@ -4,7 +4,7 @@ import (
 	"errors"
 	"time"
 
-	"github.com/coreos/go-semver/semver"
+	"github.com/blang/semver"
 )
 
 var (
@@ -82,9 +82,9 @@ func (api *API) GetUpdatePackage(instanceID, instanceIP, instanceVersion, appID,
 		}
 	}
 
-	instanceSemver, _ := semver.NewVersion(instanceVersion)
-	packageSemver, _ := semver.NewVersion(group.Channel.Package.Version)
-	if !instanceSemver.LessThan(*packageSemver) {
+	instanceSemver, _ := semver.Make(instanceVersion)
+	packageSemver, _ := semver.Make(group.Channel.Package.Version)
+	if !instanceSemver.LT(packageSemver) {
 		return nil, ErrNoUpdatePackageAvailable
 	}
 

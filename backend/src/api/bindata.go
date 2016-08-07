@@ -5,6 +5,7 @@
 // db/migrations/0002_use_tz_in_timestamps.sql
 // db/migrations/0003_package_channels_blacklist.sql
 // db/migrations/0004_coreos_action_default_values.sql
+// db/migrations/0005_remove_pgsemver.sql
 // DO NOT EDIT!
 
 package api
@@ -167,7 +168,27 @@ func dbMigrations0004_coreos_action_default_valuesSql() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "db/migrations/0004_coreos_action_default_values.sql", size: 1221, mode: os.FileMode(420), modTime: time.Unix(1465219150, 0)}
+	info := bindataFileInfo{name: "db/migrations/0004_coreos_action_default_values.sql", size: 1221, mode: os.FileMode(420), modTime: time.Unix(1470478470, 0)}
+	a := &asset{bytes: bytes, info: info}
+	return a, nil
+}
+
+var _dbMigrations0005_remove_pgsemverSql = []byte("\x1f\x8b\x08\x00\x00\x09\x6e\x88\x00\xff\xb4\x93\x5d\x4b\xc3\x30\x14\x86\xef\xfb\x2b\xce\xdd\x26\x32\x50\x61\x57\x8a\x30\xdb\x80\x60\xe7\x46\xed\x04\xaf\xc2\x21\x86\x35\xb8\x25\x21\xc9\x22\xfe\x7b\x5b\xc4\xaf\x12\x4b\x56\xdb\xab\x42\x7b\xce\xfb\xbc\x9c\xf2\xcc\x66\x70\xba\x17\x5b\x83\x8e\xc3\x46\x27\xc9\x22\x2f\x49\x01\xe5\xe2\x26\x27\xa0\x91\xbd\xe0\x96\xc3\xc7\xbb\x74\x95\x6f\x96\xf7\xe0\xb9\xb1\x42\x49\x28\x9f\xd6\x04\x3c\x1a\x56\xa1\x99\x5e\xcc\xe7\x27\x97\xe1\xdd\x2c\x83\xf4\x96\xa4\x77\x30\xfd\xdc\xbc\xba\x86\xc9\xa4\x35\x2e\xa4\x75\x28\x19\xa7\xa8\xf5\x4e\x30\x74\xcd\x60\x1f\x6e\x38\x68\xa8\x12\x3b\xb4\x8e\x1e\xf4\x73\x7d\x2d\x3a\x50\xa1\x50\x64\x67\xb9\xfa\xe1\x0e\x96\x56\xc2\x3a\x65\xde\xfe\x77\xa4\x76\x56\xdc\x9d\x90\x39\xe1\x85\xeb\xc7\xfe\x5e\x8e\x83\x71\xcf\xa5\xfb\x4d\xd2\x86\x7b\xa1\xea\xde\x91\x48\xa6\x0c\x57\x96\x36\xe4\xf6\x0f\x65\x95\x51\xfb\xe6\x63\x47\x54\xf2\xd3\x91\x4c\xbd\xca\x63\x2d\x79\x20\xcb\x47\x52\x84\xfd\xc8\x8a\xd5\x7a\x04\x41\x42\xc8\x60\xc4\x70\xfc\x3f\xdd\xe8\xd5\x65\x3c\x2d\x3a\xeb\xb4\x52\x62\xaf\x13\x61\x44\x08\xfb\xb5\x16\xcb\x39\x5a\x86\xf3\xb3\xc1\x5c\x68\x92\xde\x03\x00\x00\xff\xff\x47\x12\xe8\x2f\x2e\x06\x00\x00")
+
+func dbMigrations0005_remove_pgsemverSqlBytes() ([]byte, error) {
+	return bindataRead(
+		_dbMigrations0005_remove_pgsemverSql,
+		"db/migrations/0005_remove_pgsemver.sql",
+	)
+}
+
+func dbMigrations0005_remove_pgsemverSql() (*asset, error) {
+	bytes, err := dbMigrations0005_remove_pgsemverSqlBytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindataFileInfo{name: "db/migrations/0005_remove_pgsemver.sql", size: 1582, mode: os.FileMode(420), modTime: time.Unix(1470538110, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -229,6 +250,7 @@ var _bindata = map[string]func() (*asset, error){
 	"db/migrations/0002_use_tz_in_timestamps.sql": dbMigrations0002_use_tz_in_timestampsSql,
 	"db/migrations/0003_package_channels_blacklist.sql": dbMigrations0003_package_channels_blacklistSql,
 	"db/migrations/0004_coreos_action_default_values.sql": dbMigrations0004_coreos_action_default_valuesSql,
+	"db/migrations/0005_remove_pgsemver.sql": dbMigrations0005_remove_pgsemverSql,
 }
 
 // AssetDir returns the file names below a certain
@@ -278,6 +300,7 @@ var _bintree = &bintree{nil, map[string]*bintree{
 			"0002_use_tz_in_timestamps.sql": &bintree{dbMigrations0002_use_tz_in_timestampsSql, map[string]*bintree{}},
 			"0003_package_channels_blacklist.sql": &bintree{dbMigrations0003_package_channels_blacklistSql, map[string]*bintree{}},
 			"0004_coreos_action_default_values.sql": &bintree{dbMigrations0004_coreos_action_default_valuesSql, map[string]*bintree{}},
+			"0005_remove_pgsemver.sql": &bintree{dbMigrations0005_remove_pgsemverSql, map[string]*bintree{}},
 		}},
 	}},
 }}

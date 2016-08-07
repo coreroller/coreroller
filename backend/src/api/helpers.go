@@ -1,6 +1,10 @@
 package api
 
-import "time"
+import (
+	"time"
+
+	"github.com/blang/semver"
+)
 
 const (
 	defaultPage    uint64 = 1
@@ -31,5 +35,14 @@ func isTimezoneValid(tz string) bool {
 		return false
 	}
 
+	return true
+}
+
+// isValidSemver checks if the provided string represents a valid semver
+// version.
+func isValidSemver(version string) bool {
+	if _, err := semver.Make(version); err != nil {
+		return false
+	}
 	return true
 }

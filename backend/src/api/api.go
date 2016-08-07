@@ -24,6 +24,9 @@ var (
 	// ErrNoRowsAffected indicates that no rows were affected in an update or
 	// delete database operation.
 	ErrNoRowsAffected = errors.New("coreroller: no rows affected")
+
+	// ErrInvalidSemver indicates that the provided semver version is not valid.
+	ErrInvalidSemver = errors.New("coreroller: invalid semver")
 )
 
 // API represents an api instance used to interact with CoreRoller entities.

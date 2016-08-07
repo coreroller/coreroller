@@ -47,6 +47,10 @@ type Package struct {
 
 // AddPackage registers the provided package.
 func (api *API) AddPackage(pkg *Package) (*Package, error) {
+	if !isValidSemver(pkg.Version) {
+		return nil, ErrInvalidSemver
+	}
+
 	tx, err := api.dbR.Begin()
 	if err != nil {
 		return nil, err
@@ -100,6 +104,10 @@ func (api *API) AddPackage(pkg *Package) (*Package, error) {
 // UpdatePackage updates an existing package using the content of the package
 // provided.
 func (api *API) UpdatePackage(pkg *Package) error {
+	if !isValidSemver(pkg.Version) {
+		return ErrInvalidSemver
+	}
+
 	tx, err := api.dbR.Begin()
 	if err != nil {
 		return err
@@ -216,7 +224,7 @@ func (api *API) packagesQuery() *dat.SelectDocBuilder {
 		One("coreos_action", "SELECT * FROM coreos_action WHERE package_id = package.id").
 		From("package LEFT JOIN package_channel_blacklist pcb ON package.id = pcb.package_id").
 		GroupBy("package.id").
-		OrderBy("version DESC")
+		OrderBy("regexp_matches(version, '(\\d+)\\.(\\d+)\\.(\\d+)')::int[] DESC")
 }
 
 // updatePackageBlacklistedChannels adds or removes as needed channels to the

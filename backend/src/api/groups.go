@@ -268,7 +268,7 @@ func (api *API) groupVersionBreakdownQuery() string {
 		) totals
 	WHERE group_id=groups.id AND last_check_for_updates > now() at time zone 'utc' - interval '%s'
 	GROUP BY version, total
-	ORDER BY version desc
+	ORDER BY regexp_matches(version, '(\d+)\.(\d+)\.(\d+)')::int[] DESC
 	`, validityInterval, validityInterval)
 }
 
