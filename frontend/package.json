@@ -11,6 +11,7 @@
     "jquery": "~2.1.4",
     "moment": "~2.10.6",
     "moment-timezone": "~0.4.1",
+    "npm-shrinkwrap": "^200.5.1",
     "progressbar.js": "~0.9.0",
     "pubsub-js": "~1.5.3",
     "rc-switch": "~1.2.1",
@@ -43,7 +44,8 @@
     "watch": "npm run watch-css && npm run watch-js",
     "build-css": "lessc --clean-css src/style/styles.less > ./built/css/styles.css",
     "build-js": "browserify -g uglifyify src/js/*.js > ./built/js/main.js",
-    "build": "npm run build-css & npm run build-js && npm run copy-css"
+    "build": "npm run build-css & npm run build-js && npm run copy-css",
+    "shrinkwrap": "npm shrinkwrap"
   },
   "browserify": {
     "transform": [
