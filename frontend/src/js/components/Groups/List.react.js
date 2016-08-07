@@ -8,21 +8,36 @@ import ModalButton from "../Common/ModalButton.react"
 import SearchInput from "react-search-input"
 import Loader from "halogen/ScaleLoader"
 import MiniLoader from "halogen/PulseLoader"
+import ModalUpdate from "./ModalUpdate.react"
 
 class List extends React.Component {
 
   constructor(props) {
     super(props)
-    this.onChange = this.onChange.bind(this);
+    this.onChange = this.onChange.bind(this)
     this.searchUpdated = this.searchUpdated.bind(this)
+    this.openUpdateGroupModal = this.openUpdateGroupModal.bind(this)
+    this.closeUpdateGroupModal = this.closeUpdateGroupModal.bind(this)
+
     this.state = {
       application: applicationsStore.getCachedApplication(this.props.appID),
-      searchTerm: ""
+      searchTerm: "",
+      updateGroupModalVisible: false,
+      updateGroupIDModal: null,
+      updateAppIDModal: null
     }
   }
 
   static propTypes: {
     appID: React.PropTypes.string.isRequired
+  }
+
+  closeUpdateGroupModal() {
+    this.setState({updateGroupModalVisible: false})
+  }
+
+  openUpdateGroupModal(appID, groupID) {
+    this.setState({updateGroupModalVisible: true, updateGroupIDModal: groupID, updateAppIDModal: appID})
   }
 
   componentDidMount() {
@@ -75,7 +90,7 @@ class List extends React.Component {
         }
       } else {
         entries = _.map(groups, (group, i) => {
-          return <Item key={group.id} group={group} appName={name} channels={channels} />
+          return <Item key={"groupID_" + group.id} group={group} appName={name} channels={channels} handleUpdateGroup={this.openUpdateGroupModal} />
         })
       }
 
@@ -83,26 +98,37 @@ class List extends React.Component {
       entries = <div className="icon-loading-container"><Loader color="#00AEEF" size="35px" margin="2px"/></div>
     }
 
+    const groupToUpdate =  !_.isEmpty(groups) && this.state.updateGroupIDModal ? _.findWhere(groups, {id: this.state.updateGroupIDModal}) : null
+
 		return (
-      <Col xs={8}>
-        <Row>
-          <Col xs={5}>
-            <h1 className="displayInline mainTitle">Groups</h1>
-            <ModalButton icon="plus" modalToOpen="AddGroupModal" data={{channels: channels, appID: this.props.appID}} />
-          </Col>
-          <Col xs={7} className="alignRight">
-            <div className="searchblock">
-              <SearchInput ref="search" onChange={this.searchUpdated} placeholder="Search..." />
-              <label htmlFor="searchGroups"></label>
-            </div>
-          </Col>
-        </Row>
-        <Row>
-          <Col xs={12} className="groups--container">
-            {entries}
-          </Col>
-        </Row>
-      </Col>
+      <div>
+        <Col xs={8}>
+          <Row>
+            <Col xs={5}>
+              <h1 className="displayInline mainTitle">Groups</h1>
+              <ModalButton icon="plus" modalToOpen="AddGroupModal" data={{channels: channels, appID: this.props.appID}} />
+            </Col>
+            <Col xs={7} className="alignRight">
+              <div className="searchblock">
+                <SearchInput ref="search" onChange={this.searchUpdated} placeholder="Search..." />
+                <label htmlFor="searchGroups"></label>
+              </div>
+            </Col>
+          </Row>
+          <Row>
+            <Col xs={12} className="groups--container">
+              {entries}
+            </Col>
+          </Row>
+        </Col>
+        {/* Update group modal */}
+        {groupToUpdate &&
+          <ModalUpdate
+            data={{group: groupToUpdate, channels: channels}}
+            modalVisible={this.state.updateGroupModalVisible}
+            onHide={this.closeUpdateGroupModal} />
+        }
+      </div>
 		)
   }
 

@@ -18,7 +18,7 @@
 }
 
 .modal-dialog {
-	margin-top: 5%;		
+	margin-top: 5%;
 	width: 700px;
 
 	@media (min-width: 768px) {
@@ -115,12 +115,6 @@
 	.form--limit {
 		white-space: nowrap;
 
-		input {
-			width: 12%;
-  			display: inline-block;
-  			margin: 5px;
-		}
-
 		.form-group.group-inline {
 			display: inline;
 			width: 110px;
@@ -147,6 +141,16 @@
 			display: inline;
 		}
 
+		&.form--limit-inputs > div {
+			width: 12%;
+			display: inline-block;
+			margin: 5px;
+
+			&.has-error .help-block {
+				position: absolute;
+			}
+		}
+
 		select {
 			width: 110px !important;
 			display: inline-block;
@@ -161,7 +165,19 @@
 		.help-block {
 			position: absolute;
 			margin-top: -2px;
-			font-size: 14px;
+			font-size: 12px;
+		}
+	}
+
+	&.modal--form-with-captions {
+		.form-group.has-error {
+			.help-block {
+				margin-top: 2px;
+				width: 100%;
+				line-height: 12px;
+				padding-bottom: 10px;
+				background-color: white;
+			}
 		}
 	}
 }
@@ -241,5 +257,3 @@
 		top: 0px;
 	}
 }
-
-

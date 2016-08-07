@@ -8,10 +8,11 @@ import ModalUpdatePassword from "./Common/ModalUpdatePassword.react"
 class Header extends React.Component {
 
   constructor() {
-    super();
-    this.state = {showModal: false}
+    super()
     this.close = this.close.bind(this)
     this.open = this.open.bind(this)
+
+    this.state = {showModal: false}
   }
 
   logout() {

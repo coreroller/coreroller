@@ -7,26 +7,31 @@ import _ from "underscore"
 import ChannelLabel from "../Common/ChannelLabel.react"
 import VersionBreakdown from "../Common/VersionBreakdown.react"
 import ConfirmationContent from "../Common/ConfirmationContent.react"
-import ModalButton from "../Common/ModalButton.react"
 
 class Item extends React.Component {
 
   constructor(props) {
     super(props)
     this.deleteGroup = this.deleteGroup.bind(this)
+    this.updateGroup = this.updateGroup.bind(this)
   }
 
 	static PropTypes: {
     group: React.PropTypes.object.isRequired,
     appName: React.PropTypes.string.isRequired,
-    channels: React.PropTypes.array.isRequired
-  }
+    channels: React.PropTypes.array.isRequired,
+    handleUpdateGroup: React.PropTypes.func.isRequired
+}
 
   deleteGroup() {
     let confirmationText = "Are you sure you want to delete this group?"
     if (confirm(confirmationText)) {
       applicationsStore.deleteGroup(this.props.group.application_id, this.props.group.id)
     }
+  }
+
+  updateGroup() {
+    this.props.handleUpdateGroup(this.props.group.application_id, this.props.group.id)
   }
 
   render() {
@@ -58,7 +63,7 @@ class Item extends React.Component {
           </Col>
           <Col xs={2}>
             <div className="groups--buttons">
-              <ModalButton icon="edit" modalToOpen="UpdateGroupModal" data={{group: this.props.group, channels: this.props.channels}} />
+              <button className="cr-button displayInline fa fa-edit" onClick={this.updateGroup}></button>
               <button className="cr-button displayInline fa fa-trash-o" onClick={this.deleteGroup}></button>
             </div>
           </Col>

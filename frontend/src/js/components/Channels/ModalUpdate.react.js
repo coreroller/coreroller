@@ -1,6 +1,7 @@
 import { applicationsStore } from "../../stores/Stores"
 import React, { PropTypes } from "react"
-import { Row, Col, Modal, Input, Button, Alert } from "react-bootstrap"
+import { Row, Col, Modal, Input, Button, Alert, ButtonInput } from "react-bootstrap"
+import { Form, ValidatedInput } from "react-bootstrap-validation"
 import ColorPicker from "react-color"
 import moment from "moment"
 import _ from "underscore"
@@ -15,6 +16,9 @@ class ModalUpdate extends React.Component {
     this.handleColorPickerClose = this.handleColorPickerClose.bind(this)
     this.updateChannel = this.updateChannel.bind(this)
     this.checkBlacklistChannels = this.checkBlacklistChannels.bind(this)
+    this.handleValidSubmit = this.handleValidSubmit.bind(this)
+    this.handleInvalidSubmit = this.handleInvalidSubmit.bind(this)
+
     this.state = {
       channelColor: props.data.channel.color,
       displayColorPicker: false,
@@ -24,14 +28,15 @@ class ModalUpdate extends React.Component {
   }
 
   static propTypes : {
-    data: PropTypes.object
+    data: PropTypes.object.isRequired,
+    modalVisible: PropTypes.bool.isRequired
   }
 
   updateChannel() {
     this.setState({isLoading: true})
     let data = {
       id: this.props.data.channel.id,
-      name: this.refs.nameNewChannel.getValue(),
+      name: this.refs.nameChannel.getValue(),
       color: this.state.channelColor,
       application_id: this.props.data.channel.application_id
     }
@@ -83,6 +88,14 @@ class ModalUpdate extends React.Component {
     return _.compact(packagesWithChannelInBlacklist)
   }
 
+  handleValidSubmit() {
+    this.updateChannel()
+  }
+
+  handleInvalidSubmit() {
+    this.setState({alertVisible: true})
+  }
+
   render() {
     let packages = this.props.data.packages ? this.props.data.packages : [],
         selectedPackage = this.props.data.channel.package_id ? this.props.data.channel.package_id : "",
@@ -99,14 +112,26 @@ class ModalUpdate extends React.Component {
         channels_blacklist = this.checkBlacklistChannels()
 
     return (
-      <Modal {...this.props} animation={true}>
+      <Modal {...this.props} show={this.props.modalVisible} animation={true}>
         <Modal.Header closeButton>
           <Modal.Title id="contained-modal-title-lg">Update channel</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <div className="modal--form">
-            <form role="form" action="" onFocus={this.handleFocus}>
-              <Input type="text" label="*Name:" defaultValue={this.props.data.channel.name} ref="nameNewChannel" required={true} maxLength={25} />
+            <Form onValidSubmit={this.handleValidSubmit} onInvalidSubmit={this.handleInvalidSubmit} onFocus={this.handleFocus}>
+              <ValidatedInput
+                type="text"
+                label="*Name:"
+                name="nameChannel"
+                ref="nameChannel"
+                defaultValue={this.props.data.channel.name}
+                required={true}
+                validate="required,isLength:1:25"
+                errorHelp={{
+                  required: "Please enter a name",
+                  isLength: "Name must be less than 25 characters"
+                }}
+              />
               <div className="form-group">
                 <label className="control-label">
                   <span>Color:</span>
@@ -128,7 +153,7 @@ class ModalUpdate extends React.Component {
                   <option
                     value={packageItem.id}
                     disabled={ ( _.indexOf(channels_blacklist, packageItem.id) > -1) ? true : false }
-                    key={i}>
+                    key={"modalUpdateChannel_packageItem_" + i}>
                       {packageItem.version} &nbsp;&nbsp;(created: {moment.utc(packageItem.created_ts).local().format("DD/MM/YYYY")})
                   </option>
                 )}
@@ -144,11 +169,17 @@ class ModalUpdate extends React.Component {
                     </Alert>
                   </Col>
                   <Col xs={4}>
-                    <Button bsStyle="default" className={"plainBtn" + btnStyle} disabled={this.state.isLoading} onClick={this.updateChannel}>{btnContent}</Button>
+                    <ButtonInput
+                      type="submit"
+                      bsStyle="default"
+                      className={"plainBtn" + btnStyle}
+                      disabled={this.state.isLoading}
+                      value={btnContent}
+                    />
                   </Col>
                 </Row>
               </div>
-            </form>
+            </Form>
           </div>
         </Modal.Body>
       </Modal>

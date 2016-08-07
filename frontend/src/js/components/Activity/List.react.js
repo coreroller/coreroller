@@ -11,7 +11,7 @@ class List extends React.Component {
   static PropTypes: {
     day: React.PropTypes.string.isRequired,
     entries: React.PropTypes.array.isRequired,
-  };
+  }
 
   render() {
     let entries = this.props.entries ? this.props.entries : []

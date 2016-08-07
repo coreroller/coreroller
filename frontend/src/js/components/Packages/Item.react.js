@@ -12,11 +12,13 @@ class Item extends React.Component {
   constructor(props) {
     super(props)
     this.deletePackage = this.deletePackage.bind(this)
+    this.updatePackage = this.updatePackage.bind(this)
   }
 
   static propTypes: {
     packageItem: React.PropTypes.object.isRequired,
-    channels: React.PropTypes.array
+    channels: React.PropTypes.array,
+    handleUpdatePackage: React.PropTypes.func.isRequired
   }
 
   deletePackage() {
@@ -24,6 +26,10 @@ class Item extends React.Component {
     if (confirm(confirmationText)) {
       applicationsStore.deletePackage(this.props.packageItem.application_id, this.props.packageItem.id)
     }
+  }
+
+  updatePackage() {
+    this.props.handleUpdatePackage(this.props.packageItem.id)
   }
 
   render() {
@@ -54,7 +60,7 @@ class Item extends React.Component {
             <br />
             <span className="subtitle">Version:</span>
             {processedChannels.map((channel, i) =>
-              <VersionBullet channel={channel} key={i} />
+              <VersionBullet channel={channel} key={"packageItemBullet_" + i} />
             )}
             {this.props.packageItem.version}
             <br />
@@ -67,7 +73,7 @@ class Item extends React.Component {
           </div>
         </Col>
         <Col xs={5} className="alignRight marginTop7">
-          <ModalButton icon="edit" modalToOpen="UpdatePackageModal" data={{channels: this.props.channels, channel: this.props.packageItem}} />
+          <button className="cr-button displayInline fa fa-edit" onClick={this.updatePackage}></button>
           <button className="cr-button displayInline fa fa-trash-o" onClick={this.deletePackage}></button>
         </Col>
       </Row>

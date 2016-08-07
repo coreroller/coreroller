@@ -1,6 +1,7 @@
 import { applicationsStore } from "../../stores/Stores"
 import React, { PropTypes } from "react"
-import { Row, Col, Modal, Input, Button, Alert } from "react-bootstrap"
+import { Row, Col, Modal, Input, Button, Alert, ButtonInput } from "react-bootstrap"
+import { Form, ValidatedInput } from "react-bootstrap-validation"
 import ColorPicker from "react-color"
 import moment from "moment"
 
@@ -8,17 +9,20 @@ class ModalAdd extends React.Component {
 
   constructor(props) {
     super(props)
+    this.handleFocus = this.handleFocus.bind(this)
+    this.createChannel = this.createChannel.bind(this)
+    this.changeColor = this.changeColor.bind(this)
+    this.handleColorPicker = this.handleColorPicker.bind(this)
+    this.handleColorPickerClose = this.handleColorPickerClose.bind(this)
+    this.handleValidSubmit = this.handleValidSubmit.bind(this)
+    this.handleInvalidSubmit = this.handleInvalidSubmit.bind(this)
+
     this.state = {
       channelColor: "#777777",
       displayColorPicker: false,
       isLoading: false,
       alertVisible: false
     }
-    this.handleFocus = this.handleFocus.bind(this)
-    this.createChannel = this.createChannel.bind(this)
-    this.changeColor = this.changeColor.bind(this)
-    this.handleColorPicker = this.handleColorPicker.bind(this)
-    this.handleColorPickerClose = this.handleColorPickerClose.bind(this)
   }
 
   static propTypes : {
@@ -64,6 +68,14 @@ class ModalAdd extends React.Component {
     this.setState({ channelColor: "#" + color.hex })
   }
 
+  handleValidSubmit() {
+    this.createChannel()
+  }
+
+  handleInvalidSubmit() {
+    this.setState({alertVisible: true})
+  }
+
   render() {
     let packages = this.props.data.packages ? this.props.data.packages : [],
         popupPosition = {
@@ -84,8 +96,19 @@ class ModalAdd extends React.Component {
         </Modal.Header>
         <Modal.Body>
           <div className="modal--form">
-            <form role="form" action="" onFocus={this.handleFocus}>
-              <Input type="text" label="*Name:" ref="nameNewChannel" required={true} maxLength={25} />
+            <Form onValidSubmit={this.handleValidSubmit} onInvalidSubmit={this.handleInvalidSubmit} onFocus={this.handleFocus}>
+              <ValidatedInput
+                type="text"
+                label="*Name:"
+                name="nameNewChannel"
+                ref="nameNewChannel"
+                required={true}
+                validate="required,isLength:1:25"
+                errorHelp={{
+                  required: "Please enter a name",
+                  isLength: "Name must be less than 25 characters"
+                }}
+              />
               <div className="form-group">
                 <label className="control-label">
                   <span>Color:</span>
@@ -104,7 +127,7 @@ class ModalAdd extends React.Component {
               <Input type="select" label="Package:" placeholder="" groupClassName="arrow-icon" ref="packageChannel">
                 <option value="" />
                 {packages.map((packageItem, i) =>
-                  <option value={packageItem.id} key={i}>
+                  <option value={packageItem.id} key={"packageItem_" + i}>
                     {packageItem.version} &nbsp;&nbsp;(created: {moment.utc(packageItem.created_ts).local().format("DD/MM/YYYY")})
                   </option>
                 )}
@@ -120,11 +143,17 @@ class ModalAdd extends React.Component {
                     </Alert>
                   </Col>
                   <Col xs={4}>
-                    <Button bsStyle="default" className={"plainBtn" + btnStyle} disabled={this.state.isLoading} onClick={this.createChannel}>{btnContent}</Button>
+                    <ButtonInput
+                      type="submit"
+                      bsStyle="default"
+                      className={"plainBtn" + btnStyle}
+                      disabled={this.state.isLoading}
+                      value={btnContent}
+                    />
                   </Col>
                 </Row>
               </div>
-            </form>
+            </Form>
           </div>
         </Modal.Body>
       </Modal>

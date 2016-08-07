@@ -22,7 +22,7 @@ class StatusHistoryList extends React.Component {
           <div>Message</div>
         </li>
         {entries.map((entry, i) =>
-          <StatusHistoryItem key={i} entry={entry} />
+          <StatusHistoryItem key={"statusHistory_" + i} entry={entry} />
         )}
       </ul>
     )

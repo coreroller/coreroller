@@ -3,19 +3,35 @@ import React, { PropTypes } from "react"
 import { Row, Col } from "react-bootstrap"
 import _ from "underscore"
 import ModalButton from "../Common/ModalButton.react"
+import ModalUpdate from "./ModalUpdate.react"
 import Item from "./Item.react"
 
 class List extends React.Component {
 
   constructor(props) {
     super(props)
-    this.onChange = this.onChange.bind(this);
-    this.state = {application: applicationsStore.getCachedApplication(props.appID)}
+    this.onChange = this.onChange.bind(this)
+    this.closeUpdateChannelModal = this.closeUpdateChannelModal.bind(this)
+    this.openUpdateChannelModal = this.openUpdateChannelModal.bind(this)
+
+    this.state = {
+      application: applicationsStore.getCachedApplication(props.appID),
+      updateChannelModalVisible: false,
+      updateChannelIDModal: null
+    }
   }
 
   static propTypes: {
     appID: React.PropTypes.string.isRequired
-  };
+  }
+
+  closeUpdateChannelModal() {
+    this.setState({updateChannelModalVisible: false})
+  }
+
+  openUpdateChannelModal(channelID) {
+    this.setState({updateChannelModalVisible: true, updateChannelIDModal: channelID})
+  }
 
   componentDidMount() {
     applicationsStore.addChangeListener(this.onChange)
@@ -41,15 +57,17 @@ class List extends React.Component {
       packages = application.packages ? application.packages : []
     }
 
-    let entries = "";
+    let entries = ""
 
     if (_.isEmpty(channels)) {
       entries = <div className="emptyBox">This application does not have any channel yet</div>;
     } else {
       entries = _.map(channels, (channel, i) => {
-        return <Item key={channel.id} channel={channel} packages={packages} />
+        return <Item key={"channelID_" + channel.id} channel={channel} packages={packages} handleUpdateChannel={this.openUpdateChannelModal} />
       })
     }
+
+    const channelToUpdate =  !_.isEmpty(channels) && this.state.updateChannelIDModal ? _.findWhere(channels, {id: this.state.updateChannelIDModal}) : null
 
     return (
       <div>
@@ -65,6 +83,13 @@ class List extends React.Component {
         <div className="groups--channelsList">
           {entries}
         </div>
+        {/* Update channel modal */}
+        {channelToUpdate &&
+          <ModalUpdate
+            data={{packages: packages, applicationID: this.props.appID, channel: channelToUpdate}}
+            modalVisible={this.state.updateChannelModalVisible}
+            onHide={this.closeUpdateChannelModal} />
+        }
       </div>
     );
 

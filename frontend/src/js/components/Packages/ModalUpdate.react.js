@@ -1,6 +1,7 @@
 import { applicationsStore } from "../../stores/Stores"
 import React, { PropTypes } from "react"
-import { Row, Col, Modal, Input, Button, Alert } from "react-bootstrap"
+import { Row, Col, Modal, Input, Button, Alert, ButtonInput } from "react-bootstrap"
+import { Form, ValidatedInput } from "react-bootstrap-validation"
 import Select from "react-select"
 import _ from "underscore"
 
@@ -13,18 +14,22 @@ class ModalUpdate extends React.Component {
     this.hanldeBlacklistChange = this.hanldeBlacklistChange.bind(this)
     this.handleChangeTypePackage = this.handleChangeTypePackage.bind(this)
     this.handleChangeCoreOSSha256 = this.handleChangeCoreOSSha256.bind(this)
+    this.handleValidSubmit = this.handleValidSubmit.bind(this)
+    this.handleInvalidSubmit = this.handleInvalidSubmit.bind(this)
+
     this.state = {
       isLoading: false,
       alertVisible: false,
-      channels_blacklist: this.props.data.channel.channels_blacklist ? this.props.data.channel.channels_blacklist.join(",") : "",
-      typeCoreOS: this.props.data.channel.type == 1 ? true : false,
-      disabledCoreOSSha256: this.props.data.channel.type == 1 ? false : true,
-      coreOSSha256Package: this.props.data.channel.coreos_action ? this.props.data.channel.coreos_action.sha256 : ""
+      channels_blacklist: props.data.channel.channels_blacklist ? props.data.channel.channels_blacklist.join(",") : "",
+      typeCoreOS: props.data.channel.type == 1 ? true : false,
+      disabledCoreOSSha256: props.data.channel.type == 1 ? false : true,
+      coreOSSha256Package: props.data.channel.coreos_action ? props.data.channel.coreos_action.sha256 : ""
     }
   }
 
   static propTypes : {
-    data: PropTypes.object
+    data: PropTypes.object.isRequired,
+    modalVisible: PropTypes.bool.isRequired
   }
 
   updatePackage() {
@@ -77,6 +82,14 @@ class ModalUpdate extends React.Component {
     this.setState({coreOSSha256Package: e.target.value})
   }
 
+  handleValidSubmit() {
+    this.updatePackage()
+  }
+
+  handleInvalidSubmit() {
+    this.setState({alertVisible: true})
+  }
+
   render() {
     let packages = this.props.data.channels ? this.props.data.channels : [],
         btnStyle = this.state.isLoading ? " loading" : "",
@@ -95,34 +108,110 @@ class ModalUpdate extends React.Component {
     })
 
     return (
-      <Modal {...this.props} animation={true}>
+      <Modal {...this.props} show={this.props.modalVisible} animation={true}>
         <Modal.Header closeButton>
           <Modal.Title id="contained-modal-title-lg">Update package</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <div className="modal--form">
-            <form role="form" action="" onFocus={this.handleFocus}>
+            <Form onValidSubmit={this.handleValidSubmit} onInvalidSubmit={this.handleInvalidSubmit} onFocus={this.handleFocus}>
               <Input type="select" label="*Type:" defaultValue={this.props.data.channel.type} placeholder="" groupClassName="arrow-icon" ref="typePackage" required={true} onChange={this.handleChangeTypePackage}>
                 <option value={1}>Coreos</option>
                 <option value={4}>Other</option>
               </Input>
-              <Input type="url" label="*Url:" defaultValue={this.props.data.channel.url} ref="urlPackage" required={true} macLength={256} />
-              <Input type="text" label={(typeCoreOS ? "*" : "") + "Filename:"} defaultValue={this.props.data.channel.filename} ref="filenamePackage" maxLength={100} required={typeCoreOS} />
+              <ValidatedInput
+                type="text"
+                label="*Url:"
+                name="urlPackage"
+                ref="urlPackage"
+                defaultValue={this.props.data.channel.url}
+                required={true}
+                validate="required,isLength:1:256"
+                errorHelp={{
+                  required: "Please enter a valid url",
+                  isLength: "Url must be less than 256 characters"
+                }}
+              />
+              <ValidatedInput
+                type="text"
+                label={(typeCoreOS ? "*" : "") + "Filename:"}
+                name="filenamePackage"
+                ref="filenamePackage"
+                defaultValue={this.props.data.channel.filename}
+                required={typeCoreOS}
+                validate={"isLength:0:100" + (typeCoreOS ? ",required" : "")}
+                errorHelp={{
+                  required: "Please enter a valid filename",
+                  isLength: "Filename must be less than 100 characters"
+                }}
+              />
               <Input type="textarea" label="Description:" defaultValue={this.props.data.channel.description} ref="descriptionPackage" maxLength={250} className="smallHeight" />
               <Row>
                 <Col xs={6}>
-                  <Input type="text" label="*Version:" defaultValue={this.props.data.channel.version} ref="versionPackage" required={true} />
-                  <div className="form--legend minlegend minlegend--formGroup">Use SemVer format (1.0.1)</div>
+                  <ValidatedInput
+                    type="text"
+                    label="*Version:"
+                    name="versionPackage"
+                    ref="versionPackage"
+                    defaultValue={this.props.data.channel.version}
+                    required={true}
+                    validate={(val) => {
+                      return /^((\d+)\.(\d+)\.(\d+))(?:-([\dA-Za-z\-]+(?:\.[\dA-Za-z\-]+)*))?(?:\+([\dA-Za-z\-]+(?:\.[\dA-Za-z\-]+)*))?$/.test(val)
+                    }}
+                    errorHelp={{
+                      required: "Please enter a valid semver"
+                    }}
+                  />
+                  <div className="form--legend minlegend minlegend--formGroup">{"Use SemVer format (1.0.1)"}</div>
                 </Col>
                 <Col xs={6}>
-                  <Input type="number" label={(typeCoreOS ? "*" : "") + "Size (bytes):"} defaultValue={parseInt(this.props.data.channel.size)} ref="sizePackage" maxLength={20} required={typeCoreOS} />
+                  <ValidatedInput
+                    type="number"
+                    label={(typeCoreOS ? "*" : "") + "Size (bytes):"}
+                    name="sizePackage"
+                    ref="sizePackage"
+                    defaultValue={this.props.data.channel.size ? parseInt(this.props.data.channel.size) : null}
+                    required={typeCoreOS}
+                    validate={"isLength:0:20,isInt" + (typeCoreOS ? ",required" : "")}
+                    errorHelp={{
+                      required: "Please enter a valid size",
+                      isLength: "Size number must be less than 20 digits",
+                      isInt: "Please enter a valid number"
+                    }}
+                  />
                 </Col>
               </Row>
-              <Input type="text" label={(typeCoreOS ? "*" : "") + "Hash:"} defaultValue={this.props.data.channel.hash} ref="hashPackage" maxLength={64} required={typeCoreOS} />
+              <ValidatedInput
+                type="text"
+                label={(typeCoreOS ? "*" : "") + "Hash:"}
+                name="hashPackage"
+                ref="hashPackage"
+                defaultValue={this.props.data.channel.hash}
+                required={typeCoreOS}
+                validate={"isLength:0:64" + (typeCoreOS ? ",required" : "")}
+                errorHelp={{
+                  required: "Please enter a valid hash",
+                  isLength: "Hash must be less than 64 characters"
+                }}
+              />
               {typeCoreOS &&
                 <div>
                   <div className="form--legend minlegend minlegend--formGroup">{"Tip: cat update.gz | openssl dgst -sha1 -binary | base64"}</div>
-                  <Input type="text" label={(typeCoreOS ? "*" : "") + "CoreOS action sha256:"} value={this.state.coreOSSha256Package} ref="coreOSSha256Package" className={this.state.disabledCoreOSSha256 ? "disabled" : ""} disabled={this.state.disabledCoreOSSha256} onChange={this.handleChangeCoreOSSha256} required={typeCoreOS} />
+                  <ValidatedInput
+                    type="text"
+                    label="*CoreOS action sha256:"
+                    name="coreOSSha256Package"
+                    ref="coreOSSha256Package"
+                    value={this.state.coreOSSha256NewPackage}
+                    required={true}
+                    className={this.state.disabledCoreOSSha256 ? "disabled" : ""}
+                    disabled={this.state.disabledCoreOSSha256}
+                    onChange={this.handleChangeCoreOSSha256}
+                    validate="required"
+                    errorHelp={{
+                      required: "Please enter a valid value"
+                    }}
+                  />
                   <div className="form--legend minlegend minlegend--formGroup">{"Tip: cat update.gz | openssl dgst -sha256 -binary | base64"}</div>
                 </div>
               }
@@ -150,11 +239,17 @@ class ModalUpdate extends React.Component {
                     </Alert>
                   </Col>
                   <Col xs={4}>
-                    <Button bsStyle="default" className={"plainBtn" + btnStyle} disabled={this.state.isLoading} onClick={this.updatePackage}>{btnContent}</Button>
+                    <ButtonInput
+                      type="submit"
+                      bsStyle="default"
+                      className={"plainBtn" + btnStyle}
+                      disabled={this.state.isLoading}
+                      value={btnContent}
+                    />
                   </Col>
                 </Row>
               </div>
-            </form>
+            </Form>
           </div>
         </Modal.Body>
       </Modal>

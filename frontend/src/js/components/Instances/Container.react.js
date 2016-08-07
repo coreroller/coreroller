@@ -13,6 +13,7 @@ class Container extends React.Component {
     this.onChangeApplications = this.onChangeApplications.bind(this)
     this.onChangeInstances = this.onChangeInstances.bind(this)
     this.onChangeSelectedInstance = this.onChangeSelectedInstance.bind(this)
+
     this.state = {
       instances: instancesStore.getCachedInstances(props.appID, props.groupID),
       updating: false,

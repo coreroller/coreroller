@@ -1,21 +1,26 @@
 import { applicationsStore } from "../../stores/Stores"
 import React, { PropTypes } from "react"
-import { Modal, Input, Button, Col, Row, Alert } from "react-bootstrap"
+import { Modal, Input, Button, Col, Row, Alert, ButtonInput } from "react-bootstrap"
+import { Form, ValidatedInput } from "react-bootstrap-validation"
 
 class ModalUpdate extends React.Component {
 
   constructor(props) {
     super(props)
+    this.handleFocus = this.handleFocus.bind(this)
+    this.updateApplication = this.updateApplication.bind(this)
+    this.handleValidSubmit = this.handleValidSubmit.bind(this)
+    this.handleInvalidSubmit = this.handleInvalidSubmit.bind(this)
+
     this.state = {
       isLoading: false,
       alertVisible: false
     }
-    this.handleFocus = this.handleFocus.bind(this)
-    this.updateApplication = this.updateApplication.bind(this)
-  }
+}
 
   static propTypes : {
-    data: PropTypes.object
+    data: PropTypes.object.isRequired,
+    modalVisible: PropTypes.bool.isRequired
   }
 
   updateApplication() {
@@ -26,11 +31,11 @@ class ModalUpdate extends React.Component {
     }
 
     applicationsStore.updateApplication(this.props.data.id, data).
-      done(() => { 
-        this.props.onHide()   
+      done(() => {
+        this.props.onHide()
         this.setState({isLoading: false})
       }).
-      fail(() => { 
+      fail(() => {
         this.setState({alertVisible: true, isLoading: false})
       })
   }
@@ -39,18 +44,38 @@ class ModalUpdate extends React.Component {
     this.setState({alertVisible: false})
   }
 
-  render() { 
+  handleValidSubmit() {
+    this.updateApplication()
+  }
+
+  handleInvalidSubmit() {
+    this.setState({alertVisible: true})
+  }
+
+  render() {
     let btnStyle = this.state.isLoading ? " loading" : "",
-        btnContent = this.state.isLoading ? "Please wait" : "Submit" 
+        btnContent = this.state.isLoading ? "Please wait" : "Submit"
     return (
-      <Modal {...this.props} animation={true}>
+      <Modal {...this.props} show={this.props.modalVisible} animation={true}>
         <Modal.Header closeButton>
           <Modal.Title id="contained-modal-title-lg">Update application</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <div className="modal--form">
-            <form role="form" action="" onFocus={this.handleFocus}>
-              <Input type="text" label="*Name:" ref="nameApp" required defaultValue={this.props.data.name} min={1} maxLength={50} />
+            <Form onValidSubmit={this.handleValidSubmit} onInvalidSubmit={this.handleInvalidSubmit} onFocus={this.handleFocus}>
+              <ValidatedInput
+                type="text"
+                label="*Name:"
+                name="nameApp"
+                ref="nameApp"
+                defaultValue={this.props.data.name}
+                required={true}
+                validate="required,isLength:1:50"
+                errorHelp={{
+                  required: "Please enter a name",
+                  isLength: "Name must be less than 50 characters"
+                }}
+              />
               <Input type="textarea" label="Description:" ref="descriptionApp" defaultValue={this.props.data.description} maxLength={250} />
               <div className="modal--footer">
                 <Row>
@@ -60,11 +85,17 @@ class ModalUpdate extends React.Component {
                     </Alert>
                   </Col>
                   <Col xs={4}>
-                    <Button bsStyle="default" className={"plainBtn" + btnStyle} disabled={this.state.isLoading} onClick={this.updateApplication}>{btnContent}</Button>
+                    <ButtonInput
+                      type="submit"
+                      bsStyle="default"
+                      className={"plainBtn" + btnStyle}
+                      disabled={this.state.isLoading}
+                      value={btnContent}
+                    />
                   </Col>
                 </Row>
               </div>
-            </form>
+            </Form>
           </div>
         </Modal.Body>
       </Modal>

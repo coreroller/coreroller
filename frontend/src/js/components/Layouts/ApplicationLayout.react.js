@@ -13,8 +13,12 @@ class ApplicationLayout extends React.Component {
   constructor(props) {
     super(props);
     this.onChange = this.onChange.bind(this);
+
     let appID = props.params.appID
-    this.state = {appID: appID, applications: applicationsStore.getCachedApplications()}
+    this.state = {
+      appID: appID,
+      applications: applicationsStore.getCachedApplications()
+    }
   }
 
   componentWillMount() {

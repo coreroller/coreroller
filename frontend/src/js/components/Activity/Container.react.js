@@ -10,6 +10,7 @@ class Container extends React.Component {
   constructor() {
     super()
     this.onChange = this.onChange.bind(this);
+
     this.state = {entries: activityStore.getCachedActivity()}
   }
 
