@@ -148,7 +148,7 @@ Please make sure that your code is formatted using `gofmt` and makes [gometalint
 
 CoreRoller uses `PostgreSQL` as datastore, so you'll also need it if you are planning to do some work on CoreRoller. You can install it locally or use the docker image available in the docker hub (coreroller/postgres). 
 
-If you plan to install it yourself locally, please be aware that the [semver](https://github.com/theory/pg-semver/) extension is required and it's not installed by default with PostgreSQL. When installing it manually instead of using the docker image, you'll also need to run the following commands to created the necessary databases and extensions:
+If you plan to install it yourself locally, please be aware that the [semver](https://github.com/theory/pg-semver/)[1] extension is required and it's not installed by default with PostgreSQL. When installing it manually instead of using the docker image, you'll also need to run the following commands to created the necessary databases and extensions:
 
 	psql -U postgres -c "create database coreroller;"
 	psql -U postgres -c "alter database coreroller set timezone = 'UTC';"
@@ -161,6 +161,8 @@ To run the tests you will also need to setup the coreroller\_tests database:
 	psql -U postgres -c "alter database coreroller set timezone = 'UTC';"
 	psql -U postgres -d coreroller_tests -c "create extension \"uuid-ossp\";"
 	psql -U postgres -d coreroller_tests -c "create extension semver;"
+
+**[1] UPDATE:** *as of 7 Aug 2016 the SEMVER data type that the pg-semver Postgresql extension provides is no longer used (`db/migrations/0005_remove_pgsemver.sql` migration takes care of altering the affected tables). Please note that the extension is still required to be available and installed as the first migration script `0001_initial.sql` will create some tables with fields that use the semver data type (that will be altered afterwards by the next migration scripts). This situation is just temporary to not affect existing deployments and allow a clean update using automatic database migrations, but will be improved in the future to facilitate using other Postgresql installations where the extension may not be available (such as AWS RDS) now that there is no real need for the extension.*
 
 ### Frontend
 

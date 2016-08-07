@@ -96,6 +96,10 @@ type InstancesQueryParams struct {
 
 // RegisterInstance registers an instance into CoreRoller.
 func (api *API) RegisterInstance(instanceID, instanceIP, instanceVersion, appID, groupID string) (*Instance, error) {
+	if !isValidSemver(instanceVersion) {
+		return nil, ErrInvalidSemver
+	}
+
 	var err error
 	if appID, groupID, err = api.validateApplicationAndGroup(appID, groupID); err != nil {
 		return nil, err

@@ -38,6 +38,9 @@ func TestRegisterInstance(t *testing.T) {
 	_, err = a.RegisterInstance(instanceID, "10.0.0.1", "", tApp.ID, "invalidGroupID")
 	assert.Error(t, err, "Using an empty instance version.")
 
+	_, err = a.RegisterInstance(instanceID, "10.0.0.1", "aaa1.0.0", tApp.ID, "invalidGroupID")
+	assert.Equal(t, ErrInvalidSemver, err, "Using an invalid instance version.")
+
 	_, err = a.RegisterInstance(instanceID, "10.0.0.1", "1.0.0", tApp.ID, tGroup2.ID)
 	assert.Equal(t, ErrInvalidApplicationOrGroup, err, "The group provided doesn't belong to the application provided.")
 

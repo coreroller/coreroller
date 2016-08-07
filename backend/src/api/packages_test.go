@@ -31,13 +31,16 @@ func TestAddPackage(t *testing.T) {
 	assert.Contains(t, pkgX.ChannelsBlacklist, tChannel2.ID)
 
 	_, err = a.AddPackage(&Package{URL: "http://sample.url/pkg", Version: "12.1.0", ApplicationID: tApp.ID})
-	assert.Error(t, err, "Package type is required")
+	assert.Error(t, err, "Package type is required.")
 
 	_, err = a.AddPackage(&Package{Type: PkgTypeOther, Version: "12.1.0", ApplicationID: tApp.ID})
-	assert.Error(t, err, "Package url is required")
+	assert.Error(t, err, "Package url is required.")
 
 	_, err = a.AddPackage(&Package{Type: PkgTypeOther, URL: "http://sample.url/pkg", ApplicationID: tApp.ID})
-	assert.Error(t, err, "Package version is required")
+	assert.Error(t, err, "Package version is required.")
+
+	_, err = a.AddPackage(&Package{Type: PkgTypeOther, URL: "http://sample.url/pkg", Version: "aaa12.1.0"})
+	assert.Equal(t, ErrInvalidSemver, err, "Package version must be a valid semver.")
 
 	_, err = a.AddPackage(&Package{Type: PkgTypeOther, URL: "http://sample.url/pkg", Version: "12.1.0"})
 	assert.Error(t, err, "App id is required and must be a valid uuid.")
@@ -213,14 +216,18 @@ func TestGetPackages(t *testing.T) {
 
 	tTeam, _ := a.AddTeam(&Team{Name: "test_team"})
 	tApp, _ := a.AddApp(&Application{Name: "test_app", TeamID: tTeam.ID})
-	_, _ = a.AddPackage(&Package{Type: PkgTypeOther, URL: "http://sample.url/pkg1", Version: "12.1.0", ApplicationID: tApp.ID})
-	_, _ = a.AddPackage(&Package{Type: PkgTypeOther, URL: "http://sample.url/pkg2", Version: "14.1.0", ApplicationID: tApp.ID})
+	_, _ = a.AddPackage(&Package{Type: PkgTypeOther, URL: "http://sample.url/pkg1", Version: "1010.5.0+2016-05-27-1832", ApplicationID: tApp.ID})
+	_, _ = a.AddPackage(&Package{Type: PkgTypeOther, URL: "http://sample.url/pkg2", Version: "12.1.0", ApplicationID: tApp.ID})
+	_, _ = a.AddPackage(&Package{Type: PkgTypeOther, URL: "http://sample.url/pkg3", Version: "14.1.0", ApplicationID: tApp.ID})
+	_, _ = a.AddPackage(&Package{Type: PkgTypeOther, URL: "http://sample.url/pkg4", Version: "1010.6.0-blabla", ApplicationID: tApp.ID})
 
 	pkgs, err := a.GetPackages(tApp.ID, 0, 0)
 	assert.NoError(t, err)
-	assert.Equal(t, 2, len(pkgs))
-	assert.Equal(t, "http://sample.url/pkg2", pkgs[0].URL)
+	assert.Equal(t, 4, len(pkgs))
+	assert.Equal(t, "http://sample.url/pkg4", pkgs[0].URL)
 	assert.Equal(t, "http://sample.url/pkg1", pkgs[1].URL)
+	assert.Equal(t, "http://sample.url/pkg3", pkgs[2].URL)
+	assert.Equal(t, "http://sample.url/pkg2", pkgs[3].URL)
 
 	_, err = a.GetPackages("invalidAppID", 0, 0)
 	assert.Error(t, err, "Add id must be a valid uuid.")

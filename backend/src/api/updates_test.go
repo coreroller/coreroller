@@ -42,6 +42,9 @@ func TestGetUpdatePackage(t *testing.T) {
 
 	_, err = a.GetUpdatePackage(uuid.NewV4().String(), "10.0.0.1", "12.1.0", tApp.ID, tGroup.ID)
 	assert.Equal(t, ErrNoUpdatePackageAvailable, err, "Instance version is up to date.")
+
+	_, err = a.GetUpdatePackage(uuid.NewV4().String(), "10.0.0.1", "1010.5.0+2016-05-27-1832", tApp.ID, tGroup.ID)
+	assert.Equal(t, ErrNoUpdatePackageAvailable, err, "Instance version is up to date.")
 }
 
 func TestGetUpdatePackage_GroupNoChannel(t *testing.T) {
