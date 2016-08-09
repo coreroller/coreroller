@@ -77,6 +77,9 @@ func New(options ...func(*API) error) (*API, error) {
 		return nil, err
 	}
 
+	// Add the non-standard coreosGroups from DB
+	coreosGroupPopulate(api)
+
 	return api, nil
 }
 
