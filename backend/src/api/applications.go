@@ -7,10 +7,6 @@ import (
 	"gopkg.in/mgutz/dat.v1"
 )
 
-const (
-	coreosAppID = "e96281a6-d1af-4bde-9a0a-97b76e56dc57"
-)
-
 // Application represents a CoreRoller application instance.
 type Application struct {
 	ID          string     `db:"id" json:"id"`
