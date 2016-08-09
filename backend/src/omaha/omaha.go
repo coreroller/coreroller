@@ -74,7 +74,7 @@ func (h *Handler) buildOmahaResponse(omahaReq *omahaSpec.Request, ip string) (*o
 		group := reqApp.Track
 		if reqAppUUID, err := uuid.FromString(reqApp.Id); err == nil {
 			if reqAppUUID.String() == coreosAppID {
-				if coreosGroupID, ok := coreosGroups[group]; ok {
+				if coreosGroupID, ok := api.CoreosGroupID(group); ok {
 					group = coreosGroupID
 				}
 			}
