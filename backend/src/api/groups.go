@@ -94,6 +94,10 @@ func (api *API) AddGroup(group *Group) (*Group, error) {
 		Returning("*").
 		QueryStruct(group)
 
+	if err == nil {
+		coreosGroupAdd(group.Name, group.ID)
+	}
+
 	return group, err
 }
 
@@ -138,6 +142,10 @@ func (api *API) DeleteGroup(groupID string) error {
 
 	if err == nil && result.RowsAffected == 0 {
 		return ErrNoRowsAffected
+	}
+
+	if err == nil {
+		coreosGroupDel(groupID)
 	}
 
 	return err
