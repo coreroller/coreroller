@@ -19,6 +19,7 @@ class ModalAdd extends React.Component {
     this.changePolicyOfficeHours = this.changePolicyOfficeHours.bind(this)
     this.handleValidSubmit = this.handleValidSubmit.bind(this)
     this.handleInvalidSubmit = this.handleInvalidSubmit.bind(this)
+    this.exitedModal = this.exitedModal.bind(this)
 
     this.state = {
       safeMode: true,
@@ -118,6 +119,17 @@ class ModalAdd extends React.Component {
     this.setState({alertVisible: true})
   }
 
+  exitedModal() {
+    this.setState({
+      safeMode: true,
+      policyUpdates: true,
+      policyOfficeHours: false,
+      isLoading: false,
+      alertVisible: false,
+      timezoneError: false
+    })
+  }
+
   render() {
     let channels = this.props.data.channels ? this.props.data.channels : [],
         btnStyle = this.state.isLoading ? " loading" : "",
@@ -126,7 +138,7 @@ class ModalAdd extends React.Component {
         timezoneError = this.state.timezoneError ? {bsStyle: "error"} : ""
 
     return (
-      <Modal {...this.props} animation={true}>
+      <Modal {...this.props} animation={true} onExited={this.exitedModal}>
         <Modal.Header closeButton>
           <Modal.Title id="contained-modal-title-lg">Add new group</Modal.Title>
         </Modal.Header>

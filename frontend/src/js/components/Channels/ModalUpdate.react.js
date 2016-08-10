@@ -18,6 +18,7 @@ class ModalUpdate extends React.Component {
     this.checkBlacklistChannels = this.checkBlacklistChannels.bind(this)
     this.handleValidSubmit = this.handleValidSubmit.bind(this)
     this.handleInvalidSubmit = this.handleInvalidSubmit.bind(this)
+    this.onExited = this.onExited.bind(this)
 
     this.state = {
       channelColor: props.data.channel.color,
@@ -52,7 +53,12 @@ class ModalUpdate extends React.Component {
         this.setState({isLoading: false})
       }).
       fail(() => {
-        this.setState({alertVisible: true, isLoading: false})
+        this.setState({
+          channelColor: this.props.data.channel.color,
+          displayColorPicker: false,
+          isLoading: false,
+          alertVisible: false
+        })
       })
   }
 
@@ -96,6 +102,15 @@ class ModalUpdate extends React.Component {
     this.setState({alertVisible: true})
   }
 
+  exitedModal() {
+    this.setState({
+      channelColor: this.props.data.channel.color,
+      displayColorPicker: false,
+      isLoading: false,
+      alertVisible: false
+    })
+  }
+
   render() {
     let packages = this.props.data.packages ? this.props.data.packages : [],
         selectedPackage = this.props.data.channel.package_id ? this.props.data.channel.package_id : "",
@@ -112,7 +127,7 @@ class ModalUpdate extends React.Component {
         channels_blacklist = this.checkBlacklistChannels()
 
     return (
-      <Modal {...this.props} show={this.props.modalVisible} animation={true}>
+      <Modal {...this.props} show={this.props.modalVisible} animation={true} onExited={this.onExited}>
         <Modal.Header closeButton>
           <Modal.Title id="contained-modal-title-lg">Update channel</Modal.Title>
         </Modal.Header>

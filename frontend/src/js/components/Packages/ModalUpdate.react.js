@@ -4,6 +4,7 @@ import { Row, Col, Modal, Input, Button, Alert, ButtonInput } from "react-bootst
 import { Form, ValidatedInput } from "react-bootstrap-validation"
 import Select from "react-select"
 import _ from "underscore"
+import {REGEX_SEMVER, REGEX_URL, REGEX_SIZE} from "../../constants/regex"
 
 class ModalUpdate extends React.Component {
 
@@ -16,6 +17,7 @@ class ModalUpdate extends React.Component {
     this.handleChangeCoreOSSha256 = this.handleChangeCoreOSSha256.bind(this)
     this.handleValidSubmit = this.handleValidSubmit.bind(this)
     this.handleInvalidSubmit = this.handleInvalidSubmit.bind(this)
+    this.exitedModal = this.exitedModal.bind(this)
 
     this.state = {
       isLoading: false,
@@ -90,6 +92,17 @@ class ModalUpdate extends React.Component {
     this.setState({alertVisible: true})
   }
 
+  exitedModal() {
+    this.setState({
+      alertVisible: false,
+      isLoading: false,
+      channels_blacklist: this.props.data.channel.channels_blacklist ? this.props.data.channel.channels_blacklist.join(",") : "",
+      typeCoreOS: this.props.data.channel.type == 1 ? true : false,
+      disabledCoreOSSha256: this.props.data.channel.type == 1 ? false : true,
+      coreOSSha256Package: this.props.data.channel.coreos_action ? this.props.data.channel.coreos_action.sha256 : ""
+    })
+  }
+
   render() {
     let packages = this.props.data.channels ? this.props.data.channels : [],
         btnStyle = this.state.isLoading ? " loading" : "",
@@ -108,12 +121,12 @@ class ModalUpdate extends React.Component {
     })
 
     return (
-      <Modal {...this.props} show={this.props.modalVisible} animation={true}>
+      <Modal {...this.props} show={this.props.modalVisible} animation={true} onExited={this.exitedModal}>
         <Modal.Header closeButton>
           <Modal.Title id="contained-modal-title-lg">Update package</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <div className="modal--form">
+          <div className="modal--form modal--form-with-captions">
             <Form onValidSubmit={this.handleValidSubmit} onInvalidSubmit={this.handleInvalidSubmit} onFocus={this.handleFocus}>
               <Input type="select" label="*Type:" defaultValue={this.props.data.channel.type} placeholder="" groupClassName="arrow-icon" ref="typePackage" required={true} onChange={this.handleChangeTypePackage}>
                 <option value={1}>Coreos</option>
@@ -126,11 +139,10 @@ class ModalUpdate extends React.Component {
                 ref="urlPackage"
                 defaultValue={this.props.data.channel.url}
                 required={true}
-                validate="required,isLength:1:256"
-                errorHelp={{
-                  required: "Please enter a valid url",
-                  isLength: "Url must be less than 256 characters"
+                validate={(val) => {
+                  return REGEX_URL.test(val)
                 }}
+                errorHelp="Please enter a valid url and no more than 256 characters"
               />
               <ValidatedInput
                 type="text"
@@ -139,7 +151,7 @@ class ModalUpdate extends React.Component {
                 ref="filenamePackage"
                 defaultValue={this.props.data.channel.filename}
                 required={typeCoreOS}
-                validate={"isLength:0:100" + (typeCoreOS ? ",required" : "")}
+                validate={(typeCoreOS ? "isLength:1:100,required" : "isLength:0:100")}
                 errorHelp={{
                   required: "Please enter a valid filename",
                   isLength: "Filename must be less than 100 characters"
@@ -156,28 +168,28 @@ class ModalUpdate extends React.Component {
                     defaultValue={this.props.data.channel.version}
                     required={true}
                     validate={(val) => {
-                      return /^((\d+)\.(\d+)\.(\d+))(?:-([\dA-Za-z\-]+(?:\.[\dA-Za-z\-]+)*))?(?:\+([\dA-Za-z\-]+(?:\.[\dA-Za-z\-]+)*))?$/.test(val)
+                      return REGEX_SEMVER.test(val)
                     }}
-                    errorHelp={{
-                      required: "Please enter a valid semver"
-                    }}
+                    errorHelp="Please enter a valid semver"
                   />
                   <div className="form--legend minlegend minlegend--formGroup">{"Use SemVer format (1.0.1)"}</div>
                 </Col>
                 <Col xs={6}>
                   <ValidatedInput
-                    type="number"
+                    type="text"
                     label={(typeCoreOS ? "*" : "") + "Size (bytes):"}
                     name="sizePackage"
                     ref="sizePackage"
-                    defaultValue={this.props.data.channel.size ? parseInt(this.props.data.channel.size) : null}
+                    defaultValue={this.props.data.channel.size ? parseInt(this.props.data.channel.size) : ""}
                     required={typeCoreOS}
-                    validate={"isLength:0:20,isInt" + (typeCoreOS ? ",required" : "")}
-                    errorHelp={{
-                      required: "Please enter a valid size",
-                      isLength: "Size number must be less than 20 digits",
-                      isInt: "Please enter a valid number"
+                    validate={(val) => {
+                      if (typeCoreOS) {
+                        return REGEX_SIZE.test(val) && val.length > 0
+                      } else {
+                        return (REGEX_SIZE.test(val) || _.isEmpty(val))  && val.length >= 0
+                      }
                     }}
+                    errorHelp="Please enter a valid size (less than 20 digits)"
                   />
                 </Col>
               </Row>
@@ -188,7 +200,7 @@ class ModalUpdate extends React.Component {
                 ref="hashPackage"
                 defaultValue={this.props.data.channel.hash}
                 required={typeCoreOS}
-                validate={"isLength:0:64" + (typeCoreOS ? ",required" : "")}
+                validate={(typeCoreOS ? "isLength:1:64,required" : "isLength:0:64")}
                 errorHelp={{
                   required: "Please enter a valid hash",
                   isLength: "Hash must be less than 64 characters"

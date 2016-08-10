@@ -19,6 +19,7 @@ class ModalUpdate extends React.Component {
     this.changePolicyOfficeHours = this.changePolicyOfficeHours.bind(this)
     this.handleValidSubmit = this.handleValidSubmit.bind(this)
     this.handleInvalidSubmit = this.handleInvalidSubmit.bind(this)
+    this.exitedModal = this.exitedModal.bind(this)
 
     this.state = {
       safeMode: props.data.group.policy_safe_mode,
@@ -128,6 +129,17 @@ class ModalUpdate extends React.Component {
     this.setState({alertVisible: true})
   }
 
+  exitedModal() {
+    this.setState({
+      safeMode: this.props.data.group.policy_safe_mode,
+      policyUpdates: this.props.data.group.policy_updates_enabled,
+      policyOfficeHours: this.props.data.group.policy_office_hours,
+      isLoading: false,
+      alertVisible: false,
+      timezoneError: false
+    })
+  }
+
   render() {
     let current_period_interval = this.props.data.group.policy_period_interval.split(" "),
         current_update_timeout = this.props.data.group.policy_update_timeout.split(" "),
@@ -138,7 +150,7 @@ class ModalUpdate extends React.Component {
         timezoneError = this.state.timezoneError ? {bsStyle: "error"} : ""
 
     return (
-      <Modal {...this.props} show={this.props.modalVisible} animation={true}>
+      <Modal {...this.props} show={this.props.modalVisible} animation={true} onExited={this.exitedModal}>
         <Modal.Header closeButton>
           <Modal.Title id="contained-modal-title-lg">Update group</Modal.Title>
         </Modal.Header>

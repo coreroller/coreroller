@@ -4,6 +4,7 @@ import { Row, Col, Modal, Input, Button, Alert, ButtonInput } from "react-bootst
 import { Form, ValidatedInput } from "react-bootstrap-validation"
 import Select from "react-select"
 import _ from "underscore"
+import {REGEX_SEMVER, REGEX_URL, REGEX_SIZE} from "../../constants/regex"
 
 class ModalAdd extends React.Component {
 
@@ -16,6 +17,7 @@ class ModalAdd extends React.Component {
     this.handleChangeCoreOSSha256 = this.handleChangeCoreOSSha256.bind(this)
     this.handleValidSubmit = this.handleValidSubmit.bind(this)
     this.handleInvalidSubmit = this.handleInvalidSubmit.bind(this)
+    this.exitedModal = this.exitedModal.bind(this)
 
     this.state = {
       isLoading: false,
@@ -88,6 +90,17 @@ class ModalAdd extends React.Component {
     this.setState({alertVisible: true})
   }
 
+  exitedModal() {
+    this.setState({
+      alertVisible: false,
+      isLoading: false,
+      blacklist_channels: "",
+      typeCoreOS: false,
+      disabledCoreOSSha256: true,
+      coreOSSha256NewPackage: ""
+    })
+  }
+
   render() {
     let packages = this.props.data.channels ? this.props.data.channels : [],
         btnStyle = this.state.isLoading ? " loading" : "",
@@ -99,7 +112,7 @@ class ModalAdd extends React.Component {
     })
 
     return (
-      <Modal {...this.props} animation={true}>
+      <Modal {...this.props} animation={true} onExited={this.exitedModal}>
         <Modal.Header closeButton>
           <Modal.Title id="contained-modal-title-lg">Add new package</Modal.Title>
         </Modal.Header>
@@ -116,11 +129,10 @@ class ModalAdd extends React.Component {
                 name="urlNewPackage"
                 ref="urlNewPackage"
                 required={true}
-                validate="required,isLength:1:256"
-                errorHelp={{
-                  required: "Please enter a valid url",
-                  isLength: "Url must be less than 256 characters"
+                validate={(val) => {
+                  return REGEX_URL.test(val)
                 }}
+                errorHelp="Please enter a valid url and no more than 256 characters"
               />
               <ValidatedInput
                 type="text"
@@ -128,7 +140,7 @@ class ModalAdd extends React.Component {
                 name="filenameNewPackage"
                 ref="filenameNewPackage"
                 required={typeCoreOS}
-                validate={"isLength:0:100" + (typeCoreOS ? ",required" : "")}
+                validate={(typeCoreOS ? "isLength:1:100,required" : "isLength:0:100")}
                 errorHelp={{
                   required: "Please enter a valid filename",
                   isLength: "Filename must be less than 100 characters"
@@ -144,27 +156,27 @@ class ModalAdd extends React.Component {
                     ref="versionNewPackage"
                     required={true}
                     validate={(val) => {
-                      return /^((\d+)\.(\d+)\.(\d+))(?:-([\dA-Za-z\-]+(?:\.[\dA-Za-z\-]+)*))?(?:\+([\dA-Za-z\-]+(?:\.[\dA-Za-z\-]+)*))?$/.test(val)
+                      return REGEX_SEMVER.test(val)
                     }}
-                    errorHelp={{
-                      required: "Please enter a valid semver"
-                    }}
+                    errorHelp="Please enter a valid semver"
                   />
                   <div className="form--legend minlegend minlegend--formGroup">{"Use SemVer format (1.0.1)"}</div>
                 </Col>
                 <Col xs={6}>
                   <ValidatedInput
-                    type="number"
+                    type="text"
                     label={(typeCoreOS ? "*" : "") + "Size (bytes):"}
                     name="sizeNewPackage"
                     ref="sizeNewPackage"
                     required={typeCoreOS}
-                    validate={"isLength:0:20,isInt" + (typeCoreOS ? ",required" : "")}
-                    errorHelp={{
-                      required: "Please enter a valid size",
-                      isLength: "Size number must be less than 20 digits",
-                      isInt: "Please enter a valid number"
+                    validate={(val) => {
+                      if (typeCoreOS) {
+                        return REGEX_SIZE.test(val) && val.length > 0
+                      } else {
+                        return (REGEX_SIZE.test(val) || _.isEmpty(val))  && val.length >= 0
+                      }
                     }}
+                    errorHelp="Please enter a valid size (less than 20 digits)"
                   />
                 </Col>
               </Row>
@@ -174,7 +186,7 @@ class ModalAdd extends React.Component {
                 name="hashNewPackage"
                 ref="hashNewPackage"
                 required={typeCoreOS}
-                validate={"isLength:0:64" + (typeCoreOS ? ",required" : "")}
+                validate={(typeCoreOS ? "isLength:1:64,required" : "isLength:0:64")}
                 errorHelp={{
                   required: "Please enter a valid hash",
                   isLength: "Hash must be less than 64 characters"

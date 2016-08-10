@@ -11,6 +11,7 @@ class ModalUpdate extends React.Component {
     this.updateApplication = this.updateApplication.bind(this)
     this.handleValidSubmit = this.handleValidSubmit.bind(this)
     this.handleInvalidSubmit = this.handleInvalidSubmit.bind(this)
+    this.exitedModal = this.exitedModal.bind(this)
 
     this.state = {
       isLoading: false,
@@ -52,11 +53,15 @@ class ModalUpdate extends React.Component {
     this.setState({alertVisible: true})
   }
 
+  exitedModal() {
+    this.setState({alertVisible: false, isLoading: false})
+  }
+
   render() {
     let btnStyle = this.state.isLoading ? " loading" : "",
         btnContent = this.state.isLoading ? "Please wait" : "Submit"
     return (
-      <Modal {...this.props} show={this.props.modalVisible} animation={true}>
+      <Modal {...this.props} show={this.props.modalVisible} animation={true} onExited={this.exitedModal}>
         <Modal.Header closeButton>
           <Modal.Title id="contained-modal-title-lg">Update application</Modal.Title>
         </Modal.Header>

@@ -12,6 +12,7 @@ class ModalUpdatePassword extends React.Component {
     this.updatePassword = this.updatePassword.bind(this)
     this.handleValidSubmit = this.handleValidSubmit.bind(this)
     this.handleInvalidSubmit = this.handleInvalidSubmit.bind(this)
+    this.exitedModal = this.exitedModal.bind(this)
 
     this.state = {
       isLoading: false,
@@ -62,12 +63,16 @@ class ModalUpdatePassword extends React.Component {
     this.setState({alertVisible: true})
   }
 
+  exitedModal() {
+    this.setState({alertVisible: false, isLoading: false})
+  }
+
   render() {
     let btnStyle = this.state.isLoading ? " loading" : "",
         btnContent = this.state.isLoading ? "Please wait" : "Submit"
 
     return (
-      <Modal {...this.props} animation={true}>
+      <Modal {...this.props} animation={true} onExited={this.exitedModal}>
         <Modal.Header closeButton>
           <Modal.Title id='contained-modal-title-lg'>Change password</Modal.Title>
         </Modal.Header>

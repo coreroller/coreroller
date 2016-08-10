@@ -16,6 +16,7 @@ class ModalAdd extends React.Component {
     this.handleColorPickerClose = this.handleColorPickerClose.bind(this)
     this.handleValidSubmit = this.handleValidSubmit.bind(this)
     this.handleInvalidSubmit = this.handleInvalidSubmit.bind(this)
+    this.exitedModal = this.exitedModal.bind(this)
 
     this.state = {
       channelColor: "#777777",
@@ -76,6 +77,15 @@ class ModalAdd extends React.Component {
     this.setState({alertVisible: true})
   }
 
+  exitedModal() {
+    this.setState({
+      channelColor: "#777777",
+      displayColorPicker: false,
+      isLoading: false,
+      alertVisible: false
+    })
+  }
+
   render() {
     let packages = this.props.data.packages ? this.props.data.packages : [],
         popupPosition = {
@@ -90,7 +100,7 @@ class ModalAdd extends React.Component {
         btnContent = this.state.isLoading ? "Please wait" : "Submit"
 
     return (
-      <Modal {...this.props} animation={true}>
+      <Modal {...this.props} animation={true} onExited={this.exitedModal}>
         <Modal.Header closeButton>
           <Modal.Title id="contained-modal-title-lg">Add new channel</Modal.Title>
         </Modal.Header>
