@@ -46,6 +46,7 @@ class ModalUpdate extends React.Component {
   }
 
   handleValidSubmit() {
+    this.setState({alertVisible: false})
     this.updateApplication()
   }
 
@@ -75,6 +76,7 @@ class ModalUpdate extends React.Component {
                 ref="nameApp"
                 defaultValue={this.props.data.name}
                 required={true}
+                validationEvent="onBlur"
                 validate="required,isLength:1:50"
                 errorHelp={{
                   required: "Please enter a name",

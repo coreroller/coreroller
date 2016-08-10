@@ -122,6 +122,7 @@ class ModalUpdate extends React.Component {
   }
 
   handleValidSubmit() {
+    this.setState({alertVisible: false})
     this.updateGroup()
   }
 
@@ -164,6 +165,7 @@ class ModalUpdate extends React.Component {
                 ref="nameGroup"
                 defaultValue={this.props.data.group.name}
                 required={true}
+                validationEvent="onBlur"
                 validate="required,isLength:1:50"
                 errorHelp={{
                   required: "Please enter a name",
@@ -225,6 +227,7 @@ class ModalUpdate extends React.Component {
                   defaultValue={this.props.data.group.policy_max_updates_per_period}
                   min={1}
                   required={true}
+                  validationEvent="onBlur"
                   validate="required,isInt"
                   errorHelp={{
                     required: "",
@@ -241,6 +244,7 @@ class ModalUpdate extends React.Component {
                   defaultValue={current_period_interval[0]}
                   min={1}
                   required={true}
+                  validationEvent="onBlur"
                   validate="required,isInt"
                   errorHelp={{
                     required: "",
@@ -266,6 +270,7 @@ class ModalUpdate extends React.Component {
                     defaultValue={current_update_timeout[0]}
                     min={1}
                     required={true}
+                    validationEvent="onBlur"
                     validate="required,isInt"
                     errorHelp={{
                       required: "",

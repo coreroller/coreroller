@@ -47,6 +47,7 @@ class ModalAdd extends React.Component {
   }
 
   handleValidSubmit() {
+    this.setState({alertVisible: false})
     this.createApplication()
   }
 
@@ -76,6 +77,7 @@ class ModalAdd extends React.Component {
                 name="nameNewApp"
                 ref="nameNewApp"
                 required={true}
+                validationEvent="onBlur"
                 validate="required,isLength:1:50"
                 errorHelp={{
                   required: "Please enter a name",

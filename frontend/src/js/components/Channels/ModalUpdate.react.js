@@ -95,6 +95,7 @@ class ModalUpdate extends React.Component {
   }
 
   handleValidSubmit() {
+    this.setState({alertVisible: false})
     this.updateChannel()
   }
 
@@ -141,6 +142,7 @@ class ModalUpdate extends React.Component {
                 ref="nameChannel"
                 defaultValue={this.props.data.channel.name}
                 required={true}
+                validationEvent="onBlur"
                 validate="required,isLength:1:25"
                 errorHelp={{
                   required: "Please enter a name",

@@ -85,6 +85,7 @@ class ModalUpdate extends React.Component {
   }
 
   handleValidSubmit() {
+    this.setState({alertVisible: false})
     this.updatePackage()
   }
 
@@ -139,6 +140,7 @@ class ModalUpdate extends React.Component {
                 ref="urlPackage"
                 defaultValue={this.props.data.channel.url}
                 required={true}
+                validationEvent="onBlur"
                 validate={(val) => {
                   return REGEX_URL.test(val)
                 }}
@@ -151,6 +153,7 @@ class ModalUpdate extends React.Component {
                 ref="filenamePackage"
                 defaultValue={this.props.data.channel.filename}
                 required={typeCoreOS}
+                validationEvent="onBlur"
                 validate={(typeCoreOS ? "isLength:1:100,required" : "isLength:0:100")}
                 errorHelp={{
                   required: "Please enter a valid filename",
@@ -167,6 +170,7 @@ class ModalUpdate extends React.Component {
                     ref="versionPackage"
                     defaultValue={this.props.data.channel.version}
                     required={true}
+                    validationEvent="onBlur"
                     validate={(val) => {
                       return REGEX_SEMVER.test(val)
                     }}
@@ -182,6 +186,7 @@ class ModalUpdate extends React.Component {
                     ref="sizePackage"
                     defaultValue={this.props.data.channel.size ? parseInt(this.props.data.channel.size) : ""}
                     required={typeCoreOS}
+                    validationEvent="onBlur"
                     validate={(val) => {
                       if (typeCoreOS) {
                         return REGEX_SIZE.test(val) && val.length > 0
@@ -200,6 +205,7 @@ class ModalUpdate extends React.Component {
                 ref="hashPackage"
                 defaultValue={this.props.data.channel.hash}
                 required={typeCoreOS}
+                validationEvent="onBlur"
                 validate={(typeCoreOS ? "isLength:1:64,required" : "isLength:0:64")}
                 errorHelp={{
                   required: "Please enter a valid hash",
@@ -219,6 +225,7 @@ class ModalUpdate extends React.Component {
                     className={this.state.disabledCoreOSSha256 ? "disabled" : ""}
                     disabled={this.state.disabledCoreOSSha256}
                     onChange={this.handleChangeCoreOSSha256}
+                    validationEvent="onBlur"
                     validate="required"
                     errorHelp={{
                       required: "Please enter a valid value"

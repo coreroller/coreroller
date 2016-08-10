@@ -83,6 +83,7 @@ class ModalAdd extends React.Component {
   }
 
   handleValidSubmit() {
+    this.setState({alertVisible: false})
     this.createPackage()
   }
 
@@ -129,6 +130,7 @@ class ModalAdd extends React.Component {
                 name="urlNewPackage"
                 ref="urlNewPackage"
                 required={true}
+                validationEvent="onBlur"
                 validate={(val) => {
                   return REGEX_URL.test(val)
                 }}
@@ -140,6 +142,7 @@ class ModalAdd extends React.Component {
                 name="filenameNewPackage"
                 ref="filenameNewPackage"
                 required={typeCoreOS}
+                validationEvent="onBlur"
                 validate={(typeCoreOS ? "isLength:1:100,required" : "isLength:0:100")}
                 errorHelp={{
                   required: "Please enter a valid filename",
@@ -155,6 +158,7 @@ class ModalAdd extends React.Component {
                     name="versionNewPackage"
                     ref="versionNewPackage"
                     required={true}
+                    validationEvent="onBlur"
                     validate={(val) => {
                       return REGEX_SEMVER.test(val)
                     }}
@@ -169,6 +173,7 @@ class ModalAdd extends React.Component {
                     name="sizeNewPackage"
                     ref="sizeNewPackage"
                     required={typeCoreOS}
+                    validationEvent="onBlur"
                     validate={(val) => {
                       if (typeCoreOS) {
                         return REGEX_SIZE.test(val) && val.length > 0
@@ -186,6 +191,7 @@ class ModalAdd extends React.Component {
                 name="hashNewPackage"
                 ref="hashNewPackage"
                 required={typeCoreOS}
+                validationEvent="onBlur"
                 validate={(typeCoreOS ? "isLength:1:64,required" : "isLength:0:64")}
                 errorHelp={{
                   required: "Please enter a valid hash",
@@ -205,6 +211,7 @@ class ModalAdd extends React.Component {
                     className={this.state.disabledCoreOSSha256 ? "disabled" : ""}
                     disabled={this.state.disabledCoreOSSha256}
                     onChange={this.handleChangeCoreOSSha256}
+                    validationEvent="onBlur"
                     validate="required"
                     errorHelp={{
                       required: "Please enter a valid value"

@@ -70,6 +70,7 @@ class ModalAdd extends React.Component {
   }
 
   handleValidSubmit() {
+    this.setState({alertVisible: false})
     this.createChannel()
   }
 
@@ -113,6 +114,7 @@ class ModalAdd extends React.Component {
                 name="nameNewChannel"
                 ref="nameNewChannel"
                 required={true}
+                validationEvent="onBlur"
                 validate="required,isLength:1:25"
                 errorHelp={{
                   required: "Please enter a name",

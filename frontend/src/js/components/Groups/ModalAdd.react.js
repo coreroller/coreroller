@@ -112,6 +112,7 @@ class ModalAdd extends React.Component {
   }
 
   handleValidSubmit() {
+    this.setState({alertVisible: false})
     this.createGroup()
   }
 
@@ -151,6 +152,7 @@ class ModalAdd extends React.Component {
                 name="nameNewGroup"
                 ref="nameNewGroup"
                 required={true}
+                validationEvent="onBlur"
                 validate="required,isLength:1:50"
                 errorHelp={{
                   required: "Please enter a name",
@@ -212,6 +214,7 @@ class ModalAdd extends React.Component {
                   defaultValue={2}
                   min={1}
                   required={true}
+                  validationEvent="onBlur"
                   validate="required,isInt"
                   errorHelp={{
                     required: "",
@@ -228,6 +231,7 @@ class ModalAdd extends React.Component {
                   defaultValue={15}
                   min={1}
                   required={true}
+                  validationEvent="onBlur"
                   validate="required,isInt"
                   errorHelp={{
                     required: "",
@@ -253,6 +257,7 @@ class ModalAdd extends React.Component {
                     defaultValue={60}
                     min={1}
                     required={true}
+                    validationEvent="onBlur"
                     validate="required,isInt"
                     errorHelp={{
                       required: "",
