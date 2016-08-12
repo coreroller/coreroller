@@ -2,6 +2,7 @@ package api
 
 import (
 	"errors"
+	"strings"
 
 	"github.com/mgutz/logxi/v1"
 )
@@ -81,9 +82,10 @@ func coreosGroupPopulate(api *API) {
 	}
 
 	for _, group := range groups {
-		if _, exist := coreosGroups[group.Name]; ! exist {
-			coreosLogger.Debug(f, "Adding group", group, "uuid", group.ID)
-			coreosGroups[group.Name] = group.ID
+		groupName := strings.ToLower(group.Name)
+		if _, exist := coreosGroups[groupName]; ! exist {
+			coreosLogger.Debug(f, "Adding group", groupName, "uuid", group.ID)
+			coreosGroups[groupName] = group.ID
 		}
 	}
 
