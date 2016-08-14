@@ -1,5 +1,5 @@
 import React, { PropTypes } from "react"
-import { Col, ProgressBar, OverlayTrigger, Tooltip } from "react-bootstrap"
+import { Col, ProgressBar } from "react-bootstrap"
 import _ from "underscore"
 import semver from "semver"
 

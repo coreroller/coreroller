@@ -70,12 +70,11 @@ class ModalAdd extends React.Component {
   }
 
   handleValidSubmit() {
-    this.setState({alertVisible: false})
     this.createChannel()
   }
 
   handleInvalidSubmit() {
-    this.setState({alertVisible: true})
+    // this.setState({alertVisible: false})
   }
 
   exitedModal() {
@@ -106,8 +105,8 @@ class ModalAdd extends React.Component {
           <Modal.Title id="contained-modal-title-lg">Add new channel</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <div className="modal--form">
-            <Form onValidSubmit={this.handleValidSubmit} onInvalidSubmit={this.handleInvalidSubmit} onFocus={this.handleFocus}>
+          <div className="modal--form" onFocus={this.handleFocus}>
+            <Form onValidSubmit={this.handleValidSubmit} onInvalidSubmit={this.handleInvalidSubmit}>
               <ValidatedInput
                 type="text"
                 label="*Name:"
@@ -151,7 +150,7 @@ class ModalAdd extends React.Component {
                 <Row>
                   <Col xs={8}>
                     <Alert bsStyle="danger" className={this.state.alertVisible ? "alert--visible" : ""}>
-                      <strong>Error!</strong> Please check the form
+                      <strong>Error!</strong> The request failed, please check the form
                     </Alert>
                   </Col>
                   <Col xs={4}>

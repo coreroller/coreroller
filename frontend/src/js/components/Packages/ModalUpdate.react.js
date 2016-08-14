@@ -80,14 +80,21 @@ class ModalUpdate extends React.Component {
       this.setState({disabledCoreOSSha256: true, typeCoreOS: false, coreOSSha256Package: ""})
       // Validated not required fields when it´s not CoreOs type
       const sizePackage = $(React.findDOMNode(this.refs.sizePackage)).find("input")[0],
-            hashPackage = $(React.findDOMNode(this.refs.hashPackage)).find("input")[0]
-            
+            hashPackage = $(React.findDOMNode(this.refs.hashPackage)).find("input")[0],
+            filenamePackage = $(React.findDOMNode(this.refs.filenamePackage)).find("input")[0]
+
       sizePackage.focus()
       setTimeout(() => {
         sizePackage.blur()
         hashPackage.focus()
       }, 5)
-      setTimeout(() => { hashPackage.blur() }, 10)
+      setTimeout(() => {
+        hashPackage.blur()
+        filenamePackage.focus()
+      }, 10)
+      setTimeout(() => {
+        filenamePackage.blur()
+      }, 15)
     }
   }
 
@@ -96,12 +103,11 @@ class ModalUpdate extends React.Component {
   }
 
   handleValidSubmit() {
-    this.setState({alertVisible: false})
     this.updatePackage()
   }
 
   handleInvalidSubmit() {
-    this.setState({alertVisible: true})
+    // this.setState({alertVisible: true})
   }
 
   exitedModal() {
@@ -138,8 +144,8 @@ class ModalUpdate extends React.Component {
           <Modal.Title id="contained-modal-title-lg">Update package</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <div className="modal--form modal--form-with-captions">
-            <Form onValidSubmit={this.handleValidSubmit} onInvalidSubmit={this.handleInvalidSubmit} onFocus={this.handleFocus}>
+          <div className="modal--form modal--form-with-captions" onFocus={this.handleFocus}>
+            <Form onValidSubmit={this.handleValidSubmit} onInvalidSubmit={this.handleInvalidSubmit}>
               <Input type="select" label="*Type:" defaultValue={this.props.data.channel.type} placeholder="" groupClassName="arrow-icon" ref="typePackage" required={true} onChange={this.handleChangeTypePackage}>
                 <option value={1}>Coreos</option>
                 <option value={4}>Other</option>
@@ -165,11 +171,14 @@ class ModalUpdate extends React.Component {
                 defaultValue={this.props.data.channel.filename}
                 required={typeCoreOS}
                 validationEvent="onBlur"
-                validate={(typeCoreOS ? "isLength:1:100,required" : "isLength:0:100")}
-                errorHelp={{
-                  required: "Please enter a valid filename",
-                  isLength: "Filename must be less than 100 characters"
+                validate={(val) => {
+                  if (typeCoreOS) {
+                    return val.length > 1 && val.length <= 100
+                  } else {
+                    return val.length <= 100
+                  }
                 }}
+                errorHelp="Please enter a valid filename (less than 100 characters)"
               />
               <Input type="textarea" label="Description:" defaultValue={this.props.data.channel.description} ref="descriptionPackage" maxLength={250} className="smallHeight" />
               <Row>
@@ -185,7 +194,7 @@ class ModalUpdate extends React.Component {
                     validate={(val) => {
                       return REGEX_SEMVER.test(val)
                     }}
-                    errorHelp="Please enter a valid semver"
+                    errorHelp="Please enter a valid semver (1.0.1)"
                   />
                   <div className="form--legend minlegend minlegend--formGroup">{"Use SemVer format (1.0.1)"}</div>
                 </Col>
@@ -268,7 +277,7 @@ class ModalUpdate extends React.Component {
                 <Row>
                   <Col xs={8}>
                     <Alert bsStyle="danger" className={this.state.alertVisible ? "alert--visible" : ""}>
-                      <strong>Error!</strong> Please check the form
+                      <strong>Error!</strong> The request failed, please check the form
                     </Alert>
                   </Col>
                   <Col xs={4}>

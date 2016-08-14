@@ -103,7 +103,7 @@ class ModalUpdatePassword extends React.Component {
                 <Row>
                   <Col xs={8}>
                     <Alert bsStyle="danger" className={this.state.alertVisible ? "alert--visible" : ""}>
-                      <strong>Error!</strong> Please check the form
+                      <strong>Error!</strong> The request failed, please check the form
                     </Alert>
                   </Col>
                   <Col xs={4}>
