@@ -9,6 +9,7 @@ import (
 )
 
 const (
+	// Realm used for basic authentication.
 	Realm = "coreroller.org"
 )
 
@@ -63,6 +64,8 @@ func (api *API) UpdateUserPassword(username, newPassword string) error {
 	return nil
 }
 
+// GenerateUserSecret generates a md5 hash from the username and password
+// provided (username:realm:password).
 func (api *API) GenerateUserSecret(username, password string) (string, error) {
 	h := md5.New()
 	if _, err := io.WriteString(h, username+":"+Realm+":"+password); err != nil {
