@@ -18,7 +18,7 @@ class ModalUpdate extends React.Component {
     this.checkBlacklistChannels = this.checkBlacklistChannels.bind(this)
     this.handleValidSubmit = this.handleValidSubmit.bind(this)
     this.handleInvalidSubmit = this.handleInvalidSubmit.bind(this)
-    this.onExited = this.onExited.bind(this)
+    this.exitedModal = this.exitedModal.bind(this)
 
     this.state = {
       channelColor: props.data.channel.color,

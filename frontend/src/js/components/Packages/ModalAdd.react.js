@@ -5,6 +5,7 @@ import { Form, ValidatedInput } from "react-bootstrap-validation"
 import Select from "react-select"
 import _ from "underscore"
 import {REGEX_SEMVER, REGEX_URL, REGEX_SIZE} from "../../constants/regex"
+import $ from "jquery"
 
 class ModalAdd extends React.Component {
 
@@ -75,6 +76,16 @@ class ModalAdd extends React.Component {
       this.setState({disabledCoreOSSha256: false, typeCoreOS: true})
     } else {
       this.setState({disabledCoreOSSha256: true, typeCoreOS: false, coreOSSha256NewPackage: ""})
+      // Validated not required fields when it´s not CoreOs type
+      const sizeNewPackage = $(React.findDOMNode(this.refs.sizeNewPackage)).find("input")[0],
+            hashNewPackage = $(React.findDOMNode(this.refs.hashNewPackage)).find("input")[0]
+
+      sizeNewPackage.focus()
+      setTimeout(() => {
+        sizeNewPackage.blur()
+        hashNewPackage.focus()
+      }, 5)
+      setTimeout(() => { hashNewPackage.blur() }, 10)
     }
   }
 
@@ -192,11 +203,14 @@ class ModalAdd extends React.Component {
                 ref="hashNewPackage"
                 required={typeCoreOS}
                 validationEvent="onBlur"
-                validate={(typeCoreOS ? "isLength:1:64,required" : "isLength:0:64")}
-                errorHelp={{
-                  required: "Please enter a valid hash",
-                  isLength: "Hash must be less than 64 characters"
+                validate={(val) => {
+                  if (typeCoreOS) {
+                    return val.length > 1 && val.length <= 64
+                  } else {
+                    return val.length <= 64
+                  }
                 }}
+                errorHelp="Please enter a valid hash (less than 64 characters)"
               />
               {typeCoreOS &&
                 <div>

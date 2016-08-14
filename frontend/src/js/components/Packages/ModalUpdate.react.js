@@ -5,6 +5,7 @@ import { Form, ValidatedInput } from "react-bootstrap-validation"
 import Select from "react-select"
 import _ from "underscore"
 import {REGEX_SEMVER, REGEX_URL, REGEX_SIZE} from "../../constants/regex"
+import $ from "jquery"
 
 class ModalUpdate extends React.Component {
 
@@ -77,6 +78,16 @@ class ModalUpdate extends React.Component {
       this.setState({disabledCoreOSSha256: false, typeCoreOS: true})
     } else {
       this.setState({disabledCoreOSSha256: true, typeCoreOS: false, coreOSSha256Package: ""})
+      // Validated not required fields when it´s not CoreOs type
+      const sizePackage = $(React.findDOMNode(this.refs.sizePackage)).find("input")[0],
+            hashPackage = $(React.findDOMNode(this.refs.hashPackage)).find("input")[0]
+            
+      sizePackage.focus()
+      setTimeout(() => {
+        sizePackage.blur()
+        hashPackage.focus()
+      }, 5)
+      setTimeout(() => { hashPackage.blur() }, 10)
     }
   }
 
@@ -206,11 +217,14 @@ class ModalUpdate extends React.Component {
                 defaultValue={this.props.data.channel.hash}
                 required={typeCoreOS}
                 validationEvent="onBlur"
-                validate={(typeCoreOS ? "isLength:1:64,required" : "isLength:0:64")}
-                errorHelp={{
-                  required: "Please enter a valid hash",
-                  isLength: "Hash must be less than 64 characters"
+                validate={(val) => {
+                  if (typeCoreOS) {
+                    return val.length > 1 && val.length <= 64
+                  } else {
+                    return val.length <= 64
+                  }
                 }}
+                errorHelp="Please enter a valid hash (less than 64 characters)"
               />
               {typeCoreOS &&
                 <div>
@@ -220,7 +234,7 @@ class ModalUpdate extends React.Component {
                     label="*CoreOS action sha256:"
                     name="coreOSSha256Package"
                     ref="coreOSSha256Package"
-                    value={this.state.coreOSSha256NewPackage}
+                    value={this.state.coreOSSha256Package}
                     required={true}
                     className={this.state.disabledCoreOSSha256 ? "disabled" : ""}
                     disabled={this.state.disabledCoreOSSha256}
