@@ -42,7 +42,6 @@ class ModalUpdate extends React.Component {
   }
 
   handleFocus() {
-    console.log("handle")
     this.setState({alertVisible: false})
   }
 

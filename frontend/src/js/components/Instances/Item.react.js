@@ -5,6 +5,7 @@ import { Label } from "react-bootstrap"
 import StatusHistoryContainer from "./StatusHistoryContainer.react"
 import semver from "semver"
 import _ from "underscore"
+import { cleanSemverVersion } from "../../constants/helpers"
 
 class Item extends React.Component {
 
@@ -59,7 +60,7 @@ class Item extends React.Component {
         downloadingIcon = this.props.instance.statusInfo.spinning ? <img src="img/mini_loading.gif" /> : "",
         statusIcon = this.props.instance.statusInfo.icon ? <i className={this.props.instance.statusInfo.icon}></i> : "",
         instanceLabel = this.props.instance.statusInfo.className ? <Label>{statusIcon} {downloadingIcon} {this.props.instance.statusInfo.description}</Label> : <div>&nbsp;</div>,
-        version = this.props.instance.application.version,
+        version = cleanSemverVersion(this.props.instance.application.version),
         currentVersionIndex = this.props.lastVersionChannel ? _.indexOf(this.props.versionNumbers, this.props.lastVersionChannel) : null,
         versionStyle = "default"
 

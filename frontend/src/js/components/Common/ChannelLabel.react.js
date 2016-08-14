@@ -1,4 +1,5 @@
 import React, { PropTypes } from "react"
+import { cleanSemverVersion } from "../../constants/helpers"
 
 class ChannelLabel extends React.Component {
 
@@ -19,18 +20,13 @@ class ChannelLabel extends React.Component {
     }
 
     var name = this.props.channel ? this.props.channel.name : ""
-    var version = (this.props.channel && this.props.channel.package) ? this.props.channel.package.version : "-"
-
-    let shortVersion = version
-    if (version.includes('+')) {
-      shortVersion = version.split('+')[0]
-    }
+    var version = (this.props.channel && this.props.channel.package) ? cleanSemverVersion(this.props.channel.package.version) : "-"
 
     return (
       <div className={"channelLabel " + channelLabelStyle}>
         <div className="colouredCircle" style={divColor}></div>
         <div className="channelName">{name}</div>
-        <span className="channelLabel--span">{shortVersion}</span>
+        <span className="channelLabel--span">{version}</span>
       </div>
     )
   }

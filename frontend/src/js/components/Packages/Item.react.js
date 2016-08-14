@@ -6,6 +6,7 @@ import moment from "moment"
 import _ from "underscore"
 import VersionBullet from "../Common/VersionBullet.react"
 import ModalButton from "../Common/ModalButton.react"
+import { cleanSemverVersion } from "../../constants/helpers"
 
 class Item extends React.Component {
 
@@ -62,7 +63,7 @@ class Item extends React.Component {
             {processedChannels.map((channel, i) =>
               <VersionBullet channel={channel} key={"packageItemBullet_" + i} />
             )}
-            {this.props.packageItem.version}
+            {cleanSemverVersion(this.props.packageItem.version)}
             <br />
             <span className="subtitle">Released:</span> {date}
             { !_.isNull(this.props.packageItem.channels_blacklist) &&

@@ -2,6 +2,7 @@ import React, { PropTypes } from "react"
 import Item from "./Item.react"
 import _ from "underscore"
 import semver from "semver"
+import { cleanSemverVersion } from "../../constants/helpers"
 
 class List extends React.Component {
 
@@ -41,8 +42,10 @@ class List extends React.Component {
 
   render() {
     let versions = this.props.version_breakdown ? this.props.version_breakdown : [],
-        lastVersionChannel = this.props.channel.package ? this.props.channel.package.version : "",
-        versionNumbers = (_.map(versions, function(version) {return version.version})).sort(semver.rcompare)
+        lastVersionChannel = this.props.channel.package ? cleanSemverVersion(this.props.channel.package.version) : "",
+        versionNumbers = (_.map(versions, (version) => {
+          return cleanSemverVersion(version.version)
+        })).sort(semver.rcompare)
 
     return(
       <div className="coreRollerTable">
