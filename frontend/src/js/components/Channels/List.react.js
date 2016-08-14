@@ -4,6 +4,7 @@ import { Row, Col } from "react-bootstrap"
 import _ from "underscore"
 import ModalButton from "../Common/ModalButton.react"
 import Item from "./Item.react"
+import Loader from "halogen/ScaleLoader"
 
 class List extends React.Component {
 
@@ -34,21 +35,22 @@ class List extends React.Component {
   render() {
     let application = this.state.application,
         channels = [],
-        packages = []
+        packages = [],
+        entries = ""
 
     if (application) {
       channels = application.channels ? application.channels : []
       packages = application.packages ? application.packages : []
-    }
 
-    let entries = "";
-
-    if (_.isEmpty(channels)) {
-      entries = <div className="emptyBox">This application does not have any channel yet</div>;
+      if (_.isEmpty(channels)) {
+        entries = <div className="emptyBox">This application does not have any channel yet</div>;
+      } else {
+        entries = _.map(channels, (channel, i) => {
+          return <Item key={"channelID_" + channel.id} channel={channel} packages={packages} handleUpdateChannel={this.openUpdateChannelModal} />
+        })
+      }
     } else {
-      entries = _.map(channels, (channel, i) => {
-        return <Item key={channel.id} channel={channel} packages={packages} />
-      })
+      entries = <div className="icon-loading-container"><Loader color="#00AEEF" size="35px" margin="2px"/></div>
     }
 
     return (
@@ -66,9 +68,9 @@ class List extends React.Component {
           {entries}
         </div>
       </div>
-    );
+    )
 
   }
-};
+}
 
 export default List

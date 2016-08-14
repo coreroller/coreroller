@@ -4,6 +4,7 @@ import { Row, Col } from "react-bootstrap"
 import _ from "underscore"
 import ModalButton from "../Common/ModalButton.react"
 import Item from "./Item.react"
+import Loader from "halogen/ScaleLoader"
 
 class List extends React.Component {
 
@@ -11,8 +12,9 @@ class List extends React.Component {
     super(props)
     this.onChange = this.onChange.bind(this);
     this.state = {
-      channels: applicationsStore.getCachedChannels(props.appID),
-      packages: applicationsStore.getCachedPackages(props.appID)
+      application: applicationsStore.getCachedApplication(props.appID),
+      updatePackageModalVisible: false,
+      updatePackageIDModal: null
     }
   }
 
@@ -30,23 +32,29 @@ class List extends React.Component {
 
   onChange() {
     this.setState({
-      channels: applicationsStore.getCachedChannels(this.props.appID),
-      packages: applicationsStore.getCachedPackages(this.props.appID)
+      application: applicationsStore.getCachedApplication(this.props.appID)
     })
   }
 
   render() {
-    const channels = this.state.channels ? this.state.channels : [],
-          packages = this.state.packages ? this.state.packages : []
+    let application = this.state.application,
+        channels = [],
+        packages = [],
+        entries = ""
 
-    let entries = ""
+    if (application) {
+      channels = application.channels ? application.channels : []
+      packages = application.packages ? application.packages : []
 
-    if (_.isEmpty(packages)) {
-      entries = <div className="emptyBox">This application does not have any package yet</div>
+      if (_.isEmpty(packages)) {
+        entries = <div className="emptyBox">This application does not have any package yet</div>
+      } else {
+        entries = _.map(packages, (packageItem, i) => {
+          return <Item key={"packageItemID_" + packageItem.id} packageItem={packageItem} channels={channels} handleUpdatePackage={this.openUpdatePackageModal} />
+        })
+      }
     } else {
-      entries = _.map(packages, (packageItem, i) => {
-        return <Item key={packageItem.id} packageItem={packageItem} channels={channels} />
-      })
+      entries = <div className="icon-loading-container"><Loader color="#00AEEF" size="35px" margin="2px"/></div>
     }
 
     return (
