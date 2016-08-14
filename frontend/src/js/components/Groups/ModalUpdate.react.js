@@ -1,6 +1,7 @@
 import { applicationsStore } from "../../stores/Stores"
 import React, { PropTypes } from "react"
-import { Row, Col, Modal, Input, Button, Alert, OverlayTrigger } from "react-bootstrap"
+import { Row, Col, Modal, Input, Button, Alert, OverlayTrigger, ButtonInput } from "react-bootstrap"
+import { Form, ValidatedInput } from "react-bootstrap-validation"
 import Switch from "rc-switch"
 import _ from "underscore"
 import moment from "moment-timezone"
@@ -16,6 +17,10 @@ class ModalUpdate extends React.Component {
     this.changeSafeMode = this.changeSafeMode.bind(this)
     this.changePolicyUpdates = this.changePolicyUpdates.bind(this)
     this.changePolicyOfficeHours = this.changePolicyOfficeHours.bind(this)
+    this.handleValidSubmit = this.handleValidSubmit.bind(this)
+    this.handleInvalidSubmit = this.handleInvalidSubmit.bind(this)
+    this.exitedModal = this.exitedModal.bind(this)
+
     this.state = {
       safeMode: props.data.group.policy_safe_mode,
       policyUpdates: props.data.group.policy_updates_enabled,
@@ -27,14 +32,15 @@ class ModalUpdate extends React.Component {
   }
 
   static propTypes : {
-    data: PropTypes.object.isRequired
+    data: PropTypes.object.isRequired,
+    modalVisible: PropTypes.bool.isRequired
   }
 
   updateGroup() {
     this.setState({isLoading: true})
 
     let isValidTimezone = this.validateTimezone()
-    
+
     if (isValidTimezone) {
 
       let period_interval = this.refs.timingUpdatesPerPeriod.getValue() + " " + this.refs.timingUpdatesPerPeriodUnit.getValue(),
@@ -63,11 +69,11 @@ class ModalUpdate extends React.Component {
       }
 
       applicationsStore.updateGroup(data).
-        done(() => { 
-          this.props.onHide()   
+        done(() => {
+          this.props.onHide()
           this.setState({isLoading: false})
         }).
-        fail(() => { 
+        fail(() => {
           this.setState({alertVisible: true, isLoading: false})
         })
     } else {
@@ -115,6 +121,25 @@ class ModalUpdate extends React.Component {
     })
   }
 
+  handleValidSubmit() {
+    this.updateGroup()
+  }
+
+  handleInvalidSubmit() {
+    // this.setState({alertVisible: true})
+  }
+
+  exitedModal() {
+    this.setState({
+      safeMode: this.props.data.group.policy_safe_mode,
+      policyUpdates: this.props.data.group.policy_updates_enabled,
+      policyOfficeHours: this.props.data.group.policy_office_hours,
+      isLoading: false,
+      alertVisible: false,
+      timezoneError: false
+    })
+  }
+
   render() {
     let current_period_interval = this.props.data.group.policy_period_interval.split(" "),
         current_update_timeout = this.props.data.group.policy_update_timeout.split(" "),
@@ -125,19 +150,32 @@ class ModalUpdate extends React.Component {
         timezoneError = this.state.timezoneError ? {bsStyle: "error"} : ""
 
     return (
-      <Modal {...this.props} animation={true}>
+      <Modal {...this.props} show={this.props.modalVisible} animation={true} onExited={this.exitedModal}>
         <Modal.Header closeButton>
           <Modal.Title id="contained-modal-title-lg">Update group</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <div className="modal--form">
-            <form role="form" action="" onFocus={this.handleFocus}>
-              <Input type="text" label="*Name:" defaultValue={this.props.data.group.name} ref="nameGroup" required={true} maxLength={50} />
+          <div className="modal--form" onFocus={this.handleFocus}>
+            <Form onValidSubmit={this.handleValidSubmit} onInvalidSubmit={this.handleInvalidSubmit}>
+              <ValidatedInput
+                type="text"
+                label="*Name:"
+                name="nameGroup"
+                ref="nameGroup"
+                defaultValue={this.props.data.group.name}
+                required={true}
+                validationEvent="onBlur"
+                validate="required,isLength:1:50"
+                errorHelp={{
+                  required: "Please enter a name",
+                  isLength: "Name must be less than 50 characters"
+                }}
+              />
               <Input type="text" label="Description:" defaultValue={this.props.data.group.description} ref="descriptionGroup" maxLength={250} />
               <Input type="select" label="Channel:" placeholder="" defaultValue={this.props.data.group.channel_id} groupClassName="arrow-icon" ref="channelGroup">
                 <option value="" />
                 {channels.map((channel, i) =>
-                  <option value={channel.id} key={i}>{channel.name}</option>
+                  <option value={channel.id} key={"modalUpdateGroup_channel_" + i}>{channel.name}</option>
                 )}
               </Input>
               <h5><span>Rollout policy</span></h5>
@@ -146,15 +184,15 @@ class ModalUpdate extends React.Component {
                   <div className="form-group noMargin">
                     <label className="normalText" htmlFor="policyUpdatesGroup">Updates enabled:</label>
                     <div className="displayInline">
-                      <Switch checked={this.state.policyUpdates} onChange={this.changePolicyUpdates} checkedChildren={"✔"} unCheckedChildren={"✘"} />                      
+                      <Switch checked={this.state.policyUpdates} onChange={this.changePolicyUpdates} checkedChildren={"✔"} unCheckedChildren={"✘"} />
                     </div>
                   </div>
                   <div className="form-group noMargin">
-                    <OverlayTrigger trigger={["hover", "focus"]} container={this} placement="bottom" overlay={tooltipOfficeHours}>                    
+                    <OverlayTrigger trigger={["hover", "focus"]} container={this} placement="bottom" overlay={tooltipOfficeHours}>
                       <label className="normalText" htmlFor="policyOfficeHours"><i className="fa fa-question-circle"></i> Only office hours:</label>
                     </OverlayTrigger>
                     <div className="displayInline">
-                      <Switch checked={this.state.policyOfficeHours} onChange={this.changePolicyOfficeHours} checkedChildren={"✔"} unCheckedChildren={"✘"} />                      
+                      <Switch checked={this.state.policyOfficeHours} onChange={this.changePolicyOfficeHours} checkedChildren={"✔"} unCheckedChildren={"✘"} />
                     </div>
                   </div>
                   <div className="form-group noMargin">
@@ -162,7 +200,7 @@ class ModalUpdate extends React.Component {
                       <label className="normalText" htmlFor="safeModeNewGroup"><i className="fa fa-question-circle"></i> Safe mode:</label>
                     </OverlayTrigger>
                     <div className="displayInline lastCheck">
-                      <Switch checked={this.state.safeMode} onChange={this.changeSafeMode} checkedChildren={"✔"} unCheckedChildren={"✘"} />                      
+                      <Switch checked={this.state.safeMode} onChange={this.changeSafeMode} checkedChildren={"✔"} unCheckedChildren={"✘"} />
                     </div>
                   </div>
                 </Col>
@@ -172,49 +210,100 @@ class ModalUpdate extends React.Component {
                   <Input type="select" label="Timezone:" {...timezoneError} placeholder="" defaultValue={this.props.data.group.policy_timezone} groupClassName="arrow-icon" ref="policyTimezone">
                     <option value="" />
                     {timezones.map((timezone, i) =>
-                      <option value={timezone} key={i}>{timezone}</option>
+                      <option value={timezone} key={"modalUpdateGroup_timezone_" + i}>{timezone}</option>
                     )}
                   </Input>
                 </Col>
-              </Row>       
-              <div className="form--limit">
-                Max 
-                <Input type="number" label="" standalone className="form-control" ref="maxUpdatesPerPeriodInterval" defaultValue={this.props.data.group.policy_max_updates_per_period} required={true} min="1" /> 
-                updates per period interval 
-                <Input type="number" label="" standalone className="form-control" ref="timingUpdatesPerPeriod" defaultValue={current_period_interval[0]} required={true} /> 
+              </Row>
+              <div className="form--limit form--limit-inputs">
+                Max
+                <ValidatedInput
+                  type="number"
+                  label=""
+                  standalone
+                  name="maxUpdatesPerPeriodInterval"
+                  ref="maxUpdatesPerPeriodInterval"
+                  defaultValue={this.props.data.group.policy_max_updates_per_period}
+                  min={1}
+                  required={true}
+                  validationEvent="onBlur"
+                  validate="required,isInt"
+                  errorHelp={{
+                    required: "",
+                    isInt: ""
+                  }}
+                />
+                updates per period interval
+                <ValidatedInput
+                  type="number"
+                  label=""
+                  standalone
+                  name="timingUpdatesPerPeriod"
+                  ref="timingUpdatesPerPeriod"
+                  defaultValue={current_period_interval[0]}
+                  min={1}
+                  required={true}
+                  validationEvent="onBlur"
+                  validate="required,isInt"
+                  errorHelp={{
+                    required: "",
+                    isInt: ""
+                  }}
+                />
                 <Input type="select" placeholder="" ref="timingUpdatesPerPeriodUnit" groupClassName="form-group group-inline arrow-icon" defaultValue={current_period_interval[1]} required={true}>
                   <option value="minutes">minutes</option>
                   <option value="hours">hours</option>
                   <option value="days">days</option>
-                </Input>       
+                </Input>
               </div>
               <div className="form--legend minlegend marginBottom15">Never update more than MAX instances per interval defined.</div>
               <div className="form-group">
-                <div className="form--limit">
+                <div className="form--limit form--limit-inputs">
                   Updates timeout
-                  <Input type="number" label="" standalone className="form-control" ref="timingUpdatesTimeout" defaultValue={current_update_timeout[0]} required={true} min="1" />
+                  <ValidatedInput
+                    type="number"
+                    label=""
+                    standalone
+                    name="timingUpdatesTimeout"
+                    ref="timingUpdatesTimeout"
+                    defaultValue={current_update_timeout[0]}
+                    min={1}
+                    required={true}
+                    validationEvent="onBlur"
+                    validate="required,isInt"
+                    errorHelp={{
+                      required: "",
+                      isInt: ""
+                    }}
+                  />
                   <div className="form-group group-inline">
                     <Input type="select" placeholder="" ref="timingUpdatesTimeoutUnit" groupClassName="form-group group-inline arrow-icon" defaultValue={current_update_timeout[1]} required={true}>
                       <option value="minutes">minutes</option>
                       <option value="hours">hours</option>
                       <option value="days">days</option>
-                    </Input>     
-                  </div>          
+                    </Input>
+                  </div>
                 </div>
               </div>
               <div className="modal--footer">
                 <Row>
                   <Col xs={8}>
                     <Alert bsStyle="danger" className={this.state.alertVisible ? "alert--visible" : ""}>
-                      <strong>Error!</strong> Please check the form
+                      <strong>Error!</strong> The request failed, please check the form
                     </Alert>
                   </Col>
                   <Col xs={4}>
-                    <Button bsStyle="default" className={"plainBtn" + btnStyle} disabled={this.state.isLoading} onClick={this.updateGroup}>{btnContent}</Button>
+                    <ButtonInput
+                      type="submit"
+                      bsStyle="default"
+                      className={"plainBtn" + btnStyle}
+                      disabled={this.state.isLoading}
+                      value={btnContent}
+                    />
                   </Col>
                 </Row>
               </div>
-            </form>
+            </Form>
           </div>
         </Modal.Body>
       </Modal>

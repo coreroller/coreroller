@@ -5,17 +5,22 @@ import { Row, Col, OverlayTrigger, Button, Popover } from "react-bootstrap"
 import GroupsList from "./ApplicationItemGroupsList.react"
 import ChannelsList from "./ApplicationItemChannelsList.react"
 import ConfirmationContent from "../Common/ConfirmationContent.react"
-import ModalButton from "../Common/ModalButton.react"
 
 class Item extends React.Component {
 
   constructor(props) {
     super(props)
+    this.updateApplication = this.updateApplication.bind(this)
     this.deleteApplication = this.deleteApplication.bind(this)
   }
 
   static propTypes: {
-    application: React.PropTypes.object.isRequired
+    application: React.PropTypes.object.isRequired,
+    handleUpdateApplication: React.PropTypes.func.isRequired
+  }
+
+  updateApplication() {
+    this.props.handleUpdateApplication(this.props.application.id)
   }
 
   deleteApplication() {
@@ -37,12 +42,12 @@ class Item extends React.Component {
           type: "application",
           appID: appID
         }
-    
+
     return(
       <div className="apps--box">
         <Row className="apps--boxHeader">
           <Col xs={10}>
-            <h3 className="apps--boxTitle">              
+            <h3 className="apps--boxTitle">
               <Link to="ApplicationLayout" params={{appID}}>
                 {this.props.application.name} <i className="fa fa-caret-right"></i>
               </Link>
@@ -52,7 +57,7 @@ class Item extends React.Component {
           </Col>
           <Col xs={2}>
             <div className="apps--buttons">
-              <ModalButton icon="edit" modalToOpen="UpdateApplicationModal" data={this.props.application} />
+              <button className="cr-button displayInline fa fa-edit" onClick={this.updateApplication}></button>
               <button className="cr-button displayInline fa fa-trash-o" onClick={this.deleteApplication}></button>
             </div>
           </Col>

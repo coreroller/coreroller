@@ -5,9 +5,9 @@ import ApplicationsStore from "../../stores/ApplicationsStore"
 class ConfirmationContent extends React.Component {
 
   constructor(props) {
-    super(props);
+    super(props)
     this.processClick = this.processClick.bind(this)
-  } 
+  }
 
 	static PropTypes: {
     channel: React.PropTypes.object.isRequired,

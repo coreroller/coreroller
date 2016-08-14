@@ -9,6 +9,7 @@ class StatusHistoryItem extends React.Component {
   constructor(props) {
     super(props)
     this.fetchStatusFromStore = this.fetchStatusFromStore.bind(this)
+
     this.state = {status: {}}
   }
 

@@ -17,7 +17,7 @@ class ApplicationItemGroupsList extends React.Component {
     return(
       <span className="apps--groupsList">
         {this.props.groups.map((group, i) =>
-          <Item key={i} group={group} appID={this.props.appID} appName={this.props.appName} />
+          <Item key={"group_" + i} group={group} appID={this.props.appID} appName={this.props.appName} />
         )}
       </span>
     )

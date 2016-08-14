@@ -12,7 +12,8 @@ class ItemExtended extends React.Component {
 
   constructor() {
     super()
-    this.onChange = this.onChange.bind(this);
+    this.onChange = this.onChange.bind(this)
+
     this.state = {applications: applicationsStore.getCachedApplications()}
   }
 

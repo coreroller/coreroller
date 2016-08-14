@@ -10,9 +10,14 @@ class Item extends React.Component {
 
   constructor(props) {
     super(props)
-    this.state = {status: {}, loading: false, statusHistory: {}}
     this.onToggle = this.onToggle.bind(this)
     this.fetchStatusHistoryFromStore = this.fetchStatusHistoryFromStore.bind(this)
+
+    this.state = {
+      status: {},
+      loading: false,
+      statusHistory: {}
+    }
   }
 
   static PropTypes: {

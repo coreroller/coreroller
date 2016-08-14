@@ -3,6 +3,7 @@ import React, { PropTypes } from "react"
 import { Row, Col } from "react-bootstrap"
 import _ from "underscore"
 import ModalButton from "../Common/ModalButton.react"
+import ModalUpdate from "./ModalUpdate.react"
 import Item from "./Item.react"
 import Loader from "halogen/ScaleLoader"
 
@@ -10,13 +11,28 @@ class List extends React.Component {
 
   constructor(props) {
     super(props)
-    this.onChange = this.onChange.bind(this);
-    this.state = {application: applicationsStore.getCachedApplication(props.appID)}
+    this.onChange = this.onChange.bind(this)
+    this.closeUpdateChannelModal = this.closeUpdateChannelModal.bind(this)
+    this.openUpdateChannelModal = this.openUpdateChannelModal.bind(this)
+
+    this.state = {
+      application: applicationsStore.getCachedApplication(props.appID),
+      updateChannelModalVisible: false,
+      updateChannelIDModal: null
+    }
   }
 
   static propTypes: {
     appID: React.PropTypes.string.isRequired
-  };
+  }
+
+  closeUpdateChannelModal() {
+    this.setState({updateChannelModalVisible: false})
+  }
+
+  openUpdateChannelModal(channelID) {
+    this.setState({updateChannelModalVisible: true, updateChannelIDModal: channelID})
+  }
 
   componentDidMount() {
     applicationsStore.addChangeListener(this.onChange)
@@ -53,6 +69,8 @@ class List extends React.Component {
       entries = <div className="icon-loading-container"><Loader color="#00AEEF" size="35px" margin="2px"/></div>
     }
 
+    const channelToUpdate =  !_.isEmpty(channels) && this.state.updateChannelIDModal ? _.findWhere(channels, {id: this.state.updateChannelIDModal}) : null
+
     return (
       <div>
         <Row>
@@ -67,6 +85,13 @@ class List extends React.Component {
         <div className="groups--channelsList">
           {entries}
         </div>
+        {/* Update channel modal */}
+        {channelToUpdate &&
+          <ModalUpdate
+            data={{packages: packages, applicationID: this.props.appID, channel: channelToUpdate}}
+            modalVisible={this.state.updateChannelModalVisible}
+            onHide={this.closeUpdateChannelModal} />
+        }
       </div>
     )
 

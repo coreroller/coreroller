@@ -8,7 +8,7 @@ class VersionBullet extends React.Component {
 
   static PropTypes: {
     channel: React.PropTypes.object.isRequired
-  };
+  }
 
   render() {
     var divColor = {

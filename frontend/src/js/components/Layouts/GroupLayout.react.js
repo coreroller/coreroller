@@ -10,9 +10,14 @@ class GroupLayout extends React.Component {
  constructor(props) {
     super(props);
     this.onChange = this.onChange.bind(this);
+
     let appID = props.params.appID,
         groupID = props.params.groupID
-    this.state = {appID: appID, groupID: groupID, applications: applicationsStore.getCachedApplications()}
+    this.state = {
+      appID: appID,
+      groupID: groupID,
+      applications: applicationsStore.getCachedApplications()
+    }
   }
 
   componentWillMount() {
@@ -47,7 +52,7 @@ class GroupLayout extends React.Component {
       if (group) {
         groupName = group.name
       }
-    } 
+    }
 
     return(
       <div className="container">

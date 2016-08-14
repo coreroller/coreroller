@@ -2,7 +2,6 @@ import { applicationsStore } from "../../stores/Stores"
 import React, { PropTypes } from "react"
 import { Row, Col, OverlayTrigger, Button, Popover, Tooltip } from "react-bootstrap"
 import ConfirmationContent from "../Common/ConfirmationContent.react"
-import ModalButton from "../Common/ModalButton.react"
 import ChannelLabel from "../Common/ChannelLabel.react"
 
 class Item extends React.Component {
@@ -10,11 +9,13 @@ class Item extends React.Component {
   constructor(props) {
     super(props)
     this.deleteChannel = this.deleteChannel.bind(this)
+    this.updateChannel = this.updateChannel.bind(this)
   }
 
   static propTypes: {
     channel: React.PropTypes.object.isRequired,
-    packages: React.PropTypes.array.isRequired
+    packages: React.PropTypes.array.isRequired,
+    handleUpdateChannel: React.PropTypes.func.isRequired
   }
 
   deleteChannel() {
@@ -22,6 +23,10 @@ class Item extends React.Component {
     if (confirm(confirmationText)) {
       applicationsStore.deleteChannel(this.props.channel.application_id, this.props.channel.id)
     }
+  }
+
+  updateChannel() {
+    this.props.handleUpdateChannel(this.props.channel.id)
   }
 
   render() {
@@ -47,7 +52,7 @@ class Item extends React.Component {
         </Col>
         <Col xs={4} className="alignRight">
           <div className="channelsList-buttons">
-            <ModalButton icon="edit" modalToOpen="UpdateChannelModal" data={{channel: this.props.channel, packages: this.props.packages}} />
+            <button className="cr-button displayInline fa fa-edit" onClick={this.updateChannel}></button>
             <button className="cr-button displayInline fa fa-trash-o" onClick={this.deleteChannel}></button>
           </div>
         </Col>

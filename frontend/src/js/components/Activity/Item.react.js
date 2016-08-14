@@ -7,6 +7,7 @@ class Item extends React.Component {
 
   constructor(props) {
     super(props)
+
     this.state = {
       entryClass: {},
       entrySeverity: {}
@@ -47,26 +48,26 @@ class Item extends React.Component {
       name = this.state.entryClass.groupName
     }
 
-    return ( 
+    return (
       <li className = {this.state.entrySeverity.className}>
-        <div className="timeline--icon"> 
+        <div className="timeline--icon">
           <span className={"fa " + this.state.entrySeverity.icon}></span>
         </div>
         <div className="timeline--event">
-          {time} 
+          {time}
           <br />
-          <span className="timeline--ampm">{ampm}</span> 
-        </div> 
+          <span className="timeline--ampm">{ampm}</span>
+        </div>
         <div className="timeline--eventLabel">
           <div className="row timeline--eventLabelTitle">
-            <div className="col-xs-5 noPadding">{this.state.entryClass.appName}</div> 
+            <div className="col-xs-5 noPadding">{this.state.entryClass.appName}</div>
             <div className="col-xs-7 noPadding">
-              <span className="subtitle">{subtitle} </span> 
-              {name} 
-            </div> 
-          </div> 
-          <p>{this.state.entryClass.description}</p> 
-        </div> 
+              <span className="subtitle">{subtitle} </span>
+              {name}
+            </div>
+          </div>
+          <p>{this.state.entryClass.description}</p>
+        </div>
       </li>
     )
   }

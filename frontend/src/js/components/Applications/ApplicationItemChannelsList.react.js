@@ -20,7 +20,7 @@ class ApplicationItemChannelsList extends React.Component {
       entries = "-"
     } else {
       entries = _.map(channels, (channel, i) => {
-        return <ChannelLabel channel={channel} key={i} />
+        return <ChannelLabel channel={channel} key={"channel_" + i} />
       })
     }
 

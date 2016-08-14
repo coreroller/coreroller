@@ -56,7 +56,7 @@ class VersionBreakdown extends React.Component {
           }
 
         }
-        return <ProgressBar striped key={i} bsStyle={barStyle} now={version.percentage} label={labelLegend} />
+        return <ProgressBar striped key={"progressVersion_" + i} bsStyle={barStyle} now={version.percentage} label={labelLegend} />
       })
     }
 

@@ -4,18 +4,18 @@ import ProgressBarJS from "progressbar.js"
 
 class ProgressBar extends React.Component {
 
-  static PropTypes: {
-    name: React.PropTypes.string.isRequired,
-    color: React.PropTypes.string.isRequired,
-    width: React.PropTypes.number.isRequired
-  }
-
   constructor(props) {
     super(props)
 
     this.line = null
     this.inProgress = false
     this.inProgressCount = 0
+  }
+
+  static PropTypes: {
+    name: React.PropTypes.string.isRequired,
+    color: React.PropTypes.string.isRequired,
+    width: React.PropTypes.number.isRequired
   }
 
   componentDidMount() {
