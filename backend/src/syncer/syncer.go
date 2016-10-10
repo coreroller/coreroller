@@ -72,10 +72,13 @@ func New(api *api.API) (*Syncer, error) {
 func (s *Syncer) Start() {
 	logger.Debug("syncer ready!")
 	checkCh := time.Tick(checkFrequency)
+	startup_checkCh := time.After(1 * time.Minute)
 
 L:
 	for {
 		select {
+		case <-startup_checkCh:
+			_ = s.checkForUpdates()
 		case <-checkCh:
 			_ = s.checkForUpdates()
 		case <-s.stopCh:
