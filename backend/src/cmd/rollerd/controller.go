@@ -21,7 +21,14 @@ type controller struct {
 	syncer       *syncer.Syncer
 }
 
-func newController(enableSyncer bool) (*controller, error) {
+type controllerConfig struct {
+	enableSyncer       bool
+	hostCoreosPackages bool
+	coreosPackagesPath string
+	corerollerURL      string
+}
+
+func newController(conf *controllerConfig) (*controller, error) {
 	api, err := api.New()
 	if err != nil {
 		return nil, err
@@ -32,8 +39,14 @@ func newController(enableSyncer bool) (*controller, error) {
 		omahaHandler: omaha.NewHandler(api),
 	}
 
-	if enableSyncer {
-		syncer, err := syncer.New(api)
+	if conf.enableSyncer {
+		syncerConf := &syncer.Config{
+			Api:          api,
+			HostPackages: conf.hostCoreosPackages,
+			PackagesPath: conf.coreosPackagesPath,
+			PackagesURL:  conf.corerollerURL + coreosPkgsRouterPrefix,
+		}
+		syncer, err := syncer.New(syncerConf)
 		if err != nil {
 			return nil, err
 		}

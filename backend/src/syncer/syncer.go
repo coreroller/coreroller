@@ -2,10 +2,16 @@ package syncer
 
 import (
 	"bytes"
+	"crypto/sha256"
+	"encoding/base64"
 	"encoding/xml"
 	"errors"
+	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
+	"os"
+	"path/filepath"
 	"time"
 
 	"api"
@@ -27,37 +33,52 @@ var (
 
 	// ErrInvalidAPIInstance error indicates that no valid api instance was
 	// provided to the syncer constructor.
-	ErrInvalidAPIInstance = errors.New("sync: invalid api instance")
+	ErrInvalidAPIInstance = errors.New("invalid api instance")
 )
 
 // Syncer represents a process in charge of checking for updates in the
 // different official CoreOS channels and updating the CoreOS application in
 // CoreRoller as needed (creating new packages and updating channels to point
-// to them).
+// to them). When hostPackages is enabled, packages payloads will be downloaded
+// into packagesPath and package url/filename will be rewritten.
 type Syncer struct {
-	api         *api.API
-	stopCh      chan struct{}
-	machinesIDs map[string]string
-	bootIDs     map[string]string
-	versions    map[string]string
-	channelsIDs map[string]string
-	httpClient  *http.Client
+	api          *api.API
+	hostPackages bool
+	packagesPath string
+	packagesURL  string
+	stopCh       chan struct{}
+	machinesIDs  map[string]string
+	bootIDs      map[string]string
+	versions     map[string]string
+	channelsIDs  map[string]string
+	httpClient   *http.Client
+}
+
+// Config represents the configuration used to create a new Syncer instance.
+type Config struct {
+	Api          *api.API
+	HostPackages bool
+	PackagesPath string
+	PackagesURL  string
 }
 
 // New creates a new Syncer instance.
-func New(api *api.API) (*Syncer, error) {
-	if api == nil {
+func New(conf *Config) (*Syncer, error) {
+	if conf.Api == nil {
 		return nil, ErrInvalidAPIInstance
 	}
 
 	s := &Syncer{
-		api:         api,
-		stopCh:      make(chan struct{}),
-		machinesIDs: make(map[string]string, 3),
-		bootIDs:     make(map[string]string, 3),
-		channelsIDs: make(map[string]string, 3),
-		versions:    make(map[string]string, 3),
-		httpClient:  &http.Client{},
+		api:          conf.Api,
+		hostPackages: conf.HostPackages,
+		packagesPath: conf.PackagesPath,
+		packagesURL:  conf.PackagesURL,
+		stopCh:       make(chan struct{}),
+		machinesIDs:  make(map[string]string, 3),
+		bootIDs:      make(map[string]string, 3),
+		channelsIDs:  make(map[string]string, 3),
+		versions:     make(map[string]string, 3),
+		httpClient:   &http.Client{},
 	}
 
 	if err := s.initialize(); err != nil {
@@ -202,14 +223,26 @@ func (s *Syncer) doOmahaRequest(channel, currentVersion string) (*omaha.UpdateCh
 func (s *Syncer) processUpdate(channelName string, update *omaha.UpdateCheck) error {
 	// Create new package and action for CoreOS application in CoreRoller if
 	// needed (package may already exist and we just need to update the channel
-	// reference to it
+	// reference to it)
 	pkg, err := s.api.GetPackageByVersion(coreosAppID, update.Manifest.Version)
 	if err != nil {
+		url := update.Urls.Urls[0].CodeBase
+		filename := update.Manifest.Packages.Packages[0].Name
+
+		if s.hostPackages {
+			url = s.packagesURL
+			filename = fmt.Sprintf("coreos-amd64-%s.gz", update.Manifest.Version)
+			if err := s.downloadPackage(update, filename); err != nil {
+				logger.Error("processUpdate, downloading package", "error", err, "channelName", channelName)
+				return err
+			}
+		}
+
 		pkg = &api.Package{
 			Type:          api.PkgTypeCoreos,
-			URL:           update.Urls.Urls[0].CodeBase,
+			URL:           url,
 			Version:       update.Manifest.Version,
-			Filename:      dat.NullStringFrom(update.Manifest.Packages.Packages[0].Name),
+			Filename:      dat.NullStringFrom(filename),
 			Size:          dat.NullStringFrom(update.Manifest.Packages.Packages[0].Size),
 			Hash:          dat.NullStringFrom(update.Manifest.Packages.Packages[0].Hash),
 			ApplicationID: coreosAppID,
@@ -246,6 +279,45 @@ func (s *Syncer) processUpdate(channelName string, update *omaha.UpdateCheck) er
 	channel.PackageID = dat.NullStringFrom(pkg.ID)
 	if err = s.api.UpdateChannel(channel); err != nil {
 		logger.Error("processUpdate, updating channel", "error", err, "channelName", channelName)
+		return err
+	}
+
+	return nil
+}
+
+// downloadPackage downloads and verifies the package payload referenced in the
+// update provided. The downloaded package payload is stored in packagesPath
+// using the filename provided.
+func (s *Syncer) downloadPackage(update *omaha.UpdateCheck, filename string) error {
+	tmpFile, err := ioutil.TempFile(s.packagesPath, "tmp_coreos_pkg_")
+	if err != nil {
+		return err
+	}
+	defer os.Remove(tmpFile.Name())
+
+	pkgURL := update.Urls.Urls[0].CodeBase + update.Manifest.Packages.Packages[0].Name
+	resp, err := http.Get(pkgURL)
+	if err != nil {
+		return err
+	}
+	if resp.StatusCode != http.StatusOK {
+		return errors.New(fmt.Sprintf("received unexpected status code (%d)", resp.StatusCode))
+	}
+	defer resp.Body.Close()
+
+	hashSha256 := sha256.New()
+	logger.Debug("downloadPackage, downloading..", "url", pkgURL)
+	if _, err := io.Copy(io.MultiWriter(tmpFile, hashSha256), resp.Body); err != nil {
+		return err
+	}
+	if base64.StdEncoding.EncodeToString(hashSha256.Sum(nil)) != update.Manifest.Actions.Actions[0].Sha256 {
+		return errors.New("downloaded file hash mismatch")
+	}
+
+	if err := tmpFile.Close(); err != nil {
+		return err
+	}
+	if err := os.Rename(tmpFile.Name(), filepath.Join(s.packagesPath, filename)); err != nil {
 		return err
 	}
 
