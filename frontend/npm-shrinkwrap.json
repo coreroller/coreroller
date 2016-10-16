@@ -1864,6 +1864,11 @@
       "version": "1.8.3",
       "from": "underscore@>=1.8.3 <1.9.0",
       "resolved": "https://registry.npmjs.org/underscore/-/underscore-1.8.3.tgz"
+    },
+    "valid-url": {
+      "version": "1.0.9",
+      "from": "valid-url@latest",
+      "resolved": "https://registry.npmjs.org/valid-url/-/valid-url-1.0.9.tgz"
     }
   }
 }

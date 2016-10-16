@@ -24,7 +24,8 @@
     "react-search-input": "~0.5.0",
     "react-select": "~0.6.1",
     "semver": "~5.3.0",
-    "underscore": "~1.8.3"
+    "underscore": "~1.8.3",
+    "valid-url": "^1.0.9"
   },
   "devDependencies": {
     "babelify": "~6.3.0",
