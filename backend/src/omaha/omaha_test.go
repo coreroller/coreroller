@@ -246,7 +246,6 @@ func doOmahaRequest(t *testing.T, h *Handler, appID, appVersion, appMachineID, a
 	if addPing {
 		app.AddPing()
 	}
-	trace(omahaReq)
 
 	omahaReqXML, err := xml.Marshal(omahaReq)
 	assert.NoError(t, err)
@@ -257,7 +256,6 @@ func doOmahaRequest(t *testing.T, h *Handler, appID, appVersion, appMachineID, a
 	var omahaResp *omahaSpec.Response
 	err = xml.NewDecoder(omahaRespXML).Decode(&omahaResp)
 	assert.NoError(t, err)
-	trace(omahaResp)
 
 	return omahaResp
 }
