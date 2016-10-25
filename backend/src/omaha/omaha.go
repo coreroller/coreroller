@@ -85,14 +85,6 @@ func (h *Handler) buildOmahaResponse(omahaReq *omahaSpec.Request, ip string) (*o
 			}
 		}
 
-		if reqApp.Ping != nil {
-			if _, err := h.crApi.RegisterInstance(reqApp.MachineID, ip, reqApp.Version, reqApp.Id, group); err != nil {
-				logger.Warn("processPing", "error", err.Error())
-			}
-			respPing := respApp.AddPing()
-			respPing.Status = "ok"
-		}
-
 		if reqApp.Events != nil {
 			for _, event := range reqApp.Events {
 				if err := h.processEvent(reqApp.MachineID, reqApp.Id, group, event); err != nil {
@@ -101,6 +93,14 @@ func (h *Handler) buildOmahaResponse(omahaReq *omahaSpec.Request, ip string) (*o
 				respEvent := respApp.AddEvent()
 				respEvent.Status = "ok"
 			}
+		}
+
+		if reqApp.Ping != nil {
+			if _, err := h.crApi.RegisterInstance(reqApp.MachineID, ip, reqApp.Version, reqApp.Id, group); err != nil {
+				logger.Warn("processPing", "error", err.Error())
+			}
+			respPing := respApp.AddPing()
+			respPing.Status = "ok"
 		}
 
 		if reqApp.UpdateCheck != nil {

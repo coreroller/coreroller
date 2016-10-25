@@ -77,10 +77,9 @@ func TestAppNoUpdateForAppWithChannelAndPackageName(t *testing.T) {
 	defer a.Close()
 	h := NewHandler(a)
 
-	tTeam, _ := a.AddTeam(&api.Team{Name: "test_team"})
-	tAppCoreos, _ := a.AddApp(&api.Application{Name: "CoreOS", Description: "Linux containers", TeamID: tTeam.ID})
+	tAppCoreos, _ := a.GetApp(coreosAppID)
 	tPkgCoreos640, _ := a.AddPackage(&api.Package{Type: api.PkgTypeCoreos, URL: "http://sample.url/pkg", Version: "640.0.0", ApplicationID: tAppCoreos.ID})
-	tChannel, _ := a.AddChannel(&api.Channel{Name: "stable", Color: "white", ApplicationID: tAppCoreos.ID, PackageID: dat.NullStringFrom(tPkgCoreos640.ID)})
+	tChannel, _ := a.AddChannel(&api.Channel{Name: "mychannel", Color: "white", ApplicationID: tAppCoreos.ID, PackageID: dat.NullStringFrom(tPkgCoreos640.ID)})
 	tGroup, _ := a.AddGroup(&api.Group{Name: "Production", ApplicationID: tAppCoreos.ID, ChannelID: dat.NullStringFrom(tChannel.ID), PolicyUpdatesEnabled: true, PolicySafeMode: true, PolicyPeriodInterval: "15 minutes", PolicyMaxUpdatesPerPeriod: 2, PolicyUpdateTimeout: "60 minutes"})
 
 	validUnregisteredIP := "127.0.0.1"
@@ -130,10 +129,9 @@ func TestAppRegistrationForAppWithChannelAndPackageName(t *testing.T) {
 	defer a.Close()
 	h := NewHandler(a)
 
-	tTeam, _ := a.AddTeam(&api.Team{Name: "test_team"})
-	tAppCoreos, _ := a.AddApp(&api.Application{Name: "CoreOS", Description: "Linux containers", TeamID: tTeam.ID})
+	tAppCoreos, _ := a.GetApp(coreosAppID)
 	tPkgCoreos640, _ := a.AddPackage(&api.Package{Type: api.PkgTypeCoreos, URL: "http://sample.url/pkg", Version: "640.0.0", ApplicationID: tAppCoreos.ID})
-	tChannel, _ := a.AddChannel(&api.Channel{Name: "stable", Color: "white", ApplicationID: tAppCoreos.ID, PackageID: dat.NullStringFrom(tPkgCoreos640.ID)})
+	tChannel, _ := a.AddChannel(&api.Channel{Name: "mychannel", Color: "white", ApplicationID: tAppCoreos.ID, PackageID: dat.NullStringFrom(tPkgCoreos640.ID)})
 	tGroup, _ := a.AddGroup(&api.Group{Name: "Production", ApplicationID: tAppCoreos.ID, ChannelID: dat.NullStringFrom(tChannel.ID), PolicyUpdatesEnabled: true, PolicySafeMode: true, PolicyPeriodInterval: "15 minutes", PolicyMaxUpdatesPerPeriod: 2, PolicyUpdateTimeout: "60 minutes"})
 
 	validUnregisteredIP := "127.0.0.1"
@@ -162,11 +160,10 @@ func TestAppUpdateForAppWithChannelAndPackageName(t *testing.T) {
 	defer a.Close()
 	h := NewHandler(a)
 
-	tTeam, _ := a.AddTeam(&api.Team{Name: "test_team"})
-	tAppCoreos, _ := a.AddApp(&api.Application{Name: "CoreOS", Description: "Linux containers", TeamID: tTeam.ID})
+	tAppCoreos, _ := a.GetApp(coreosAppID)
 	tFilenameCoreos := "coreosupdate.tgz"
-	tPkgCoreos640, _ := a.AddPackage(&api.Package{Type: api.PkgTypeCoreos, URL: "http://sample.url/pkg", Filename: dat.NullStringFrom(tFilenameCoreos), Version: "640.0.0", ApplicationID: tAppCoreos.ID})
-	tChannel, _ := a.AddChannel(&api.Channel{Name: "stable", Color: "white", ApplicationID: tAppCoreos.ID, PackageID: dat.NullStringFrom(tPkgCoreos640.ID)})
+	tPkgCoreos640, _ := a.AddPackage(&api.Package{Type: api.PkgTypeCoreos, URL: "http://sample.url/pkg", Filename: dat.NullStringFrom(tFilenameCoreos), Version: "99640.0.0", ApplicationID: tAppCoreos.ID})
+	tChannel, _ := a.AddChannel(&api.Channel{Name: "mychannel", Color: "white", ApplicationID: tAppCoreos.ID, PackageID: dat.NullStringFrom(tPkgCoreos640.ID)})
 	tGroup, _ := a.AddGroup(&api.Group{Name: "Production", ApplicationID: tAppCoreos.ID, ChannelID: dat.NullStringFrom(tChannel.ID), PolicyUpdatesEnabled: true, PolicySafeMode: true, PolicyPeriodInterval: "15 minutes", PolicyMaxUpdatesPerPeriod: 2, PolicyUpdateTimeout: "60 minutes"})
 	coreosAction, _ := a.AddCoreosAction(&api.CoreosAction{Event: "postinstall", Sha256: "fsdkjjfghsdakjfgaksdjfasd", PackageID: tPkgCoreos640.ID})
 
@@ -174,9 +171,9 @@ func TestAppUpdateForAppWithChannelAndPackageName(t *testing.T) {
 	validUnregisteredMachineID := "65e1266d-6f54-4b87-9080-23b99ca9c12f"
 	oldAppVersion := "610.0.0"
 	updateCheck := true
-	addPing := false
+	addPing := true
 
-	omahaResp := doOmahaRequest(t, h, tAppCoreos.ID, oldAppVersion, validUnregisteredMachineID, tGroup.ID, validUnregisteredIP, addPing, updateCheck, "3", "2", oldAppVersion)
+	omahaResp := doOmahaRequest(t, h, tAppCoreos.ID, oldAppVersion, validUnregisteredMachineID, tGroup.ID, validUnregisteredIP, addPing, updateCheck, "", "", "")
 	checkOmahaResponse(t, omahaResp, tAppCoreos.ID, "ok")
 	checkOmahaUpdateResponse(t, omahaResp, tPkgCoreos640.Version, tFilenameCoreos, tPkgCoreos640.URL, "ok")
 	checkOmahaPingResponse(t, omahaResp, tAppCoreos.ID, addPing)
