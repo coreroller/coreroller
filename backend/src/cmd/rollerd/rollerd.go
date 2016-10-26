@@ -1,8 +1,11 @@
 package main
 
 import (
+	"errors"
 	"flag"
+	"io/ioutil"
 	"net/http"
+	"net/url"
 	"os"
 
 	"github.com/mgutz/logxi/v1"
@@ -11,24 +14,42 @@ import (
 	"github.com/zenazn/goji/web/middleware"
 )
 
+const (
+	coreosPkgsRouterPrefix = "/coreos/"
+)
+
 var (
-	enableSyncer  = flag.Bool("enable-syncer", true, "Enable CoreOS packages syncer")
-	httpLog       = flag.Bool("http-log", false, "Enable http requests logging")
-	httpStaticDir = flag.String("http-static-dir", "../frontend/built", "Path to http static files")
-	logger        = log.New("rollerd")
+	enableSyncer       = flag.Bool("enable-syncer", true, "Enable CoreOS packages syncer")
+	hostCoreosPackages = flag.Bool("host-coreos-packages", false, "Host CoreOS packages in CoreRoller")
+	coreosPackagesPath = flag.String("coreos-packages-path", "", "Path where CoreOS packages files are stored")
+	corerollerURL      = flag.String("coreroller-url", "", "CoreRoller URL (http://host:port - required when hosting CoreOS packages in CoreRoller)")
+	httpLog            = flag.Bool("http-log", false, "Enable http requests logging")
+	httpStaticDir      = flag.String("http-static-dir", "../frontend/built", "Path to frontend static files")
+	logger             = log.New("rollerd")
 )
 
 func main() {
 	flag.Parse()
 
-	ctl, err := newController(*enableSyncer)
+	if err := checkArgs(); err != nil {
+		logger.Error(err.Error())
+		os.Exit(1)
+	}
+
+	conf := &controllerConfig{
+		enableSyncer:       *enableSyncer,
+		hostCoreosPackages: *hostCoreosPackages,
+		coreosPackagesPath: *coreosPackagesPath,
+		corerollerURL:      *corerollerURL,
+	}
+	ctl, err := newController(conf)
 	if err != nil {
 		logger.Error(err.Error())
 		os.Exit(1)
 	}
 	defer ctl.close()
 
-	setupRoutes(ctl, *httpStaticDir)
+	setupRoutes(ctl)
 
 	if !*httpLog {
 		goji.Abandon(middleware.Logger)
@@ -36,7 +57,26 @@ func main() {
 	goji.Serve()
 }
 
-func setupRoutes(ctl *controller, staticDir string) {
+func checkArgs() error {
+	if *hostCoreosPackages {
+		if *coreosPackagesPath == "" {
+			return errors.New("Invalid CoreOS packages path. Please ensure you provide a valid path using -coreos-packages-path")
+		}
+		tmpFile, err := ioutil.TempFile(*coreosPackagesPath, "")
+		if err != nil {
+			return errors.New("Invalid CoreOS packages path: " + err.Error())
+		}
+		defer os.Remove(tmpFile.Name())
+
+		if _, err := url.ParseRequestURI(*corerollerURL); err != nil {
+			return errors.New("Invalid CoreRoller url. Please ensure the value provided using -coreroller-url is a valid url.")
+		}
+	}
+
+	return nil
+}
+
+func setupRoutes(ctl *controller) {
 	// API router setup
 	apiRouter := web.New()
 	apiRouter.Use(ctl.authenticate)
@@ -91,9 +131,17 @@ func setupRoutes(ctl *controller, staticDir string) {
 	// Omaha server routes
 	omahaRouter.Post("/", ctl.processOmahaRequest)
 
-	// Serve static content
+	// Host CoreOS packages payloads
+	if *hostCoreosPackages {
+		coreosPkgsRouter := web.New()
+		coreosPkgsRouter.Use(middleware.SubRouter)
+		goji.Handle(coreosPkgsRouterPrefix+"*", coreosPkgsRouter)
+		coreosPkgsRouter.Handle("/*", http.FileServer(http.Dir(*coreosPackagesPath)))
+	}
+
+	// Serve frontend static content
 	staticRouter := web.New()
 	staticRouter.Use(ctl.authenticate)
 	goji.Handle("/*", staticRouter)
-	staticRouter.Handle("/*", http.FileServer(http.Dir(staticDir)))
+	staticRouter.Handle("/*", http.FileServer(http.Dir(*httpStaticDir)))
 }
