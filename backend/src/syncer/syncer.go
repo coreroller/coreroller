@@ -301,7 +301,7 @@ func (s *Syncer) downloadPackage(update *omaha.UpdateCheck, filename string) err
 		return err
 	}
 	if resp.StatusCode != http.StatusOK {
-		return errors.New(fmt.Sprintf("received unexpected status code (%d)", resp.StatusCode))
+		return fmt.Errorf("received unexpected status code (%d)", resp.StatusCode)
 	}
 	defer resp.Body.Close()
 
