@@ -47,6 +47,7 @@ class ModalUpdate extends React.Component {
           update_timeout = this.refs.timingUpdatesTimeout.getValue() + " " + this.refs.timingUpdatesTimeoutUnit.getValue()
 
       let data = {
+        application_id: this.props.data.group.application_id,
         id: this.props.data.group.id,
         name: this.refs.nameGroup.getValue(),
         description: this.refs.descriptionGroup.getValue(),
