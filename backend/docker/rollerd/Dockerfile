@@ -3,7 +3,7 @@ FROM alpine:3.3
 RUN set -x \
     && apk update \
     && apk add --virtual .build-deps git go nodejs \
-    && apk add ca-certificates \
+    && apk add ca-certificates tzdata \
     && mkdir -p /build /coreroller/static \
     && GOPATH=/go go get github.com/constabulary/gb/... \
     && cd /build \

@@ -3,7 +3,7 @@ FROM alpine:3.3
 RUN set -x \
     && apk update \
     && apk add --virtual .build-deps git curl go nodejs postgresql-dev gcc make musl-dev \
-    && apk add ca-certificates postgresql postgresql-contrib \
+    && apk add ca-certificates postgresql postgresql-contrib tzdata \
     && mkdir -p /build /coreroller/static \
     && curl -o /usr/local/bin/gosu -sSL "https://github.com/tianon/gosu/releases/download/1.9/gosu-amd64" \
     && chmod +x /usr/local/bin/gosu \
