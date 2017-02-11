@@ -1,63 +1,63 @@
 .chart--container {
-	margin: 20px 0px 10px 0px !important;
-	background-color: @white;
+  margin: 20px 0 10px !important;
+  background-color: @white;
   border: 1px solid @grey-50;
   .border-radius(4px);
 
-	.chart--header {
-		background-color: #fafafa;
-		padding: 10px;
-		margin: 0px !important;
-		border-bottom: 1px solid @grey-50;
-		.border-top-radius(4px);
-	
-		.chart--title {
-			font-size: 18px;
-			margin: 0px;
-			padding-top: 3px;
-			margin-bottom: 5px;
-			display: inline;
-			padding-right: 10px;
+  .chart--header {
+    background-color: #fafafa;
+    padding: 10px;
+    margin: 0 !important;
+    border-bottom: 1px solid @grey-50;
+    .border-top-radius(4px);
 
-			a span, a:hover span {
-				color: @grey-50;
-			}
-		}
+    .chart--title {
+      font-size: 18px;
+      margin: 0;
+      padding-top: 3px;
+      margin-bottom: 5px;
+      display: inline;
+      padding-right: 10px;
 
-		.chart--description {
-			color: @grey-75;
-			font-family: @font-family-Roboto;
-			font-size: .90em;
-		}
+      a span,
+      a:hover span {
+        color: @grey-50;
+      }
+    }
 
-		.chart--content {
-	  	padding: 20px;
-	  	overflow: hidden;
+    .chart--description {
+      color: @grey-75;
+      font-family: @font-family-Roboto;
+      font-size: 0.90em;
+    }
 
-	  	& > [class*="col-"] {
-				text-align: center;
-			}
-		}
-	}
+    .chart--content {
+      padding: 20px;
+      overflow: hidden;
+
+      & > [class*="col-"] {
+        text-align: center;
+      }
+    }
+  }
 }
 
-
 .chart {
-	position: relative;
-	width: 100px;
-	height: 100px;
-	margin: 10px auto;
+  position: relative;
+  width: 100px;
+  height: 100px;
+  margin: 10px auto;
 
-	h2 {
-		position: absolute;
-		line-height: 100px;
-		text-align: center;
-		width: 100%;
-		font-size: 1.5em;
-		margin: 0px;
+  h2 {
+    position: absolute;
+    line-height: 100px;
+    text-align: center;
+    width: 100%;
+    font-size: 1.5em;
+    margin: 0;
 
-		span {
-			font-size: .75em;
-		}
-	}
+    span {
+      font-size: 0.75em;
+    }
+  }
 }

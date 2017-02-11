@@ -10,13 +10,13 @@ class VersionBreakdown extends React.Component {
     super()
   }
 
-	static PropTypes: {
+  static PropTypes: {
     version_breakdown: React.PropTypes.array.isRequired,
     channel: React.PropTypes.object.isRequired
   }
 
   render() {
-  	let versions = this.props.version_breakdown ? this.props.version_breakdown : [],
+    let versions = this.props.version_breakdown ? this.props.version_breakdown : [],
         lastVersionChannel = "",
         entries = [],
         channel = this.props.channel ? this.props.channel : {},

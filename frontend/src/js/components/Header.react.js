@@ -28,15 +28,15 @@ class Header extends React.Component {
   }
 
   render() {
-  	var brand = <Link to="MainLayout">Core<span className="blueStyle">Roller</span></Link>
+    var brand = <Link to="MainLayout">Core<span className="blueStyle">Roller</span></Link>
     var options = {
       show: this.state.showModal
     }
 
     return (
-    	<Navbar brand={brand} fixedTop={true} toggleNavKey={0}>
-    		<Nav right eventKey={1}>
-			    <NavItemLink eventKey={1} to="MainLayout"><span className="fa fa-server"></span> Applications</NavItemLink>
+      <Navbar brand={brand} fixedTop={true} toggleNavKey={0}>
+        <Nav right eventKey={1}>
+          <NavItemLink eventKey={1} to="MainLayout"><span className="fa fa-server"></span> Applications</NavItemLink>
           <li>
             <DropdownButton bsStyle="link" title="My account" key={2}>
               <MenuItem eventKey="2">
@@ -49,8 +49,8 @@ class Header extends React.Component {
               <MenuItem eventKey="3"><Button bsStyle="link" onClick={this.logout}><span className="fa fa-sign-out"></span> Log out</Button></MenuItem>
             </DropdownButton>
           </li>
-			  </Nav>
-	   	</Navbar>
+        </Nav>
+       </Navbar>
     )
   }
 }

@@ -9,7 +9,7 @@ class ConfirmationContent extends React.Component {
     this.processClick = this.processClick.bind(this)
   }
 
-	static PropTypes: {
+  static PropTypes: {
     channel: React.PropTypes.object.isRequired,
     data: React.PropTypes.object.isRequired
   }
