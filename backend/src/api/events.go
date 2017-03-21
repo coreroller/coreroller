@@ -143,7 +143,7 @@ func (api *API) triggerEventConsequences(instanceID, appID, groupID, lastUpdateV
 		return err
 	}
 
-	// TODO: should we also consider ResultSuccess in the next check? CoreOS ~ generic conflics?
+	// TODO: should we also consider ResultSuccess in the next check? CoreOS ~ generic conflicts?
 	if etype == EventUpdateComplete && result == ResultSuccessReboot {
 		_ = api.updateInstanceStatus(instanceID, appID, InstanceStatusComplete)
 
