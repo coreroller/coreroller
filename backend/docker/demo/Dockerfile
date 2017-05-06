@@ -2,17 +2,11 @@ FROM alpine:3.3
 
 RUN set -x \
     && apk update \
-    && apk add --virtual .build-deps git curl go nodejs postgresql-dev gcc make musl-dev \
+    && apk add --virtual .build-deps git curl go nodejs \
     && apk add ca-certificates postgresql postgresql-contrib tzdata \
     && mkdir -p /build /coreroller/static \
     && curl -o /usr/local/bin/gosu -sSL "https://github.com/tianon/gosu/releases/download/1.9/gosu-amd64" \
     && chmod +x /usr/local/bin/gosu \
-    && cd /build \
-    && git clone https://github.com/theory/pg-semver \
-    && cd pg-semver \
-    && git checkout v0.12.0 \
-    && make \
-    && make install \
     && GOPATH=/go go get github.com/constabulary/gb/... \
     && cd /build \
     && git clone https://github.com/coreroller/coreroller \
