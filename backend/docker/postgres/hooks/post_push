@@ -1,0 +1,23 @@
+#!/bin/bash
+
+# If master branch is tagged with a semver tag (x.y.z) then the docker image
+# will be tagged with 3 other tags: x.y.z, x.y and x
+
+[ "$SOURCE_BRANCH" == "master" ] || exit 0;
+
+tag=$(git describe --tags --match "[0-9]*\.[0-9]*\.[0-9]*" $SOURCE_COMMIT 2>/dev/null)
+[ "$?" == "0" ] || { echo "No semver matching tag found" && exit 0; }
+
+semver=( ${tag//./ } )
+major="${semver[0]}"
+minor="${semver[1]}"
+patch="${semver[2]}"
+
+tags=("${major}.${minor}.${patch}")
+tags+=("${major}.${minor}")
+tags+=("${major}")
+
+for t in ${tags[@]}; do
+    echo "Tagging and pushing $IMAGE_NAME as $t .."
+    docker tag $IMAGE_NAME $DOCKER_REPO:$t && docker push $DOCKER_REPO:$t
+done
