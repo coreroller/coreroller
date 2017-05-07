@@ -13,7 +13,7 @@ import (
 	_ "github.com/lib/pq"
 )
 
-//go:generate go-bindata -pkg api db db/migrations
+//go:generate go-bindata -ignore=\.swp -pkg api db db/migrations
 
 const (
 	defaultDbURL = "postgres://postgres@127.0.0.1:5432/coreroller?sslmode=disable&connect_timeout=10"
