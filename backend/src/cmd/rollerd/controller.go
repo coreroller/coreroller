@@ -6,6 +6,7 @@ import (
 	"net"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	"api"
@@ -663,8 +664,9 @@ func (ctl *controller) processOmahaRequest(c web.C, w http.ResponseWriter, r *ht
 //
 
 func getRequestIP(r *http.Request) string {
-	if ip := r.Header.Get("X-FORWARDED-FOR"); ip != "" {
-		return ip
+	ips := strings.Split(r.Header.Get("X-FORWARDED-FOR"), ", ")
+	if ips[0] != "" && net.ParseIP(ips[0]) != nil {
+		return ips[0]
 	}
 	ip, _, _ := net.SplitHostPort(r.RemoteAddr)
 	return ip
