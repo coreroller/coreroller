@@ -1,7 +1,7 @@
 package main
 
 import (
-	"net/http/httptest"
+	"net/http"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -21,7 +21,7 @@ func TestGetRequestIP(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		r := httptest.NewRequest("POST", "/v1/update", nil)
+		r, _ := http.NewRequest("POST", "/v1/update", nil)
 		r.RemoteAddr = tc.remoteAddr
 		r.Header.Set("X-Forwarded-For", tc.xForwardedFor)
 		assert.Equal(t, tc.expectedOutput, getRequestIP(r))
