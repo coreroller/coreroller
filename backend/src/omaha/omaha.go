@@ -16,12 +16,7 @@ import (
 var (
 	logger = log.New("omaha")
 
-	coreosAppID  = "e96281a6-d1af-4bde-9a0a-97b76e56dc57"
-	coreosGroups = map[string]string{
-		"alpha":  "5b810680-e36a-4879-b98a-4f989e80b899",
-		"beta":   "3fe10490-dd73-4b49-b72a-28ac19acfcdc",
-		"stable": "9a2deb70-37be-4026-853f-bfdd6b347bbe",
-	}
+	coreosAppID = api.CoreosAppID()
 
 	// ErrMalformedRequest error indicates that the omaha request it has
 	// received is malformed.
@@ -79,7 +74,7 @@ func (h *Handler) buildOmahaResponse(omahaReq *omahaSpec.Request, ip string) (*o
 		group := reqApp.Track
 		if reqAppUUID, err := uuid.FromString(reqApp.Id); err == nil {
 			if reqAppUUID.String() == coreosAppID {
-				if coreosGroupID, ok := coreosGroups[group]; ok {
+				if coreosGroupID, ok := api.CoreosGroupID(group); ok {
 					group = coreosGroupID
 				}
 			}
