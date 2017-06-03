@@ -3,8 +3,6 @@ package api
 import (
 	"errors"
 	"time"
-
-	"gopkg.in/mgutz/dat.v1"
 )
 
 const (
