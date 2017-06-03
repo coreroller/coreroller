@@ -5,6 +5,7 @@ RUN set -x \
     && apk add --virtual .build-deps git go nodejs \
     && apk add ca-certificates tzdata \
     && mkdir -p /build /coreroller/static \
+    && git clone --branch v0.4.4 https://github.com/constabulary/gb /go/src/github.com/constabulary/gb \
     && GOPATH=/go go get github.com/constabulary/gb/... \
     && cd /build \
     && git clone https://github.com/coreroller/coreroller \

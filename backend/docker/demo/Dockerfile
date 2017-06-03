@@ -7,6 +7,7 @@ RUN set -x \
     && mkdir -p /build /coreroller/static \
     && curl -o /usr/local/bin/gosu -sSL "https://github.com/tianon/gosu/releases/download/1.9/gosu-amd64" \
     && chmod +x /usr/local/bin/gosu \
+    && git clone --branch v0.4.4 https://github.com/constabulary/gb /go/src/github.com/constabulary/gb \
     && GOPATH=/go go get github.com/constabulary/gb/... \
     && cd /build \
     && git clone https://github.com/coreroller/coreroller \
