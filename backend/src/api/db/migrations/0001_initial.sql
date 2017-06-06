@@ -4,6 +4,8 @@
 
 alter database coreroller set timezone = 'utc';
 
+create extension if not exists "uuid-ossp";
+
 create table team (
 	id uuid primary key default uuid_generate_v4(),
 	name varchar(25) not null check (name <> '') unique,

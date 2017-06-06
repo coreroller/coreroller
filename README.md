@@ -178,15 +178,13 @@ Please make sure that your code is formatted using `gofmt` and makes [gometalint
 
 CoreRoller uses `PostgreSQL` as datastore, so you will need it installed if you are planning to do some work on CoreRoller.
 
-You can install it locally or use the docker image available in the docker hub (coreroller/postgres). If you don't use the docker image provided, you'll need to run the following commands to create the necessary databases and extensions:
+You can install it locally or use the docker image available in the docker hub (coreroller/postgres). If you don't use the docker image provided, you'll need to run the following commands to create the necessary databases:
 
 	psql -U postgres -c "create database coreroller;"
-	psql -U postgres -d coreroller -c "create extension \"uuid-ossp\";"
 
 To run the tests you will also need to setup the coreroller\_tests database:
 	
 	psql -U postgres -c "create database coreroller_tests;"
-	psql -U postgres -d coreroller_tests -c "create extension \"uuid-ossp\";"
 
 ### Frontend
 
@@ -230,9 +228,8 @@ If you were using CoreRoller before this release we recommend you to follow the 
     pg_dump -h COREROLLER_DB -U postgres -d coreroller --data-only --exclude-table=database_migrations > coreroller_backup.sql
 
     # Step 2: Start a new PostgreSQL server (free of any coreroller tables and data)
-    # (If you are setting up your PostgreSQL instance manually instead of using the provided docker image don't forget creating the database and the required extension)
+    # (If you are setting up your PostgreSQL instance manually instead of using the provided docker image don't forget creating the database)
 	psql -h NEW_COREROLLER_DB -U postgres -c "create database coreroller;"
-	psql -h NEW_COREROLLER_DB -U postgres -d coreroller -c "create extension \"uuid-ossp\";"
 
     # Step 3: Start a new rollerd 1.0 instance connecting to the new PostgreSQL server. The new migration file will create the schema and add the sample data.
 
