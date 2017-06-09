@@ -17,11 +17,9 @@ if [ ! -f "$PGDATA/postgresql.conf" ]; then
 
     gosu postgres psql -c "CREATE DATABASE coreroller;"
     gosu postgres psql -c "ALTER DATABASE coreroller SET TIMEZONE = 'UTC';"
-    gosu postgres psql -d coreroller -c "CREATE EXTENSION \"uuid-ossp\";"
 
     gosu postgres psql -c "CREATE DATABASE coreroller_tests;"
     gosu postgres psql -c "ALTER DATABASE coreroller_tests SET TIMEZONE = 'UTC';"
-    gosu postgres psql -d coreroller_tests -c "CREATE EXTENSION \"uuid-ossp\";"
 
     gosu postgres pg_ctl -m fast -w stop
 fi
