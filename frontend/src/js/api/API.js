@@ -11,7 +11,7 @@ class API {
   static logout() {
     $.ajax({
       type: "GET",
-      url: "/api/activity",
+      url: BASE_URL + "/activity",
       async: false,
       username: "admin",
       password: "invalid-password",
