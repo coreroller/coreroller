@@ -8,7 +8,7 @@ import (
 
 const (
 	defaultPage    uint64 = 1
-	defaultPerPage uint64 = 25
+	defaultPerPage uint64 = 500
 )
 
 // validatePaginationParams validates the pagination parameters provided,
