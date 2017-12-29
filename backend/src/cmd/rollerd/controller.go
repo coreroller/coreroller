@@ -656,6 +656,7 @@ func (ctl *controller) getActivity(c web.C, w http.ResponseWriter, r *http.Reque
 //
 
 func (ctl *controller) processOmahaRequest(c web.C, w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/xml")
 	ctl.omahaHandler.Handle(r.Body, w, getRequestIP(r))
 }
 
