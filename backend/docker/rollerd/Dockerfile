@@ -11,7 +11,6 @@ RUN set -x \
     && git clone https://github.com/coreroller/coreroller \
     && cd /build/coreroller/backend \
     && /go/bin/gb build \
-    && ls -l \
     && cd /build/coreroller/frontend \
     && npm install \
     && npm run build 
