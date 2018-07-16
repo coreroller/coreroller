@@ -6,7 +6,7 @@ ARG GIT_BRANCH=master
 WORKDIR /build
 
 RUN set -x \
-    && apk --no-cache add git curl nodejs musl-dev npm \
+    && apk --no-cache add git curl \
     ca-certificates postgresql postgresql-contrib tzdata \
     && mkdir -p /build /coreroller/static \
     # Switch to https://pkgs.alpinelinux.org/package/edge/testing/x86_64/gb once this is in stable
