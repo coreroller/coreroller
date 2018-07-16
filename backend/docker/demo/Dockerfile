@@ -1,6 +1,8 @@
 FROM golang:alpine as builder
 
 ENV GOPATH /go
+ARG GIT_REMOTE_URL=https://github.com/coreroller/coreroller
+ARG GIT_BRANCH=master
 WORKDIR /build
 
 RUN set -x \
@@ -10,16 +12,18 @@ RUN set -x \
     # Switch to https://pkgs.alpinelinux.org/package/edge/testing/x86_64/gb once this is in stable
     && git clone --branch v0.4.4 https://github.com/constabulary/gb /go/src/github.com/constabulary/gb \
     && go get github.com/constabulary/gb/... \
-    && git clone https://github.com/coreroller/coreroller \
+    && git clone --single-branch --branch ${GIT_BRANCH} ${GIT_REMOTE_URL} \
     && cd coreroller/backend \
     && /go/bin/gb build \
     && cp /build/coreroller/backend/bin/rollerd /coreroller
 
 FROM node:9-alpine as assets
 WORKDIR /build
+ARG GIT_REMOTE_URL=https://github.com/coreroller/coreroller
+ARG GIT_BRANCH=master
 
 RUN apk --no-cache add git \
-    && git clone https://github.com/coreroller/coreroller \
+    && git clone --single-branch --branch ${GIT_BRANCH} ${GIT_REMOTE_URL} \
     && cd /build/coreroller/frontend \
     && npm install \
     && npm run build
