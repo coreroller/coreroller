@@ -11,7 +11,6 @@
     "jquery": "~2.1.4",
     "moment": "~2.10.6",
     "moment-timezone": "~0.4.1",
-    "npm-shrinkwrap": "^200.5.1",
     "progressbar.js": "~0.9.0",
     "pubsub-js": "~1.5.3",
     "rc-switch": "~1.2.1",
@@ -32,28 +31,24 @@
     "browserify": "~11.2.0",
     "catw": "~1.0.1",
     "envify": "~3.4.0",
-    "less": "~2.5.3",
+    "less": "~3.7.1",
     "less-plugin-clean-css": "~1.5.1",
     "reactify": "~1.1.1",
     "uglify-js": "~2.4.24",
     "uglifyify": "~3.0.1",
-    "watchify": "~3.4.0"
+    "watchify": "^3.4.0"
   },
   "scripts": {
     "copy-css": "cp -R src/css/*.css ./built/css/",
     "watch-css": "lessc src/style/styles.less > ./built/css/styles.css",
     "watch-js": "watchify src/js/main.js -o ./built/js/main.js -dv",
     "watch": "npm run watch-css && npm run watch-js",
-    "build-css": "lessc --clean-css src/style/styles.less > ./built/css/styles.css",
+    "build-css":
+      "lessc --clean-css src/style/styles.less >  built/css/styles.css",
     "build-js": "browserify -g uglifyify src/js/*.js > ./built/js/main.js",
-    "build": "npm run build-css & npm run build-js && npm run copy-css",
-    "shrinkwrap": "npm shrinkwrap"
+    "build": "npm run build-css & npm run build-js && npm run copy-css"
   },
   "browserify": {
-    "transform": [
-      "babelify",
-      "reactify",
-      "envify"
-    ]
+    "transform": ["babelify", "reactify", "envify"]
   }
 }
