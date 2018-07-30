@@ -19,6 +19,7 @@ RUN set -x \
 
 FROM node:9-alpine as assets
 WORKDIR /build
+
 ARG GIT_REMOTE_URL=https://github.com/coreroller/coreroller
 ARG GIT_BRANCH=master
 
@@ -31,8 +32,10 @@ RUN apk --no-cache add git \
 FROM alpine:3.8
 RUN apk --no-cache add ca-certificates tzdata \
     && mkdir -p /coreroller/static
+
 COPY --from=builder /build/coreroller/backend/bin/rollerd /coreroller/
-COPY --from=assets /build/coreroller/frontend/built/* /coreroller/static/
+COPY --from=assets /build/coreroller/frontend/built/ /coreroller/static/
+
 ENV COREROLLER_DB_URL "postgres://postgres@postgresqld.local:5432/coreroller?sslmode=disable"
 EXPOSE 8000
 CMD ["/coreroller/rollerd", "-http-static-dir=/coreroller/static"]
