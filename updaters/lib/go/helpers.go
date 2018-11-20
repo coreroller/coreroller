@@ -7,7 +7,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
-	"strconv"
 
 	"github.com/coreos/go-omaha/omaha"
 )
@@ -22,17 +21,6 @@ type Update struct {
 
 const (
 	defaultOmahaURL = "http://localhost:8000/omaha/"
-
-	// Event types
-	eventUpdateComplete         = 3
-	eventUpdateDownloadStarted  = 13
-	eventUpdateDownloadFinished = 14
-	eventUpdateInstalled        = 800
-
-	// Event results
-	resultFailed        = 0
-	resultSuccess       = 1
-	resultSuccessReboot = 2
 )
 
 var (
@@ -60,7 +48,7 @@ func GetUpdate(instanceID, appID, groupID, version string) (*Update, error) {
 
 	app := resp.Apps[0]
 	if app.Status != "ok" {
-		return nil, errors.New(app.Status)
+		return nil, errors.New(string(app.Status))
 	}
 
 	status := app.UpdateCheck.Status
@@ -68,22 +56,22 @@ func GetUpdate(instanceID, appID, groupID, version string) (*Update, error) {
 	case "ok":
 		update := &Update{
 			Version:  app.UpdateCheck.Manifest.Version,
-			URL:      app.UpdateCheck.Urls.Urls[0].CodeBase,
-			Filename: app.UpdateCheck.Manifest.Packages.Packages[0].Name,
-			Hash:     app.UpdateCheck.Manifest.Packages.Packages[0].Hash,
+			URL:      app.UpdateCheck.URLs[0].CodeBase,
+			Filename: app.UpdateCheck.Manifest.Packages[0].Name,
+			Hash:     app.UpdateCheck.Manifest.Packages[0].SHA1,
 		}
 		return update, nil
 	case "noupdate":
 		return nil, ErrNoUpdate
 	default:
-		return nil, errors.New(status)
+		return nil, errors.New(string(status))
 	}
 }
 
 // EventDownloadStarted posts an event to CR to indicate that the download of
 // the update has started.
 func EventDownloadStarted(instanceID, appID, groupID string) error {
-	req := buildOmahaEventRequest(instanceID, appID, groupID, eventUpdateDownloadStarted, resultSuccess)
+	req := buildOmahaEventRequest(instanceID, appID, groupID, omaha.EventTypeUpdateDownloadStarted, omaha.EventResultSuccess)
 	_, err := doOmahaRequest(req)
 
 	return err
@@ -92,7 +80,7 @@ func EventDownloadStarted(instanceID, appID, groupID string) error {
 // EventDownloadFinished posts an event to CR to indicate that the download of
 // the update has finished.
 func EventDownloadFinished(instanceID, appID, groupID string) error {
-	req := buildOmahaEventRequest(instanceID, appID, groupID, eventUpdateDownloadFinished, resultSuccess)
+	req := buildOmahaEventRequest(instanceID, appID, groupID, omaha.EventTypeUpdateDownloadFinished, omaha.EventResultSuccess)
 	_, err := doOmahaRequest(req)
 
 	return err
@@ -101,7 +89,7 @@ func EventDownloadFinished(instanceID, appID, groupID string) error {
 // EventUpdateSucceeded posts an event to CR to indicate that the update was
 // installed successfully and the new version is working fine.
 func EventUpdateSucceeded(instanceID, appID, groupID string) error {
-	req := buildOmahaEventRequest(instanceID, appID, groupID, eventUpdateComplete, resultSuccessReboot)
+	req := buildOmahaEventRequest(instanceID, appID, groupID, omaha.EventTypeUpdateComplete, omaha.EventResultSuccessReboot)
 	_, err := doOmahaRequest(req)
 
 	return err
@@ -110,7 +98,7 @@ func EventUpdateSucceeded(instanceID, appID, groupID string) error {
 // EventUpdateFailed posts an event to CR to indicate that the update process
 // complete but it didn't succeed.
 func EventUpdateFailed(instanceID, appID, groupID string) error {
-	req := buildOmahaEventRequest(instanceID, appID, groupID, eventUpdateComplete, resultFailed)
+	req := buildOmahaEventRequest(instanceID, appID, groupID, omaha.EventTypeUpdateComplete, omaha.EventResultError)
 	_, err := doOmahaRequest(req)
 
 	return err
@@ -120,22 +108,22 @@ func buildOmahaUpdateRequest(instanceID, appID, groupID, version string) *omaha.
 	req := &omaha.Request{}
 	app := req.AddApp(appID, version)
 	app.MachineID = instanceID
-	app.BootId = instanceID
+	app.BootID = instanceID
 	app.Track = groupID
 	app.AddUpdateCheck()
 
 	return req
 }
 
-func buildOmahaEventRequest(instanceID, appID, groupID string, eventType, eventResult int) *omaha.Request {
+func buildOmahaEventRequest(instanceID, appID, groupID string, eventType omaha.EventType, eventResult omaha.EventResult) *omaha.Request {
 	req := &omaha.Request{}
 	app := req.AddApp(appID, "")
 	app.MachineID = instanceID
-	app.BootId = instanceID
+	app.BootID = instanceID
 	app.Track = groupID
 	event := app.AddEvent()
-	event.Type = strconv.Itoa(eventType)
-	event.Result = strconv.Itoa(eventResult)
+	event.Type = eventType
+	event.Result = eventResult
 
 	return req
 }
