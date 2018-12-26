@@ -2,6 +2,7 @@
 // sources:
 // db/drop_all_tables.sql
 // db/migrations/0001_initial.sql
+// db/migrations/0002_add_rollback.sql
 // DO NOT EDIT!
 
 package api
@@ -84,7 +85,7 @@ func dbDrop_all_tablesSql() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "db/drop_all_tables.sql", size: 674, mode: os.FileMode(420), modTime: time.Unix(1496479415, 0)}
+	info := bindataFileInfo{name: "db/drop_all_tables.sql", size: 674, mode: os.FileMode(420), modTime: time.Unix(1545639712, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -104,7 +105,27 @@ func dbMigrations0001_initialSql() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "db/migrations/0001_initial.sql", size: 22244, mode: os.FileMode(420), modTime: time.Unix(1496990329, 0)}
+	info := bindataFileInfo{name: "db/migrations/0001_initial.sql", size: 22244, mode: os.FileMode(420), modTime: time.Unix(1545683519, 0)}
+	a := &asset{bytes: bytes, info: info}
+	return a, nil
+}
+
+var _dbMigrations0002_add_rollbackSql = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x04\xc0\x41\x0e\xc2\x20\x10\x05\xd0\x3d\xa7\xf8\x7b\xc3\x09\x5c\x7a\x03\x13\xd7\xcd\x14\xa6\xb5\xf1\xc3\x90\x61\x88\xf1\xf6\xbe\x9c\x71\x6b\xd7\xe9\x12\x8a\xd7\x48\x29\x67\x3c\xcc\xf5\x69\xa4\x3a\x66\x79\x6b\x93\x94\x84\xa1\x8e\x90\x9d\x8a\xd3\x6d\x8d\x09\xa9\x15\xc5\xb8\x5a\xc7\x30\x5e\xe5\xb7\xb9\x91\xbb\x94\xcf\x26\xa4\x7d\xb5\x62\x37\xa3\x4a\x47\xb7\x40\x5f\x24\xaa\x1e\xb2\x18\x38\x84\x53\xef\xff\x00\x00\x00\xff\xff\x6b\x00\x10\xa3\x7b\x00\x00\x00")
+
+func dbMigrations0002_add_rollbackSqlBytes() ([]byte, error) {
+	return bindataRead(
+		_dbMigrations0002_add_rollbackSql,
+		"db/migrations/0002_add_rollback.sql",
+	)
+}
+
+func dbMigrations0002_add_rollbackSql() (*asset, error) {
+	bytes, err := dbMigrations0002_add_rollbackSqlBytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindataFileInfo{name: "db/migrations/0002_add_rollback.sql", size: 123, mode: os.FileMode(420), modTime: time.Unix(1545683707, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -163,6 +184,7 @@ func AssetNames() []string {
 var _bindata = map[string]func() (*asset, error){
 	"db/drop_all_tables.sql": dbDrop_all_tablesSql,
 	"db/migrations/0001_initial.sql": dbMigrations0001_initialSql,
+	"db/migrations/0002_add_rollback.sql": dbMigrations0002_add_rollbackSql,
 }
 
 // AssetDir returns the file names below a certain
@@ -209,6 +231,7 @@ var _bintree = &bintree{nil, map[string]*bintree{
 		"drop_all_tables.sql": &bintree{dbDrop_all_tablesSql, map[string]*bintree{}},
 		"migrations": &bintree{nil, map[string]*bintree{
 			"0001_initial.sql": &bintree{dbMigrations0001_initialSql, map[string]*bintree{}},
+			"0002_add_rollback.sql": &bintree{dbMigrations0002_add_rollbackSql, map[string]*bintree{}},
 		}},
 	}},
 }}
