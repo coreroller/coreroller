@@ -16,6 +16,7 @@ class ModalAdd extends React.Component {
     this.validateTimezone = this.validateTimezone.bind(this)
     this.changeSafeMode = this.changeSafeMode.bind(this)
     this.changePolicyUpdates = this.changePolicyUpdates.bind(this)
+    this.changePolicyRollback = this.changePolicyRollback.bind(this)
     this.changePolicyOfficeHours = this.changePolicyOfficeHours.bind(this)
     this.handleValidSubmit = this.handleValidSubmit.bind(this)
     this.handleInvalidSubmit = this.handleInvalidSubmit.bind(this)
@@ -25,6 +26,7 @@ class ModalAdd extends React.Component {
       safeMode: true,
       policyUpdates: true,
       policyOfficeHours: false,
+      policyRollback: false,
       isLoading: false,
       alertVisible: false,
       timezoneError: false
@@ -102,6 +104,12 @@ class ModalAdd extends React.Component {
   changePolicyUpdates() {
     this.setState({
       policyUpdates: !this.state.policyUpdates
+    })
+  }
+
+  changePolicyRollback() {
+    this.setState({
+      policyRollback: !this.state.policyRollback
     })
   }
 
@@ -188,6 +196,16 @@ class ModalAdd extends React.Component {
                     </OverlayTrigger>
                     <div className="displayInline lastCheck">
                       <Switch defaultChecked onChange={this.changeSafeMode} checkedChildren={"✔"} unCheckedChildren={"✘"} />
+                    </div>
+                  </div>
+                </Col>
+              </Row>
+              <Row>
+                <Col xs={12}>
+                  <div className="form-group noMargin">
+                    <label className="normalText" htmlFor="policyRollbackNewGroup">Allow rollack:</label>
+                    <div className="displayInline">
+                      <Switch onChange={this.changePolicyRollback} checkedChildren={"✔"} unCheckedChildren={"✘"} />
                     </div>
                   </div>
                 </Col>

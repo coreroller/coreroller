@@ -28,6 +28,7 @@ type Group struct {
 	ApplicationID             string                   `db:"application_id" json:"application_id"`
 	ChannelID                 dat.NullString           `db:"channel_id" json:"channel_id"`
 	PolicyUpdatesEnabled      bool                     `db:"policy_updates_enabled" json:"policy_updates_enabled"`
+	PolicyAllowRollback       bool                     `db:"policy_rollback_allowed" json:"policy_rollback_allowed"`
 	PolicySafeMode            bool                     `db:"policy_safe_mode" json:"policy_safe_mode"`
 	PolicyOfficeHours         bool                     `db:"policy_office_hours" json:"policy_office_hours"`
 	PolicyTimezone            dat.NullString           `db:"policy_timezone" json:"policy_timezone"`
@@ -88,8 +89,8 @@ func (api *API) AddGroup(group *Group) (*Group, error) {
 
 	err := api.dbR.
 		InsertInto("groups").
-		Whitelist("name", "description", "application_id", "channel_id", "policy_updates_enabled", "policy_safe_mode", "policy_office_hours",
-			"policy_timezone", "policy_period_interval", "policy_max_updates_per_period", "policy_update_timeout").
+		Whitelist("name", "description", "application_id", "channel_id", "policy_updates_enabled", "policy_rollback_allowed",
+			"policy_safe_mode", "policy_office_hours", "policy_timezone", "policy_period_interval", "policy_max_updates_per_period", "policy_update_timeout").
 		Record(group).
 		Returning("*").
 		QueryStruct(group)
@@ -117,8 +118,8 @@ func (api *API) UpdateGroup(group *Group) error {
 
 	result, err := api.dbR.
 		Update("groups").
-		SetWhitelist(group, "name", "description", "channel_id", "policy_updates_enabled", "policy_safe_mode", "policy_office_hours",
-			"policy_timezone", "policy_period_interval", "policy_max_updates_per_period", "policy_update_timeout").
+		SetWhitelist(group, "name", "description", "channel_id", "policy_updates_enabled", "policy_rollback_allowed", "policy_safe_mode",
+			"policy_office_hours", "policy_timezone", "policy_period_interval", "policy_max_updates_per_period", "policy_update_timeout").
 		Where("id = $1", group.ID).
 		Exec()
 

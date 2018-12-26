@@ -49,6 +49,7 @@ class ItemExtended extends React.Component {
         channel = {},
         version_breakdown = [],
         policyUpdates,
+        policyRollback,
         policyUpdatesTimeout,
         safeMode,
         officeHours,
@@ -64,6 +65,7 @@ class ItemExtended extends React.Component {
       policyMaxUpdatesPerDay = group.policy_max_updates_per_period ? group.policy_max_updates_per_period : 0
       policyPeriodInterval = group.policy_period_interval ? group.policy_period_interval : 0
       policyUpdates = group.policy_updates_enabled ? group.policy_updates_enabled : null
+      policyRollback = group.policy_rollback_allowed ? group.policy_rollback_allowed : null
       policyUpdatesTimeout = group.policy_update_timeout ? group.policy_update_timeout : null
       safeMode = group.policy_safe_mode ? group.policy_safe_mode : null
       officeHours = group.policy_office_hours ? group.policy_office_hours : null
@@ -105,6 +107,10 @@ class ItemExtended extends React.Component {
                       <span className="subtitle displayInline">Updates enabled:</span>
                       <div className="displayInline">
                         <Switch checked={policyUpdates} disabled={true} checkedChildren={"✔"} unCheckedChildren={"✘"} />
+                      </div>
+                      <span className="subtitle displayInline">Allow rollack:</span>
+                      <div className="displayInline">
+                        <Switch checked={policyRollback} disabled={true} checkedChildren={"✔"} unCheckedChildren={"✘"} />
                       </div>
                       <span className="subtitle displayInline">Only office hours:</span>
                       <div className="displayInline">

@@ -84,7 +84,7 @@ func (api *API) GetUpdatePackage(instanceID, instanceIP, instanceVersion, appID,
 
 	instanceSemver, _ := semver.Make(instanceVersion)
 	packageSemver, _ := semver.Make(group.Channel.Package.Version)
-	if !instanceSemver.LT(packageSemver) {
+	if (!instanceSemver.LT(packageSemver) && !group.PolicyAllowRollback) || instanceSemver.EQ(packageSemver) {
 		return nil, ErrNoUpdatePackageAvailable
 	}
 
