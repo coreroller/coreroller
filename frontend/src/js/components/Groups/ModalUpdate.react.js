@@ -16,6 +16,7 @@ class ModalUpdate extends React.Component {
     this.validateTimezone = this.validateTimezone.bind(this)
     this.changeSafeMode = this.changeSafeMode.bind(this)
     this.changePolicyUpdates = this.changePolicyUpdates.bind(this)
+    this.changePolicyRollback = this.changePolicyRollback.bind(this)
     this.changePolicyOfficeHours = this.changePolicyOfficeHours.bind(this)
     this.handleValidSubmit = this.handleValidSubmit.bind(this)
     this.handleInvalidSubmit = this.handleInvalidSubmit.bind(this)
@@ -24,6 +25,7 @@ class ModalUpdate extends React.Component {
     this.state = {
       safeMode: props.data.group.policy_safe_mode,
       policyUpdates: props.data.group.policy_updates_enabled,
+      policyRollback: props.data.group.policy_rollback_allowed,
       policyOfficeHours: props.data.group.policy_office_hours,
       isLoading: false,
       alertVisible: false,
@@ -54,6 +56,7 @@ class ModalUpdate extends React.Component {
         policy_safe_mode: this.state.safeMode,
         policy_max_updates_per_period: parseInt(this.refs.maxUpdatesPerPeriodInterval.getValue()),
         policy_updates_enabled: this.state.policyUpdates,
+        policy_rollback_allowed: this.state.policyRollback,
         policy_period_interval: period_interval,
         policy_update_timeout: update_timeout,
         policy_office_hours: this.state.policyOfficeHours
@@ -105,6 +108,12 @@ class ModalUpdate extends React.Component {
   changePolicyUpdates() {
     this.setState({
       policyUpdates: !this.state.policyUpdates
+    })
+  }
+
+  changePolicyRollback() {
+    this.setState({
+      policyRollback: !this.state.policyRollback
     })
   }
 
@@ -202,6 +211,16 @@ class ModalUpdate extends React.Component {
                     </OverlayTrigger>
                     <div className="displayInline lastCheck">
                       <Switch checked={this.state.safeMode} onChange={this.changeSafeMode} checkedChildren={"✔"} unCheckedChildren={"✘"} />
+                    </div>
+                  </div>
+                </Col>
+              </Row>
+              <Row>
+                <Col xs={12}>
+                  <div className="form-group noMargin">
+                    <label className="normalText" htmlFor="policyRollbackGroup">Allow rollback:</label>
+                    <div className="displayInline">
+                      <Switch checked={this.state.policyRollback} onChange={this.changePolicyRollback} checkedChildren={"✔"} unCheckedChildren={"✘"} />
                     </div>
                   </div>
                 </Col>
