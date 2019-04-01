@@ -156,6 +156,9 @@ CoreRoller is an Open Source project and we welcome contributions. Before submit
 
 Below you will find some introductory notes that should point you in the right direction to start playing with the CoreRoller source code.
 
+### Setup
+See: [docs/local-setup.md](./docs/local-setup.md)
+
 ### Backend
 
 The CoreRoller backend (aka rollerd) is a Golang application. Builds and vendored dependencies are managed using [gb](http://getgb.io), so you just need a working Golang environment and gb installed to start working with it (there is **no** need to do a `go get` to fetch the dependencies as they are already contained in `backend/vendor`).
