@@ -9,7 +9,7 @@
     "flux": "~2.1.1",
     "halogen": "~0.1.10",
     "jquery": "~2.1.4",
-    "moment": "~2.10.6",
+    "moment": "~2.29.2",
     "moment-timezone": "~0.4.1",
     "progressbar.js": "~0.9.0",
     "pubsub-js": "~1.5.3",
