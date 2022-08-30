@@ -10,7 +10,7 @@
     "halogen": "~0.1.10",
     "jquery": "~2.1.4",
     "moment": "~2.10.6",
-    "moment-timezone": "~0.4.1",
+    "moment-timezone": "~0.5.35",
     "progressbar.js": "~0.9.0",
     "pubsub-js": "~1.5.3",
     "rc-switch": "~1.2.1",
